@@ -18,22 +18,27 @@
             background: #f5f5f5;
         }
         header {
-            background: linear-gradient(135deg, #c0392b, #e74c3c);
+            background: linear-gradient(135deg, rgba(192,57,43,0.9), rgba(231,76,60,0.9)), url('https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?w=1600') center/cover;
             color: white;
-            padding: 3rem 2rem;
+            padding: 5rem 2rem;
             text-align: center;
         }
         header h1 {
-            font-size: 2.5rem;
+            font-size: 3rem;
             margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
         header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
+            font-size: 1.3rem;
+            opacity: 0.95;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
         nav {
             background: #2c3e50;
             padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         nav .nav-container {
             max-width: 1200px;
@@ -76,6 +81,7 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             text-align: center;
             margin-bottom: 2rem;
+            background: linear-gradient(to bottom, #fff, #fafafa);
         }
         .hero h2 {
             color: #c0392b;
@@ -96,29 +102,38 @@
         }
         .category-card {
             background: white;
-            padding: 2rem;
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             transition: transform 0.3s, box-shadow 0.3s;
             text-decoration: none;
             color: inherit;
             display: block;
+            overflow: hidden;
         }
         .category-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 12px rgba(0,0,0,0.15);
         }
+        .category-card .card-img {
+            height: 160px;
+            background-size: cover;
+            background-position: center;
+        }
+        .category-card .card-content {
+            padding: 1.5rem;
+        }
         .category-card h3 {
             color: #c0392b;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             margin-bottom: 0.5rem;
         }
         .category-card p {
             color: #666;
+            font-size: 0.95rem;
         }
         .category-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
         }
         .articles {
             display: grid;
@@ -195,39 +210,57 @@
         
         <div class="categories">
             <a href="architecture.html" class="category-card">
-                <div class="category-icon">🏛</div>
-                <h3>闽南建筑</h3>
-                <p>古厝、骑楼、红砖瓦房，燕尾脊下的千年古韵</p>
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?w=600')"></div>
+                <div class="card-content">
+                    <div class="category-icon">🏛</div>
+                    <h3>闽南建筑</h3>
+                    <p>古厝、骑楼、红砖瓦房，燕尾脊下的千年古韵</p>
+                </div>
             </a>
             
             <a href="food.html" class="category-card">
-                <div class="category-icon">🍜</div>
-                <h3>闽南美食</h3>
-                <p>沙茶面、蚵仔煎、土笋冻、润饼的独特风味</p>
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600')"></div>
+                <div class="card-content">
+                    <div class="category-icon">🍜</div>
+                    <h3>闽南美食</h3>
+                    <p>沙茶面、蚵仔煎、土笋冻、润饼的独特风味</p>
+                </div>
             </a>
             
             <a href="opera.html" class="category-card">
-                <div class="category-icon">🎭</div>
-                <h3>闽南戏曲</h3>
-                <p>歌仔戏、高甲戏、南音，非遗文化的瑰宝</p>
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=600')"></div>
+                <div class="card-content">
+                    <div class="category-icon">🎭</div>
+                    <h3>闽南戏曲</h3>
+                    <p>歌仔戏、高甲戏、南音，非遗文化的瑰宝</p>
+                </div>
             </a>
             
             <a href="language.html" class="category-card">
-                <div class="category-icon">🎵</div>
-                <h3>闽南语</h3>
-                <p>歌曲、俗语、童谣，闽南人的乡音</p>
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1594708767771-a7502209ff51?w=600')"></div>
+                <div class="card-content">
+                    <div class="category-icon">🎵</div>
+                    <h3>闽南语</h3>
+                    <p>歌曲、俗语、童谣，闽南人的乡音</p>
+                </div>
             </a>
             
             <a href="customs.html" class="category-card">
-                <div class="category-icon">🏮</div>
-                <h3>传统习俗</h3>
-                <p>中秋博饼、端午划龙舟、春节习俗</p>
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=600')"></div>
+                <div class="card-content">
+                    <div class="category-icon">🏮</div>
+                    <h3>传统习俗</h3>
+                    <p>中秋博饼、端午划龙舟、春节习俗</p>
+                </div>
             </a>
             
             <a href="religion.html" class="category-card">
-                <div class="category-icon">🙏</div>
-                <h3>宗教信仰</h3>
-                <p>妈祖、保仪大帝，闽南人的精神寄托</p>
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1548013146-72479768bada?w=600')"></div>
+                <div class="card-content">
+                    <div class="category-icon">🙏</div>
+                    <h3>宗教信仰</h3>
+                    <p>妈祖、保仪大帝，闽南人的精神寄托</p>
+                </div>
             </a>
         </div>
         
