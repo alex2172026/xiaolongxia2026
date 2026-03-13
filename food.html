@@ -3,102 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>闽南美食 - 闽南文化</title>
+    <title>闽南美食 - 沙茶面、蚵仔煎、土笋冻</title>
+    <link rel="stylesheet" href="styles.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; line-height: 1.6; color: #333; background: #f5f5f5; }
-        header { background: linear-gradient(135deg, #d35400, #e67e22); color: white; padding: 2rem; text-align: center; }
-        header h1 { font-size: 2rem; }
-        nav { background: #2c3e50; padding: 1rem; text-align: center; }
-        nav a { color: white; text-decoration: none; margin: 0 1rem; padding: 0.5rem 1rem; border-radius: 4px; }
-        nav a:hover { background: #d35400; }
-        main { max-width: 1000px; margin: 2rem auto; padding: 0 2rem; }
-        .article { background: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .article h2 { color: #d35400; margin-bottom: 1rem; }
-        .article h3 { color: #2c3e50; margin: 1.5rem 0 0.5rem; }
-        .article p { margin-bottom: 1rem; }
-        .highlight { background: #ffe6d2; padding: 0.2rem 0.5rem; border-radius: 4px; }
-        footer { background: #2c3e50; color: white; text-align: center; padding: 2rem; margin-top: 3rem; }
-        .back { display: inline-block; margin-bottom: 1rem; color: #d35400; text-decoration: none; }
+        .hero-section {
+            background: linear-gradient(135deg, #e65100, #ff9800);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        .hero-section h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .content-section {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+        .food-item {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 3rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .food-item img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+        }
+        .food-content {
+            padding: 2rem;
+        }
+        .food-content h2 {
+            color: #e65100;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 3px solid #ff9800;
+            padding-bottom: 0.5rem;
+        }
+        .food-content p {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+        .food-content .highlight {
+            background: #fff3e0;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #ff9800;
+            margin: 1rem 0;
+        }
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .food-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .food-card:hover {
+            transform: translateY(-5px);
+        }
+        .food-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        .food-card-content {
+            padding: 1.5rem;
+        }
+        .food-card h3 {
+            color: #e65100;
+            margin-bottom: 0.5rem;
+        }
+        .food-card p {
+            color: #666;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>🍜 闽南美食</h1>
+        <nav>
+            <div class="logo">🦞 小龙虾</div>
+            <ul class="nav-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="architecture.html">闽南建筑</a></li>
+                <li><a href="food.html">闽南美食</a></li>
+                <li><a href="opera.html">闽南戏曲</a></li>
+                <li><a href="language.html">闽南语</a></li>
+                <li><a href="customs.html">传统习俗</a></li>
+                <li><a href="religion.html">宗教信仰</a></li>
+                <li><a href="about.html">关于</a></li>
+            </ul>
+        </nav>
     </header>
-    <nav>
-        <a href="index.html">首页</a>
-        <a href="architecture.html">闽南建筑</a>
-        <a href="food.html">闽南美食</a>
-        <a href="opera.html">闽南戏曲</a>
-        <a href="language.html">闽南语</a>
-        <a href="about.html">关于我</a>
-    </nav>
-    <main>
-        <a href="index.html" class="back">← 返回首页</a>
+
+    <div class="hero-section">
+        <h1>🍜 闽南美食</h1>
+        <p>舌尖上的闽南，古早味的传承</p>
+    </div>
+
+    <main class="content-section">
+        <div class="food-item">
+            <img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=1200" alt="沙茶面">
+            <div class="food-content">
+                <h2>🍜 沙茶面</h2>
+                <p>沙茶面是闽南最具代表性的面食之一，起源于厦门。沙茶酱是将花生、椰肉、虾酱、蒜蓉等多种调料炒制而成，香气浓郁，口感丰富。</p>
+                <p>正宗的闽南沙茶面，汤头醇厚，沙茶酱的浓郁与面条的爽滑完美结合。配料丰富多样，有牛肉丸、鸭血、豆腐、米血等，食客可以根据喜好自由搭配。</p>
+                <div class="highlight">
+                    <strong>🍲 地道吃法：</strong>吃沙茶面要趁热，先喝一口浓郁的汤头，再品尝Q弹的面条。推荐搭配牛肉丸、鸭血、炸豆皮等配料，味道更佳！
+                </div>
+            </div>
+        </div>
+
+        <div class="food-item">
+            <img src="https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=1200" alt="蚵仔煎">
+            <div class="food-content">
+                <h2>🥞 蚵仔煎</h2>
+                <p>蚵仔煎是闽南沿海地区最著名的小吃，又称"蚝烙"。选用新鲜的海蛎，加上番薯粉和鸡蛋，在平底锅上煎至两面金黄酥脆，外酥里嫩，鲜美可口。</p>
+                <p>闽南蚵仔煎的特点是外皮酥脆，内里鲜嫩多汁。食用时蘸上甜辣酱或酱油，口感更加丰富。这道小吃不仅在闽南广受欢迎，在台湾、潮汕等地也有类似的做法。</p>
+                <div class="highlight">
+                    <strong>🦪 美味秘诀：</strong>正宗蚵仔煎选用新鲜海蛎，番薯粉要调得恰到好处，煎的时候火候要掌握好，才能做到外酥里嫩。
+                </div>
+            </div>
+        </div>
+
+        <div class="food-item">
+            <img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=1200" alt="土笋冻">
+            <div class="food-content">
+                <h2>🧊 土笋冻</h2>
+                <p>土笋冻是泉州地区的传统小吃，以其独特的口感和营养价值而闻名。"土笋"其实是一种海沙虫，学名"可口革囊星虫"，生长在滩涂中。</p>
+                <p>制作土笋冻需要将土笋反复清洗，加水熬煮至胶质析出，冷却后即成冻。成品呈透明状，口感Q弹，蘸上酱油、醋、蒜蓉等调料食用，清凉爽口。</p>
+                <div class="highlight">
+                    <strong>😋 品尝要点：</strong>优质的土笋冻色泽透明，没有杂质。食用时可以搭配花生酱、甜辣酱或酱油蒜蓉汁，风味更佳。
+                </div>
+            </div>
+        </div>
+
+        <div class="food-item">
+            <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?w=1200" alt="润饼">
+            <div class="food-content">
+                <h2>🥙 润饼</h2>
+                <p>润饼是闽南传统小吃，也是清明节祭祀祖先的必备食品。润饼皮薄如纸，柔韧有嚼劲，内馅丰富多样，包括胡萝卜丝、豆芽、蛋皮、豆腐、猪肉、花生粉等。</p>
+                <p>吃润饼时，将各种馅料放在饼皮上，撒上花生粉和糖粉，卷成圆筒状即可享用。润饼象征着"包金包银"，寓意吉祥如意。</p>
+                <div class="highlight">
+                    <strong>🥢 闽南春卷：</strong>润饼又称"春饼"，与北方春卷不同，闽南润饼的饼皮更薄更软，内馅以蔬菜为主，是闽南人清明节的重要食品。
+                </div>
+            </div>
+        </div>
+
+        <h2 style="color: #e65100; font-size: 2rem; margin: 3rem 0 1.5rem; text-align: center;">🍽️ 更多闽南经典美食</h2>
         
-        <article class="article">
-            <h2>沙茶面：厦门人的早餐记忆</h2>
-            <p>沙茶面是厦门最具代表性的小吃之一，几乎每个厦门人的一天都是从一碗热腾腾的沙茶面开始的。</p>
-            
-            <h3>什么是沙茶面？</h3>
-            <p>沙茶面由<span class="highlight">沙茶酱</span>调配的汤底加上碱水面组成。沙茶酱源自东南亚的沙爹酱，经闽南厨师改良后，形成独特的闽南风味。汤头浓郁，带有花生酱的香甜和虾米的鲜味。</p>
-            
-            <h3>经典配料</h3>
-            <p><strong>✔ 豆腐</strong> - 吸满汤汁的油豆腐是必点</p>
-            <p><strong>✔ 猪血</strong> - 滑嫩可口</p>
-            <p><strong>✔ 瘦肉</strong> - 鲜嫩的猪里脊肉</p>
-            <p><strong>✔ 豆芽</strong> - 爽口解腻</p>
-            <p><strong>✔ 鸭血</strong> - 厦门特色的配料</p>
-            
-            <h3>推荐店铺</h3>
-            <p>厦门最著名的沙茶面店包括：月华沙茶面、乌糖沙茶面、大中沙茶面等。虽然店铺简陋，但常常大排长龙。</p>
-        </article>
-        
-        <article class="article">
-            <h2>蚵仔煎：闽南夜市的招牌美味</h2>
-            <p>蚵仔煎（闽南语读作"ô-á-jiān"）是闽南地区经典的夜市小吃，外酥里嫩，蚵仔鲜甜，是许多人童年记忆中的味道。</p>
-            
-            <h3>起源</h3>
-            <p>相传蚵仔煎起源于郑成功收复台湾时期，当时军队粮食紧缺，百姓用蚵仔和地瓜粉混合煎制而成。如今已成为闽台两岸的特色美食。</p>
-            
-            <h3>制作方法</h3>
-            <p>将新鲜蚵仔洗净，与<span class="highlight">地瓜粉</span>、鸡蛋、蒜苗一起搅拌，在平底锅上煎至两面金黄。吃时沾上甜辣酱或酱油膏，味道绝妙。</p>
-        </article>
-        
-        <article class="article">
-            <h2>土笋冻：勇敢者的美食</h2>
-            <p>土笋冻是闽南特色小吃中最为"奇特"的一种，让许多外地人望而却步，却让闽南人欲罢不能。</p>
-            
-            <h3>什么是土笋？</h3>
-            <p>土笋不是笋，而是一种<span class="highlight">滩涂上的蠕虫</span>，学名"星虫"。将它反复熬煮后，虫体富含的胶质溶入水中，冷却后凝固成冻。</p>
-            
-            <h3>吃法</h3>
-            <p>将冻切成小块，沾上<span class="highlight">酱油、醋、蒜蓉、辣椒</span>等调料食用。口感Q弹，清凉解暑。配上香菜更添风味。</p>
-            
-            <h3>分布</h3>
-            <p>最著名的土笋冻产自泉州安海和厦门，其中安海土笋冻最为正宗。</p>
-        </article>
-        
-        <article class="article">
-            <h2>润饼：闽南人的春饼情缘</h2>
-            <p>润饼是闽南地区立春时的传统美食，又称"春饼"。一家人围坐在一起包润饼，象征着团圆和美好的祝愿。</p>
-            
-            <h3>饼皮</h3>
-            <p>润饼皮薄如蝉翼，<span class="highlight">Q弹有嚼劲</span>。好的润饼皮可以隐约看到对面的人影。</p>
-            
-            <h3>配料</h3>
-            <p>润饼的配料丰富多彩，通常包括：</p>
-            <p><strong>✔ 炒米粉</strong> - 吸油的米粉是核心</p>
-            <p><strong>✔ 豆芽</strong> - 爽脆可口</p>
-            <p><strong>✔ 胡萝卜</strong> - 甜美的根菜</p>
-            <p><strong>✔ 猪肉</strong> - 炒香的肉丝</p>
-            <p><strong>✔ 花生碎</strong> - 增香添脆</p>
-            <p><strong>✔ 糖粉</strong> - 画龙点睛的甜味</p>
-        </article>
+        <div class="food-grid">
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600" alt="厦门沙茶焖鸭">
+                <div class="food-card-content">
+                    <h3>🦆 沙茶焖鸭</h3>
+                    <p>厦门特色菜，鸭肉酥软，沙茶酱香浓，是闽南人待客的上等佳肴。</p>
+                </div>
+            </div>
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1548943487-a2e4e43b4853?w=600" alt="泉州卤面">
+                <div class="food-card-content">
+                    <h3>🍜 泉州卤面</h3>
+                    <p>泉州传统面食，汤头浓郁，配料丰富，是闽南人过生日必吃的"长寿面"。</p>
+                </div>
+            </div>
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600" alt="姜母鸭">
+                <div class="food-card-content">
+                    <h3>🦆 姜母鸭</h3>
+                    <p>闽南冬季进补佳品，鸭肉鲜嫩，姜香浓郁，滋补养生。</p>
+                </div>
+            </div>
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600" alt="闽南粽">
+                <div class="food-card-content">
+                    <h3>🍙 闽南粽</h3>
+                    <p>闽南肉粽配料丰富，有五花肉、咸蛋黄、香菇、虾米等，端午节必备。</p>
+                </div>
+            </div>
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?w=600" alt="花生汤">
+                <div class="food-card-content">
+                    <h3>🥜 花生汤</h3>
+                    <p>闽南传统甜品，花生酥软，汤汁浓稠，甜而不腻，是早餐或宵夜的好选择。</p>
+                </div>
+            </div>
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600" alt="炸五香">
+                <div class="food-card-content">
+                    <h3>🍢 炸五香</h3>
+                    <p>闽南传统小吃，以豆腐皮包裹肉馅和荸荠，油炸至金黄，外酥里嫩。</p>
+                </div>
+            </div>
+        </div>
     </main>
+
     <footer>
-        <p>© 2026 闽南文化博客</p>
+        <p>&copy; 2026 小龙虾的博客 · 闽南文化探索者</p>
     </footer>
 </body>
 </html>

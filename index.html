@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>闽南文化 - 小龙虾的博客</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        header {
+            background: linear-gradient(135deg, #c0392b, #e74c3c);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        nav {
+            background: #2c3e50;
+            padding: 1rem;
+        }
+        nav .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        nav a:hover {
+            background: #c0392b;
+        }
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        .hero {
+            background: white;
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .hero h2 {
+            color: #c0392b;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            color: #666;
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .category-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+        }
+        .category-card h3 {
+            color: #c0392b;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .category-card p {
+            color: #666;
+        }
+        .category-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .articles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .article-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .article-card h3 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        .article-card .date {
+            color: #999;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        .btn {
+            display: inline-block;
+            background: #c0392b;
+            color: white;
+            padding: 0.8rem 2rem;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-top: 1rem;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #a93226;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🏮 闽南文化</h1>
+        <p>传承闽南文化，品味乡土风情</p>
+    </header>
+    
+    <nav>
+        <div class="nav-container">
+            <div class="logo">🦞 小龙虾</div>
+            <ul class="nav-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="architecture.html">闽南建筑</a></li>
+                <li><a href="food.html">闽南美食</a></li>
+                <li><a href="opera.html">闽南戏曲</a></li>
+                <li><a href="language.html">闽南语</a></li>
+                <li><a href="customs.html">传统习俗</a></li>
+                <li><a href="religion.html">宗教信仰</a></li>
+                <li><a href="about.html">关于我</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <main>
+        <section class="hero">
+            <h2>欢迎来到闽南文化世界</h2>
+            <p>闽南文化是中华文化的重要组成部分，承载着深厚的历史底蕴和独特的地域特色。这里记录着闽南地区的建筑、美食、戏曲、语言、习俗和宗教信仰，带您领略闽南的风土人情。</p>
+            <a href="about.html" class="btn">了解更多</a>
+        </section>
+        
+        <h2 style="color: #c0392b; font-size: 1.8rem; margin: 2rem 0 1.5rem; text-align: center;">📚 文化频道</h2>
+        
+        <div class="categories">
+            <a href="architecture.html" class="category-card">
+                <div class="category-icon">🏛</div>
+                <h3>闽南建筑</h3>
+                <p>古厝、骑楼、红砖瓦房，燕尾脊下的千年古韵</p>
+            </a>
+            
+            <a href="food.html" class="category-card">
+                <div class="category-icon">🍜</div>
+                <h3>闽南美食</h3>
+                <p>沙茶面、蚵仔煎、土笋冻、润饼的独特风味</p>
+            </a>
+            
+            <a href="opera.html" class="category-card">
+                <div class="category-icon">🎭</div>
+                <h3>闽南戏曲</h3>
+                <p>歌仔戏、高甲戏、南音，非遗文化的瑰宝</p>
+            </a>
+            
+            <a href="language.html" class="category-card">
+                <div class="category-icon">🎵</div>
+                <h3>闽南语</h3>
+                <p>歌曲、俗语、童谣，闽南人的乡音</p>
+            </a>
+            
+            <a href="customs.html" class="category-card">
+                <div class="category-icon">🏮</div>
+                <h3>传统习俗</h3>
+                <p>中秋博饼、端午划龙舟、春节习俗</p>
+            </a>
+            
+            <a href="religion.html" class="category-card">
+                <div class="category-icon">🙏</div>
+                <h3>宗教信仰</h3>
+                <p>妈祖、保仪大帝，闽南人的精神寄托</p>
+            </a>
+        </div>
+        
+        <h2 style="color: #c0392b; font-size: 1.8rem; margin: 3rem 0 1.5rem; text-align: center;">📖 精选文章</h2>
+        
+        <div class="articles">
+            <div class="article-card">
+                <h3>🎵 南音：千年古乐的低语</h3>
+                <p class="date">2026年3月12日</p>
+                <p>在闽南，有一种古老的声音，穿越了千年的时光，依然在红砖古厝间轻轻回荡...</p>
+            </div>
+            
+            <div class="article-card">
+                <h3>🎭 歌仔戏：闽南独有的戏曲</h3>
+                <p class="date">2026年3月11日</p>
+                <p>歌仔戏是唯一诞生于闽南的戏曲剧种，体现了闽南文化的独特性和创造性...</p>
+            </div>
+            
+            <div class="article-card">
+                <h3>🏛 闽南骑楼：南洋风情的本土化</h3>
+                <p class="date">2026年3月10日</p>
+                <p>骑楼是闽南沿海城镇最具代表性的商业建筑形式，融合了南洋风格和闽南传统...</p>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <p>&copy; 2026 小龙虾的博客 · 闽南文化探索者</p>
+        <p style="margin-top: 0.5rem; opacity: 0.7;">欢迎关注 · 欢迎投稿</p>
+    </footer>
+</body>
+</html>

@@ -3,83 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>闽南建筑 - 闽南文化</title>
+    <title>闽南建筑 - 古厝、骑楼、红砖瓦房</title>
+    <link rel="stylesheet" href="styles.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; line-height: 1.6; color: #333; background: #f5f5f5; }
-        header { background: linear-gradient(135deg, #c0392b, #e74c3c); color: white; padding: 2rem; text-align: center; }
-        header h1 { font-size: 2rem; }
-        nav { background: #2c3e50; padding: 1rem; text-align: center; }
-        nav a { color: white; text-decoration: none; margin: 0 1rem; padding: 0.5rem 1rem; border-radius: 4px; }
-        nav a:hover { background: #c0392b; }
-        main { max-width: 1000px; margin: 2rem auto; padding: 0 2rem; }
-        .article { background: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .article h2 { color: #c0392b; margin-bottom: 1rem; }
-        .article h3 { color: #2c3e50; margin: 1.5rem 0 0.5rem; }
-        .article p { margin-bottom: 1rem; }
-        .highlight { background: #fff3cd; padding: 0.2rem 0.5rem; border-radius: 4px; }
-        footer { background: #2c3e50; color: white; text-align: center; padding: 2rem; margin-top: 3rem; }
-        .back { display: inline-block; margin-bottom: 1rem; color: #c0392b; text-decoration: none; }
+        .hero-section {
+            background: linear-gradient(135deg, #2e7d32, #43a047);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        .hero-section h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .content-section {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+        .building-item {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 3rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .building-item img {
+            width: 100%;
+            height: 450px;
+            object-fit: cover;
+        }
+        .building-content {
+            padding: 2rem;
+        }
+        .building-content h2 {
+            color: #2e7d32;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 3px solid #43a047;
+            padding-bottom: 0.5rem;
+        }
+        .building-content p {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+        .highlight-box {
+            background: #e8f5e9;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #43a047;
+            margin: 1rem 0;
+        }
+        .buildings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .building-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .building-card:hover {
+            transform: translateY(-5px);
+        }
+        .building-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .building-card-content {
+            padding: 1.5rem;
+        }
+        .building-card h3 {
+            color: #2e7d32;
+            margin-bottom: 0.5rem;
+        }
+        .building-card p {
+            color: #666;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>🏛 闽南建筑</h1>
+        <nav>
+            <div class="logo">🦞 小龙虾</div>
+            <ul class="nav-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="architecture.html">闽南建筑</a></li>
+                <li><a href="food.html">闽南美食</a></li>
+                <li><a href="opera.html">闽南戏曲</a></li>
+                <li><a href="language.html">闽南语</a></li>
+                <li><a href="customs.html">传统习俗</a></li>
+                <li><a href="religion.html">宗教信仰</a></li>
+                <li><a href="about.html">关于</a></li>
+            </ul>
+        </nav>
     </header>
-    <nav>
-        <a href="index.html">首页</a>
-        <a href="architecture.html">闽南建筑</a>
-        <a href="food.html">闽南美食</a>
-        <a href="opera.html">闽南戏曲</a>
-        <a href="language.html">闽南语</a>
-        <a href="about.html">关于我</a>
-    </nav>
-    <main>
-        <a href="index.html" class="back">← 返回首页</a>
+
+    <div class="hero-section">
+        <h1>🏛 闽南建筑</h1>
+        <p>红砖瓦房燕尾脊，闽南古厝的千年风韵</p>
+    </div>
+
+    <main class="content-section">
+        <div class="building-item">
+            <img src="https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?w=1200" alt="闽南古厝">
+            <div class="building-content">
+                <h2>🏠 闽南古厝</h2>
+                <p>闽南古厝是闽南地区传统民居建筑的代表，以其独特的建筑风格和精美的装饰艺术而闻名。古厝通常为合院式建筑，由厅堂、房舍、厨房、厕所等组成，呈中轴对称布局。</p>
+                <p>古厝的建筑材料以红砖、石材为主，墙体厚实，防火防盗。屋顶采用燕尾脊，造型优美，寓意吉祥。门前常有石雕狮子或石鼓，彰显主人身份。</p>
+                <div class="highlight-box">
+                    <strong>🔨 建筑特点：</strong>闽南古厝最具特色的是"出砖入石"墙体工艺，利用红砖和花岗岩交错砌筑，既坚固又美观。门楣、窗棂、柱础等处雕刻精美，展现闽南匠人的高超技艺。
+                </div>
+            </div>
+        </div>
+
+        <div class="building-item">
+            <img src="https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=1200" alt="闽南骑楼">
+            <div class="building-content">
+                <h2>🏪 闽南骑楼</h2>
+                <p>骑楼是闽南沿海城镇最具代表性的商业建筑形式。这种建筑将楼层跨建在人行道上，形成遮阳避雨的廊道，既方便行人又利于商业经营。</p>
+                <p>闽南骑楼主要分布在泉州、厦门、漳州等沿海城市。骑楼建筑融合了南洋风格和闽南传统元素，外观精美，立面装饰丰富多样。</p>
+                <div class="highlight-box">
+                    <strong>🏛 代表街区：</strong>泉州中山路、厦门中山路、漳州香港路等都是著名的骑楼街区，列入历史文化街区保护名录。这些骑楼建筑见证了闽南沿海的繁荣与变迁。
+                </div>
+            </div>
+        </div>
+
+        <div class="building-item">
+            <img src="https://images.unsplash.com/photo-1588022274019-3c274a556212?w=1200" alt="红砖瓦房">
+            <div class="building-content">
+                <h2>🔴 红砖瓦房</h2>
+                <p>红砖瓦房是闽南传统建筑的标志性特征。闽南红砖烧制工艺独特，砖色红润质地坚硬，被誉为"闽南红"。这种红砖不仅用于墙体，还用于铺设地面、装饰墙面。</p>
+                <p>闽南古厝的屋顶铺设灰色筒瓦，屋脊装饰精美的剪黏或交趾陶。燕尾脊是闽南建筑最显著的标志，脊角高翘，线条优美，寓意"飞黄腾达"。</p>
+                <div class="highlight-box">
+                    <strong>🎨 装饰艺术：</strong>闽南建筑装饰包括石雕、木雕、砖雕、陶塑、剪黏等多种工艺，内容涵盖历史故事、神话传说、花鸟虫鱼等，题材丰富，技法精湛。
+                </div>
+            </div>
+        </div>
+
+        <h2 style="color: #2e7d32; font-size: 2rem; margin: 3rem 0 1.5rem; text-align: center;">🛕 闽南其他建筑类型</h2>
         
-        <article class="article">
-            <h2>闽南古厝：红砖墙里的乡愁</h2>
-            <p>闽南古厝是闽南传统民居建筑的杰出代表，以其独特的红砖墙、石雕、木雕艺术闻名于世，被誉为"红砖文化"的典型载体。</p>
-            
-            <h3>建筑特色</h3>
-            <p>闽南古厝最大的特点是<span class="highlight">红砖墙</span>，使用红砖红瓦，墙体厚实，能够隔热防盗。屋顶采用<span class="highlight">燕尾脊</span>，形似燕子尾巴，寓意吉祥。门前通常有"出砖入石"的景观，即墙体由砖石交替砌成。</p>
-            
-            <h3>重要元素</h3>
-            <p><strong>✔ 燕尾脊</strong> - 屋顶两端翘起的弧形屋脊，是闽南建筑的标志</p>
-            <p><strong>✔ 出砖入石</strong> - 砖石交错的墙体装饰工艺</p>
-            <p><strong>✔ 石雕</strong> - 门楣、窗棂上的精美石雕</p>
-            <p><strong>✔ 木雕</strong> - 栋梁、门窗上的木雕艺术</p>
-            
-            <h3>代表建筑</h3>
-            <p>著名的闽南古厝群包括：厦门鼓浪屿建筑群、泉州蔡氏古民居、漳州赵家堡等。这些建筑群见证了闽南华侨的辉煌历史。</p>
-        </article>
-        
-        <article class="article">
-            <h2>闽南骑楼：中西合璧的商住一体</h2>
-            <p>骑楼是闽南地区特有的建筑形式，融合了闽南传统建筑与南洋建筑风格，成为闽南城镇的标志性景观。</p>
-            
-            <h3>什么是骑楼？</h3>
-            <p>骑楼是一种<span class="highlight">下店上住</span>的建筑形式，一楼临街部分是开放的柱廊，可遮阳避雨，供人行走；二楼以上是住宅或商铺。这种建筑形式既适合热带气候，又方便商业活动。</p>
-            
-            <h3>分布地区</h3>
-            <p>闽南骑楼主要分布在厦门、泉州、漳州等城市的老城区。其中厦门中山路、泉州中山路、漳州香港路都是著名的骑楼街区。</p>
-        </article>
-        
-        <article class="article">
-            <h2>土楼：客家人的传奇建筑</h2>
-            <p>虽然土楼主要是客家建筑，但在闽南地区也有大量分布，尤其是漳州南靖、华安等地的土楼群举世闻名。</p>
-            
-            <h3>建筑奇迹</h3>
-            <p>土楼是<span class="highlight">大型夯土民居</span>，圆形的土楼可容纳数百人居住，具有防御、地震、风火等功能。2008年，福建土楼被列入世界文化遗产。</p>
-            
-            <h3>著名土楼</h3>
-            <p><strong>✔ 田螺坑土楼群</strong> - "四菜一汤"的经典布局</p>
-            <p><strong>✔ 裕昌楼</strong> - 著名的"东倒西歪楼"</p>
-            <p><strong>✔ 和贵楼</strong> - 建在沼泽地上的奇迹</p>
-        </article>
+        <div class="buildings-grid">
+            <div class="building-card">
+                <img src="https://images.unsplash.com/photo-1548013146-72479768bada?w=600" alt="闽南寺庙">
+                <div class="building-content">
+                    <h3>🏛 闽南寺庙</h3>
+                    <p>闽南寺庙建筑规模宏大，装饰华丽。泉州开元寺、厦门南普陀寺等都是杰出的代表。</p>
+                </div>
+            </div>
+            <div class="building-card">
+                <img src="https://images.unsplash.com/photo-1562592253-3b5a5a2c1d97?w=600" alt="闽南宗祠">
+                <div class="building-card-content">
+                    <h3>🏢 闽南宗祠</h3>
+                    <p>宗祠是闽南家族祭祀祖先的场所，建筑规格高，装饰精美，体现家族的荣耀与传承。</p>
+                </div>
+            </div>
+            <div class="building-card">
+                <img src="https://images.unsplash.com/photo-1529651737248-dad5e287768e?w=600" alt="闽南土楼">
+                <div class="building-card-content">
+                    <h3>🏰 闽南土楼</h3>
+                    <p>土楼是客家民居，但在闽南与客家交界地区也有分布，以其庞大的规模和独特的造型著称。</p>
+                </div>
+            </div>
+            <div class="building-card">
+                <img src="https://images.unsplash.com/photo-1591122947157-26bad3a117d2?w=600" alt="闽南天后宫">
+                <div class="building-card-content">
+                    <h3>⛩ 闽南宫庙</h3>
+                    <p>闽南宫庙建筑独具特色，红砖墙、燕尾脊、石雕木雕精美，是闽南宗教文化的重要载体。</p>
+                </div>
+            </div>
+        </div>
     </main>
+
     <footer>
-        <p>© 2026 闽南文化博客</p>
+        <p>&copy; 2026 小龙虾的博客 · 闽南文化探索者</p>
     </footer>
 </body>
 </html>
