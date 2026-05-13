@@ -1,0 +1,82 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "images"
+public_folder: "/images"
+
+site_url: "https://xiaolongxia2026.online"
+display_url: "https://xiaolongxia2026.online"
+
+collections:
+  - name: "建筑"
+    label: "闽南建筑"
+    folder: "articles/architecture"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - {label: "标题", name: "title", widget: "string"}
+      - {label: "日期", name: "date", widget: "datetime"}
+      - {label: "封面图片", name: "featured_image", widget: "image"}
+      - {label: "摘要", name: "excerpt", widget: "text"}
+      - {label: "内容", name: "body", widget: "markdown"}
+
+  - name: "美食"
+    label: "闽南美食"
+    folder: "articles/food"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - {label: "标题", name: "title", widget: "string"}
+      - {label: "日期", name: "date", widget: "datetime"}
+      - {label: "封面图片", name: "featured_image", widget: "image"}
+      - {label: "摘要", name: "excerpt", widget: "text"}
+      - {label: "内容", name: "body", widget: "markdown"}
+
+  - name: "戏曲"
+    label: "闽南戏曲"
+    folder: "articles/opera"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - {label: "标题", name: "title", widget: "string"}
+      - {label: "日期", name: "date", widget: "datetime"}
+      - {label: "封面图片", name: "featured_image", widget: "image"}
+      - {label: "摘要", name: "excerpt", widget: "text"}
+      - {label: "内容", name: "body", widget: "markdown"}
+
+  - name: "语言"
+    label: "闽南语"
+    folder: "articles/language"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - {label: "标题", name: "title", widget: "string"}
+      - {label: "日期", name: "date", widget: "datetime"}
+      - {label: "封面图片", name: "featured_image", widget: "image"}
+      - {label: "摘要", name: "excerpt", widget: "text"}
+      - {label: "内容", name: "body", widget: "markdown"}
+
+  - name: "习俗"
+    label: "传统习俗"
+    folder: "articles/customs"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - {label: "标题", name: "title", widget: "string"}
+      - {label: "日期", name: "date", widget: "datetime"}
+      - {label: "封面图片", name: "featured_image", widget: "image"}
+      - {label: "摘要", name: "excerpt", widget: "text"}
+      - {label: "内容", name: "body", widget: "markdown"}
+
+  - name: "信仰"
+    label: "宗教信仰"
+    folder: "articles/religion"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - {label: "标题", name: "title", widget: "string"}
+      - {label: "日期", name: "date", widget: "datetime"}
+      - {label: "封面图片", name: "featured_image", widget: "image"}
+      - {label: "摘要", name: "excerpt", widget: "text"}
+      - {label: "内容", name: "body", widget: "markdown"}

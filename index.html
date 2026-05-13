@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中华传统文化 - 小龙虾的博客</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; line-height: 1.6; color: #333; background: #f5f5f5; }
+        header { background: linear-gradient(135deg, #8B0000, #B22222); color: white; padding: 3rem 2rem; text-align: center; }
+        header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        header p { font-size: 1.2rem; opacity: 0.9; }
+        nav { background: #2c3e50; padding: 1rem; text-align: center; position: sticky; top: 0; z-index: 100; }
+        nav a { color: white; text-decoration: none; margin: 0 0.5rem; padding: 0.5rem 1rem; border-radius: 4px; transition: background 0.3s; }
+        nav a:hover { background: #8B0000; }
+        main { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+        .hero { background: white; padding: 3rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; margin-bottom: 2rem; }
+        .hero h2 { color: #8B0000; font-size: 2rem; margin-bottom: 1rem; }
+        .hero p { max-width: 700px; margin: 0 auto 1rem; }
+        .categories { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .category-card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s; }
+        .category-card:hover { transform: translateY(-5px); box-shadow: 0 8px 12px rgba(0,0,0,0.15); }
+        .category-card h3 { color: #8B0000; font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .category-card p { color: #666; }
+        .category-icon { font-size: 3rem; margin-bottom: 1rem; }
+        footer { background: #2c3e50; color: white; text-align: center; padding: 2rem; margin-top: 3rem; }
+        .btn { display: inline-block; background: #8B0000; color: white; padding: 0.8rem 2rem; text-decoration: none; border-radius: 6px; margin-top: 1rem; transition: background 0.3s; }
+        .btn:hover { background: #a00000; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🏮 中华传统文化</h1>
+        <p>传承千年文明，品味华夏风韵</p>
+    </header>
+    <nav>
+        <a href="index.html">首页</a>
+        <a href="architecture.html">传统建筑</a>
+        <a href="food.html">传统美食</a>
+        <a href="festivals.html">传统节日</a>
+        <a href="opera.html">传统戏曲</a>
+        <a href="clothing.html">传统服饰</a>
+        <a href="art.html">传统艺术</a>
+        <a href="religion.html">传统信仰</a>
+        <a href="about.html">关于我</a>
+    </nav>
+    <main>
+        <section class="hero">
+            <h2>欢迎来到中华传统文化世界</h2>
+            <p>中华文化是世界上唯一没有中断的古老文明，五千年的历史沉淀了深厚的文化底蕴。</p>
+            <p>从宏伟的建筑到精致的美食，从绚丽的戏曲到深邃的信仰，让我们一起探索这博大精深的文化宝库。</p>
+            <a href="architecture.html" class="btn">开始探索</a>
+        </section>
+        
+        <section class="categories">
+            <div class="category-card">
+                <div class="category-icon">🏛</div>
+                <h3>传统建筑</h3>
+                <p>故宫、长城、园林、寺庙，感受古建筑之美</p>
+            </div>
+            <div class="category-card">
+                <div class="category-icon">🍜</div>
+                <h3>传统美食</h3>
+                <p>饺子、年糕、面条，品味中华美食文化</p>
+            </div>
+            <div class="category-card">
+                <div class="category-icon">🎭</div>
+                <h3>传统戏曲</h3>
+                <p>京剧、昆曲、皮影戏，传承戏曲艺术</p>
+            </div>
+            <div class="category-card">
+                <div class="category-icon">🏮</div>
+                <h3>传统节日</h3>
+                <p>春节、元宵、端午、中秋，传承节日习俗</p>
+            </div>
+            <div class="category-card">
+                <div class="category-icon">👘</div>
+                <h3>传统服饰</h3>
+                <p>汉服、旗袍、长衫，感受服饰变迁</p>
+            </div>
+            <div class="category-card">
+                <div class="category-icon">🎨</div>
+                <h3>传统艺术</h3>
+                <p>书法、国画、剪纸，传承工匠精神</p>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>© 2026 中华传统文化博客 - 小龙虾</p>
+        <p>传承中华文化，从我做起</p>
+    </footer>
+</body>
+</html>
