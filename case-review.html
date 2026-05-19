@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>案件评查系统 - AI智能分析</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -225,9 +225,14 @@
         // ============ 配置 ============
         const CONFIG = {
             API_KEY: 'sk-cp-3_mAX-zdVmNqEJY9mvVaTtaaUag9r4Dm8YnT7b5BGjywY0AFefzPEHAs0EktthEzjJWEGU-xC2-ah5hyHAPgDEWevBTwxHUcHMuVBPWsaBvztRXKrJRhhGw',
+            // MiniMax 文本API
             API_URL: 'https://api.minimax.chat/v1/text/chatcompletion_v2',
             MODEL: 'MiniMax-M2.5',
-            CORS_PROXY: 'https://corsproxy.io/?'
+            // 多个CORS代理备用
+            CORS_PROXIES: [
+                'https://api.allorigins.win/raw?url=',
+                'https://corsproxy.io/?'
+            ]
         };
 
         // ============ 用户系统 ============
@@ -267,17 +272,17 @@
                 document.getElementById('userInfo').classList.remove('hidden');
                 document.getElementById('displayName').textContent = user.username;
                 document.getElementById('displayPoints').textContent = user.points;
-                
+
                 // 显示会员标识
                 document.getElementById('memberBadge').classList.toggle('hidden', !user.isMember);
-                
+
                 // 显示用户中心入口
                 document.getElementById('userCenterLink').classList.remove('hidden');
-                
+
                 // 管理员后台入口
                 document.getElementById('adminLink').classList.toggle('hidden', !user.isAdmin);
-                
-                document.getElementById('btnText').textContent = (user.isAdmin || user.isMember) ? '生成评查报告（无限）' : '生成评查报告（消耗5积分）';
+
+                document.getElementById('btnText').textContent = (user.isAdmin || user.isMember) ? '生成评查报告(无限)' : '生成评查报告(消耗5积分)';
                 document.getElementById('rechargeLink').classList.toggle('hidden', user.isAdmin || user.isMember);
             } else {
                 document.getElementById('authPanel').classList.remove('hidden');
@@ -382,14 +387,36 @@
         }
 
         // ============ AI生成 ============
+        // ============ 尝试API调用（多代理备用）===========
+        async function callAPI(url, options, proxies) {
+            let lastError = null;
+            
+            for (const proxy of proxies) {
+                try {
+                    const tryUrl = proxy + encodeURIComponent(url);
+                    const response = await fetch(tryUrl, {
+                        ...options,
+                        signal: AbortSignal.timeout(30000)
+                    });
+                    if (response.ok) {
+                        return await response.json();
+                    }
+                } catch (e) {
+                    lastError = e;
+                    console.log('代理失败:', proxy, e);
+                }
+            }
+            throw lastError || '所有代理都失败';
+        }
+
         async function generateReport() {
             const user = DB.currentUser;
             if (!user) return alert('请先登录');
             if (!user.isAdmin && !user.isMember && user.points < 5) return showRecharge();
-
+            
             const content = document.getElementById('caseContent').value.trim();
             if (!content && uploadedFiles.length === 0) return alert('请输入案件内容或上传文件');
-
+            
             if (!user.isAdmin && !user.isMember) {
                 user.points -= 5;
                 user.usedCount = (user.usedCount || 0) + 1;
@@ -400,39 +427,38 @@
 
             document.getElementById('status').classList.remove('hidden');
             document.getElementById('reportSection').classList.add('hidden');
-            document.getElementById('statusText').textContent = '正在连接AI...';
+            document.getElementById('statusText').textContent = '正在生成评查报告...';
 
             try {
-                // 使用CORS代理
-                const targetUrl = CONFIG.API_URL;
-                const proxyUrl = CONFIG.CORS_PROXY + encodeURIComponent(targetUrl);
-
-                const response = await fetch(proxyUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': CONFIG.API_KEY,
-                        'Accept': 'application/json'
+                const response = await callAPI(
+                    CONFIG.API_URL,
+                    {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json', 
+                            'Authorization': CONFIG.API_KEY,
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            model: CONFIG.MODEL,
+                            messages: [
+                                { role: 'system', content: '你是法律案件评查专家。请生成专业、详细的评查报告。' },
+                                { role: 'user', content: '【案件内容】\n' + content + '\n\n请生成评查报告。' }
+                            ]
+                        })
                     },
-                    body: JSON.stringify({
-                        model: CONFIG.MODEL,
-                        messages: [
-                            { role: 'system', content: '你是法律案件评查专家。请生成专业、详细的评查报告。' },
-                            { role: 'user', content: '【案件内容】\n' + content + '\n\n请生成评查报告。' }
-                        ]
-                    })
-                });
-
-                const data = await response.json();
-                console.log('API响应:', data);
-
-                if (data.choices && data.choices[0]) {
-                    reportText = data.choices[0].message.content;
+                    CONFIG.CORS_PROXIES
+                );
+                
+                console.log('API响应:', response);
+                
+                if (response.choices && response.choices[0]) {
+                    reportText = response.choices[0].message.content;
                     document.getElementById('reportContent').textContent = reportText;
                     document.getElementById('reportSection').classList.remove('hidden');
                 } else {
-                    console.log('错误:', data);
-                    throw new Error(data.message || 'API返回格式错误');
+                    console.log('错误:', response);
+                    throw new Error(response.message || 'API返回格式错误');
                 }
             } catch (e) {
                 console.error('生成错误:', e);
