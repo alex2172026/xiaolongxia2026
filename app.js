@@ -23,6 +23,8 @@ const CONFIG = {
     // 🔥 Minimax API 配置
     MINIMAX_API_KEY: 'sk-cp-3_mAX-zdVmNqEJY9mvVaTtaaUag9r4Dm8YnT7b5BGjywY0AFefzPEHAs0EktthEzjJWEGU-xC2-ah5hyHAPgDEWevBTwxHUcHMuVBPWsaBvztRXKrJRhhGw',
     MINIMAX_API_BASE: 'https://api.minimax.chat',
+    // 使用CORS代理
+    CORS_PROXY: 'https://corsproxy.io/?',
     enableRealGenerate: true
 };
 
@@ -327,13 +329,15 @@ async function doGenerate() {
     loadingSection.classList.remove('hidden');
     resultSection.classList.add('hidden');
 
-    // 🔥 尝试调用Minimax API
+    // 🔥 尝试调用Minimax API（通过CORS代理）
     if (CONFIG.enableRealGenerate) {
         try {
             showToast('🎵 正在调用Minimax AI...', 'info');
             
-            // 构建Minimax音乐生成请求
-            const response = await fetch(`${CONFIG.MINIMAX_API_BASE}/v1/music/generation`, {
+            const targetUrl = `${CONFIG.MINIMAX_API_BASE}/v1/music/generation`;
+            const proxyUrl = `${CONFIG.CORS_PROXY}${encodeURIComponent(targetUrl)}`;
+            
+            const response = await fetch(proxyUrl, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${CONFIG.MINIMAX_API_KEY}`,
