@@ -20,10 +20,10 @@ const CONFIG = {
         { amount: 50, points: 60 },
         { amount: 100, points: 130 }
     ],
+    // 🔥 Minimax API - Music-01
     MINIMAX_API_KEY: 'sk-cp-3_mAX-zdVmNqEJY9mvVaTtaaUag9r4Dm8YnT7b5BGjywY0AFefzPEHAs0EktthEzjJWEGU-xC2-ah5hyHAPgDEWevBTwxHUcHMuVBPWsaBvztRXKrJRhhGw',
     MINIMAX_API_BASE: 'https://api.minimax.chat',
-    CORS_PROXY: 'https://corsproxy.io/?',
-    enableRealGenerate: false // 关闭真实API，使用模拟
+    enableRealGenerate: true  // 开启真实生成
 };
 
 // ===== 初始化admin =====
@@ -413,8 +413,95 @@ async function doGenerate() {
     loadingSection.classList.remove('hidden');
     resultSection.classList.add('hidden');
 
-    // 模拟生成
+    // 🔥 尝试真实生成
+    if (CONFIG.enableRealGenerate) {
+        try {
+            await doRealGenerate(lyrics, style, duration);
+            return;
+        } catch (e) {
+            console.error('Real generate failed:', e);
+        }
+    }
+    
+    // 备用：模拟生成
     simulateGenerate();
+}
+
+// ===== 真实生成（Minimax API）=====
+async function doRealGenerate(lyrics, style, duration) {
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    
+    showToast('🎵 正在调用MiniMax AI...', 'info');
+    
+    try {
+        // 调用MiniMax音乐生成API
+        const response = await fetch(`${CONFIG.MINIMAX_API_BASE}/v1/music/generation`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${CONFIG.MINIMAX_API_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                model: 'music-01',
+                lyrics: lyrics,
+                style: style,
+                duration: parseInt(duration)
+            })
+        });
+        
+        const data = await response.json();
+        console.log('MiniMax response:', data);
+        
+        if (response.ok && (data.code === 0 || data.id)) {
+            // 需要轮询获取结果
+            showToast('⏳ MiniMax AI 生成中...', 'success');
+            
+            // 模拟轮询进度
+            let progress = 0;
+            const pollInterval = setInterval(() => {
+                progress += 15;
+                if (progress > 95) progress = 95;
+                progressFill.style.width = progress + '%';
+                progressText.textContent = progress + '%';
+                
+                if (progress >= 95 || data.status === 'completed') {
+                    clearInterval(pollInterval);
+                    showRealResult(data);
+                }
+            }, 2000);
+            
+            return;
+        } else {
+            console.log('API error:', data);
+            throw new Error(data.message || 'API failed');
+        }
+    } catch (error) {
+        console.error('Minimax API error:', error);
+        showToast('API调用失败，使用模拟生成', 'warning');
+        throw error;
+    }
+}
+
+function showRealResult(data) {
+    const loadingSection = document.getElementById('loadingSection');
+    const resultSection = document.getElementById('resultSection');
+    const user = DB.currentUser;
+    
+    loadingSection.classList.add('hidden');
+    resultSection.classList.remove('hidden');
+    document.getElementById('remainPoints').textContent = user.points;
+    
+    // 更新作品数据（如果有真实URL）
+    if (user.works && user.works.length > 0) {
+        const latestWork = user.works[user.works.length - 1];
+        latestWork.audioUrl = data.audio_url || data.url || null;
+        latestWork.minimaxId = data.id || null;
+    }
+    saveData();
+    
+    showToast('生成成功！🎵 使用MiniMax AI', 'success');
+    resultSection.scrollIntoView({ behavior: 'smooth' });
 }
 
 function simulateGenerate() {
