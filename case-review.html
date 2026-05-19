@@ -31,13 +31,17 @@
         <!-- 用户信息 -->
         <div id="userInfo" class="hidden mb-4 flex justify-between items-center glass px-4 py-2 rounded-xl">
             <div>
-                <span class="text-slate-400">用户：</span>
+                <span class="text-slate-400">用户:</span>
                 <span id="displayName" class="text-white font-bold"></span>
+                <span id="memberBadge" class="hidden ml-1 px-1 bg-gradient-to-r from-purple-500 to-pink-500 text-xs rounded">VIP</span>
                 <span class="text-slate-500 mx-2">|</span>
-                <span class="text-amber-400">积分：</span>
+                <span class="text-amber-400">积分:</span>
                 <span id="displayPoints" class="text-amber-400 font-bold"></span>
             </div>
             <div>
+                <span id="userCenterLink" class="hidden mr-2">
+                    <button onclick="showUserCenter()" class="text-green-400 hover:text-green-300 text-sm mr-2">用户中心</button>
+                </span>
                 <span id="adminLink" class="hidden mr-2">
                     <button onclick="showAdminPanel()" class="text-blue-400 hover:text-blue-300 text-sm mr-2">管理后台</button>
                 </span>
@@ -54,16 +58,16 @@
                         <input type="text" id="loginUser" class="w-full bg-slate-700 border border-slate-600 rounded-xl p-3 text-white" placeholder="用户名">
                         <input type="password" id="loginPass" class="w-full bg-slate-700 border border-slate-600 rounded-xl p-3 text-white" placeholder="密码">
                         <button onclick="doLogin()" class="btn-primary w-full py-3 rounded-xl font-semibold">登录</button>
-                        <p class="text-center text-slate-500 text-sm">新用户？<a href="#" onclick="showRegister()" class="text-blue-400">立即注册</a>（送10积分）</p>
+                        <p class="text-center text-slate-500 text-sm">新用户?<a href="#" onclick="showRegister()" class="text-blue-400">立即注册</a>(送10积分)</p>
                     </div>
                 </div>
                 <div id="registerForm" class="hidden">
                     <h2 class="text-xl font-semibold mb-4 text-center">注册</h2>
                     <div class="space-y-4">
                         <input type="text" id="regUser" class="w-full bg-slate-700 border border-slate-600 rounded-xl p-3 text-white" placeholder="用户名">
-                        <input type="password" id="regPass" class="w-full bg-slate-700 border border-slate-600 rounded-xl p-3 text-white" placeholder="密码（至少6位）">
-                        <button onclick="doRegister()" class="btn-primary w-full py-3 rounded-xl font-semibold">注册（送10积分）</button>
-                        <p class="text-center text-slate-500 text-sm">已有账号？<a href="#" onclick="showLogin()" class="text-blue-400">立即登录</a></p>
+                        <input type="password" id="regPass" class="w-full bg-slate-700 border border-slate-600 rounded-xl p-3 text-white" placeholder="密码(至少6位)">
+                        <button onclick="doRegister()" class="btn-primary w-full py-3 rounded-xl font-semibold">注册(送10积分)</button>
+                        <p class="text-center text-slate-500 text-sm">已有账号?<a href="#" onclick="showLogin()" class="text-blue-400">立即登录</a></p>
                     </div>
                 </div>
             </div>
@@ -86,7 +90,7 @@
                 <div class="mb-4">
                     <h2 class="text-lg font-semibold mb-2">案件内容</h2>
                     <textarea id="caseContent" class="w-full h-40 bg-slate-700 border border-slate-600 rounded-xl p-3 text-white placeholder-slate-500" placeholder="请输入案件内容...
-例：原告张三诉被告李四民间借贷纠纷..."></textarea>
+例:原告张三诉被告李四民间借贷纠纷..."></textarea>
                 </div>
 
                 <!-- 生成按钮 -->
@@ -114,7 +118,7 @@
 
                 <!-- 充值链接 -->
                 <div id="rechargeLink" class="hidden mt-4 text-center">
-                    <button onclick="showRecharge()" class="text-amber-400 hover:text-amber-300">积分不足？点击充值</button>
+                    <button onclick="showRecharge()" class="text-amber-400 hover:text-amber-300">积分不足?点击充值</button>
                 </div>
             </div>
 
@@ -139,7 +143,7 @@
                         <div class="text-sm text-slate-400">130积分</div>
                     </button>
                 </div>
-                
+
                 <h4 class="text-md font-semibold mb-2 text-center">开通会员</h4>
                 <div class="grid grid-cols-2 gap-3 mb-4">
                     <button onclick="buyMember('month')" class="p-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl">
@@ -151,15 +155,44 @@
                         <div class="text-sm">¥268/年 无限评查</div>
                     </button>
                 </div>
-                
+
                 <div class="p-4 bg-slate-800 rounded-xl text-center">
                     <p class="text-sm text-slate-400 mb-2">扫码支付 / 转账</p>
-                    <p class="text-lg font-bold text-amber-400">联系QQ：7879113</p>
+                    <p class="text-lg font-bold text-amber-400">联系QQ:7879113</p>
                 </div>
-                
+
                 <button onclick="showMain()" class="mt-4 w-full py-2 bg-slate-700 rounded-xl">返回</button>
             </div>
-            
+
+            <!-- 用户中心 -->
+            <div id="userCenterPanel" class="hidden mt-6 pt-6 border-t border-slate-700">
+                <h3 class="text-lg font-semibold mb-4 text-center">用户中心</h3>
+
+                <div class="mb-4 p-4 bg-slate-800 rounded-xl text-center">
+                    <div class="text-2xl font-bold mb-1" id="ucName">用户名</div>
+                    <div id="ucMemberBadge" class="hidden mb-2 text-purple-400 font-bold">VIP会员</div>
+                    <div class="text-amber-400 text-xl">积分: <span id="ucPoints">0</span></div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <div class="p-3 bg-slate-800 rounded-xl text-center">
+                        <div class="text-2xl font-bold" id="ucUsed">0</div>
+                        <div class="text-sm text-slate-400">已评查次数</div>
+                    </div>
+                    <div class="p-3 bg-slate-800 rounded-xl text-center">
+                        <div class="text-2xl font-bold" id="ucRemain">0</div>
+                        <div class="text-sm text-slate-400">剩余积分</div>
+                    </div>
+                </div>
+
+                <button onclick="showRecharge()" class="w-full py-3 bg-gradient-to-r from-amber-600 to-orange-600 rounded-xl font-bold mb-3">充值积分</button>
+
+                <button onclick="buyMember('month')" class="w-full py-2 bg-purple-600 rounded-xl text-sm mb-2">开通月度会员(28元/月)</button>
+                <button onclick="buyMember('year')" class="w-full py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-sm mb-3">开通年度会员(268元/年)</button>
+
+                <button onclick="showMain()" class="w-full py-2 bg-slate-700 rounded-xl">返回</button>
+            </div>
+
             <!-- 管理员后台 -->
             <div id="adminPanel" class="hidden mt-6 pt-6 border-t border-slate-700">
                 <h3 class="text-lg font-semibold mb-4 text-center">管理员后台</h3>
@@ -185,7 +218,7 @@
     </div>
 
     <footer class="text-center py-6 text-slate-500 text-sm">
-        <p>联系QQ：7879113 | 版本 V2.2</p>
+        <p>联系QQ:7879113 | 版本 V2.2</p>
     </footer>
 
     <script>
@@ -234,7 +267,16 @@
                 document.getElementById('userInfo').classList.remove('hidden');
                 document.getElementById('displayName').textContent = user.username;
                 document.getElementById('displayPoints').textContent = user.points;
+                
+                // 显示会员标识
+                document.getElementById('memberBadge').classList.toggle('hidden', !user.isMember);
+                
+                // 显示用户中心入口
+                document.getElementById('userCenterLink').classList.remove('hidden');
+                
+                // 管理员后台入口
                 document.getElementById('adminLink').classList.toggle('hidden', !user.isAdmin);
+                
                 document.getElementById('btnText').textContent = (user.isAdmin || user.isMember) ? '生成评查报告（无限）' : '生成评查报告（消耗5积分）';
                 document.getElementById('rechargeLink').classList.toggle('hidden', user.isAdmin || user.isMember);
             } else {
@@ -251,29 +293,29 @@
             const user = document.getElementById('regUser').value.trim();
             const pass = document.getElementById('regPass').value;
             const ip = getIP();
-            
+
             if (!user || !pass) return alert('请填写用户名和密码');
             if (pass.length < 6) return alert('密码至少6位');
             if (DB.users.find(u => u.username === user)) return alert('用户名已存在');
-            
-            // IP限制：同一IP只能注册一个账号
+
+            // IP限制:同一IP只能注册一个账号
             if (DB.registeredIPs.includes(ip)) {
-                return alert('该IP已注册过，请联系管理员QQ：7879113');
+                return alert('该IP已注册过,请联系管理员QQ:7879113');
             }
-            
+
             const newUser = {
                 id: 'user_' + Date.now(), username: user, password: pass,
-                points: 10, isAdmin: false, isMember: false
+                points: 10, isAdmin: false, isMember: false, usedCount: 0
             };
             DB.users.push(newUser);
             DB.currentUser = newUser;
             DB.registeredIPs.push(ip);
-            
+
             localStorage.setItem('case_users', JSON.stringify(DB.users));
             localStorage.setItem('case_currentUser', JSON.stringify(DB.currentUser));
             localStorage.setItem('case_registeredIPs', JSON.stringify(DB.registeredIPs));
-            
-            alert('注册成功！赠送10积分');
+
+            alert('注册成功!赠送10积分');
             initUI();
         }
 
@@ -284,7 +326,7 @@
             if (!found) return alert('用户名或密码错误');
             DB.currentUser = found;
             localStorage.setItem('case_currentUser', JSON.stringify(DB.currentUser));
-            alert('欢迎回来，' + found.username + '！');
+            alert('欢迎回来,' + found.username + '!');
             initUI();
         }
 
@@ -302,11 +344,25 @@
         function showMain() {
             document.getElementById('rechargePanel').classList.add('hidden');
             document.getElementById('adminPanel').classList.add('hidden');
+            document.getElementById('userCenterPanel').classList.add('hidden');
             document.getElementById('mainPanel').classList.remove('hidden');
         }
 
-        function recharge(amount) { alert('请联系QQ：7879113 充值 ¥' + amount); }
-        function buyMember(plan) { alert('请联系QQ：7879113 开通' + (plan === 'month' ? '月度' : '年度') + '会员'); }
+        // ============ 用户中心 ============
+        function showUserCenter() {
+            document.getElementById('mainPanel').classList.add('hidden');
+            document.getElementById('userCenterPanel').classList.remove('hidden');
+
+            const user = DB.currentUser;
+            document.getElementById('ucName').textContent = user.username;
+            document.getElementById('ucPoints').textContent = user.points;
+            document.getElementById('ucRemain').textContent = user.points;
+            document.getElementById('ucUsed').textContent = user.usedCount || 0;
+            document.getElementById('ucMemberBadge').classList.toggle('hidden', !user.isMember);
+        }
+
+        function recharge(amount) { alert('请联系QQ:7879113 充值 ¥' + amount); }
+        function buyMember(plan) { alert('请联系QQ:7879113 开通' + (plan === 'month' ? '月度' : '年度') + '会员'); }
 
         // ============ 文件上传 ============
         function handleFiles() {
@@ -330,12 +386,13 @@
             const user = DB.currentUser;
             if (!user) return alert('请先登录');
             if (!user.isAdmin && !user.isMember && user.points < 5) return showRecharge();
-            
+
             const content = document.getElementById('caseContent').value.trim();
             if (!content && uploadedFiles.length === 0) return alert('请输入案件内容或上传文件');
-            
+
             if (!user.isAdmin && !user.isMember) {
                 user.points -= 5;
+                user.usedCount = (user.usedCount || 0) + 1;
                 localStorage.setItem('case_users', JSON.stringify(DB.users));
                 localStorage.setItem('case_currentUser', JSON.stringify(DB.currentUser));
                 document.getElementById('displayPoints').textContent = user.points;
@@ -349,11 +406,11 @@
                 // 使用CORS代理
                 const targetUrl = CONFIG.API_URL;
                 const proxyUrl = CONFIG.CORS_PROXY + encodeURIComponent(targetUrl);
-                
+
                 const response = await fetch(proxyUrl, {
                     method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json', 
+                    headers: {
+                        'Content-Type': 'application/json',
                         'Authorization': CONFIG.API_KEY,
                         'Accept': 'application/json'
                     },
@@ -368,7 +425,7 @@
 
                 const data = await response.json();
                 console.log('API响应:', data);
-                
+
                 if (data.choices && data.choices[0]) {
                     reportText = data.choices[0].message.content;
                     document.getElementById('reportContent').textContent = reportText;
