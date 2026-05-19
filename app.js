@@ -20,10 +20,12 @@ const CONFIG = {
         { amount: 50, points: 60 },
         { amount: 100, points: 130 }
     ],
-    // 🔥 Minimax API - Music-01
+    // 🔥 MiniMax API配置
     MINIMAX_API_KEY: 'sk-cp-3_mAX-zdVmNqEJY9mvVaTtaaUag9r4Dm8YnT7b5BGjywY0AFefzPEHAs0EktthEzjJWEGU-xC2-ah5hyHAPgDEWevBTwxHUcHMuVBPWsaBvztRXKrJRhhGw',
+    // API端点需要从MiniMax开放平台获取
     MINIMAX_API_BASE: 'https://api.minimax.chat',
-    enableRealGenerate: true  // 开启真实生成
+    // 暂时关闭，等API开放后再开启
+    enableRealGenerate: false
 };
 
 // ===== 初始化admin =====
