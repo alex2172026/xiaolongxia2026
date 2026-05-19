@@ -21,7 +21,6 @@ const CONFIG = {
         { amount: 100, points: 130 }
     ],
     // 🔥 Minimax API 配置
-    SUNO_API_KEY: 'sk-cp-3_mAX-zdVmNqEJY9mvVaTtaaUag9r4Dm8YnT7b5BGjywY0AFefzPEHAs0EktthEzjJWEGU-xC2-ah5hyHAPgDEWevBTwxHUcHMuVBPWsaBvztRXKrJRhhGw',
     MINIMAX_API_KEY: 'sk-cp-3_mAX-zdVmNqEJY9mvVaTtaaUag9r4Dm8YnT7b5BGjywY0AFefzPEHAs0EktthEzjJWEGU-xC2-ah5hyHAPgDEWevBTwxHUcHMuVBPWsaBvztRXKrJRhhGw',
     MINIMAX_API_BASE: 'https://api.minimax.chat',
     enableRealGenerate: true
