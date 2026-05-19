@@ -15,10 +15,23 @@
                 <span class="logo-text">SONG <span class="logo-ai">AI</span></span>
             </div>
             <div class="nav-links">
-                <a href="#works">🎶 作品库</a>
-                <a href="#community">👥 社区</a>
-                <a href="#pricing">💎 会员</a>
-                <a href="#login" class="login-btn">登录</a>
+                <a href="#works" class="nav-item">🎶 作品库</a>
+                <a href="#pricing" class="nav-item">💎 会员</a>
+                <div class="user-area" id="userArea">
+                    <button class="login-btn" id="loginBtn">登录</button>
+                    <button class="register-btn" id="registerBtn">注册</button>
+                </div>
+                <div class="user-info hidden" id="userInfo">
+                    <div class="user-avatar">🦞</div>
+                    <span class="user-name" id="userName">用户</span>
+                    <div class="user-points">
+                        <span class="points-icon">💰</span>
+                        <span class="points-num" id="userPoints">10</span>
+                        <span class="points-label">积分</span>
+                    </div>
+                    <button class=" recharge-btn" id="rechargeBtn">充值</button>
+                    <button class="vip-btn hidden" id="vipBtn">VIP</button>
+                </div>
             </div>
         </nav>
     </header>
@@ -31,7 +44,7 @@
                 <h1 class="hero-title">写出你的歌词，<span class="highlight">AI为你谱曲</span></h1>
                 <p class="hero-subtitle">支持中文、英文、日文等多种语言 · 无需懂乐理，一键生成完整歌曲</p>
                 
-                <div class="lyrics-input-container">
+                <div class="lyrics-input-container" id="lyricsContainer">
                     <div class="lyrics-header">
                         <span class="lyrics-label">📝 歌词输入</span>
                         <span class="lyrics-hint">（支持 [Verse] 主歌 / [Chorus] 副歌 / [Bridge] 桥段 标签）</span>
@@ -40,28 +53,57 @@
                         id="lyricsInput" 
                         class="lyrics-input" 
                         placeholder="在这里输入你的歌词...
-例如：
+
 [Verse]
 清晨的阳光洒在窗前
 新的一天开始啦
-梦想在心中萌芽
 
 [Chorus]
 一起向前奔跑
 追逐心中的光
-未来在我们手中闪耀"
+
+=== 登录后即可开始创作 ==="
                         rows="8"
+                        disabled
                     ></textarea>
+                    <div class="login-prompt" id="loginPrompt">
+                        <span>🔒</span>
+                        <span>登录后即可开始创作</span>
+                        <button class=" login-now-btn" id="loginNowBtn">立即登录</button>
+                    </div>
                     <div class="lyrics-footer">
                         <span class="word-count">字数: <span id="wordCount">0</span></span>
-                        <button class="clear-btn">清空</button>
+                        <button class="clear-btn" id="clearBtn">清空</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 用户信息栏 -->
+        <section class="user-bar hidden" id="userBar">
+            <div class="user-bar-content">
+                <div class="user-stats">
+                    <div class="stat-item">
+                        <span class="stat-icon">💰</span>
+                        <span class="stat-label">我的积分</span>
+                        <span class="stat-value" id="myPoints">10</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">🎵</span>
+                        <span class="stat-label">已生成</span>
+                        <span class="stat-value" id="myWorks">0</span>
+                        <span class="stat-label">首</span>
+                    </div>
+                    <div class="stat-item member-badge hidden" id="memberBadge">
+                        <span class="stat-icon">👑</span>
+                        <span class="stat-value">VIP会员</span>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- 生成配置区域 -->
-        <section class="config-section">
+        <section class="config-section" id="configSection">
             <div class="config-grid">
                 <div class="config-item">
                     <label class="config-label">🎼 音乐风格</label>
@@ -81,7 +123,7 @@
                 <div class="config-item">
                     <label class="config-label">⏱️ 歌曲时长</label>
                     <select id="durationSelect" class="config-select">
-                <option value="30">30秒（副歌版）</option>
+                        <option value="30">30秒（副歌版）</option>
                         <option value="60">1分钟</option>
                         <option value="180">3分钟</option>
                         <option value="240">4分钟</option>
@@ -92,7 +134,7 @@
                 <div class="config-item">
                     <label class="config-label">🎤 人声选择</label>
                     <select id="voiceSelect" class="config-select">
-                        <option value="male-young" selected>青叔音（推荐）</option>
+                        <option value="male-young">青叔音（推荐）</option>
                         <option value="female-sweet">甜妹音</option>
                         <option value="male-teen">少年音</option>
                         <option value="female-mature">御姐音</option>
@@ -119,11 +161,11 @@
 
             <!-- 生成按钮 -->
             <div class="generate-section">
-                <button id="generateBtn" class="generate-btn">
-                    <span class="btn-icon">🎵</span>
-                    <span class="btn-text">开始生成歌曲</span>
+                <button id="generateBtn" class="generate-btn" disabled>
+                    <span class="btn-icon">🔒</span>
+                    <span class="btn-text">登录后生成歌曲</span>
                 </button>
-                <p class="generate-hint">每次生成4个不同版本供选择</p>
+                <p class="generate-hint">每次生成消耗 2 积分，会员无限生成</p>
             </div>
         </section>
 
@@ -139,6 +181,7 @@
                     <span class="progress-text" id="progressText">0%</span>
                 </div>
                 <p class="loading-tip">AI正在理解歌词情感，匹配和弦走向，生成旋律...</p>
+                <p class="loading-points">消耗积分: <span id="costPoints">2</span></p>
             </div>
         </div>
 
@@ -147,6 +190,9 @@
             <div class="result-header">
                 <h2>🎧 生成结果</h2>
                 <p>点击播放按钮试听，满意即可下载</p>
+                <div class="result-points-info">
+                    <span>剩余积分: <strong id="remainPoints">8</strong></span>
+                </div>
             </div>
             
             <div class="result-grid">
@@ -173,7 +219,7 @@
                             <div class="mini-progress">
                                 <div class="mini-fill"></div>
                             </div>
-                            <span class="mini-time">0:00 / 3:42</span>
+                            <span class="mini-time">0:00 / 4:58</span>
                         </div>
                     </div>
                     <div class="card-footer">
@@ -205,7 +251,7 @@
                             <div class="mini-progress">
                                 <div class="mini-fill"></div>
                             </div>
-                            <span class="mini-time">0:00 / 3:38</span>
+                            <span class="mini-time">0:00 / 4:52</span>
                         </div>
                     </div>
                     <div class="card-footer">
@@ -237,7 +283,7 @@
                             <div class="mini-progress">
                                 <div class="mini-fill"></div>
                             </div>
-                            <span class="mini-time">0:00 / 3:45</span>
+                            <span class="mini-time">0:00 / 4:55</span>
                         </div>
                     </div>
                     <div class="card-footer">
@@ -269,7 +315,7 @@
                             <div class="mini-progress">
                                 <div class="mini-fill"></div>
                             </div>
-                            <span class="mini-time">0:00 / 3:20</span>
+                            <span class="mini-time">0:00 / 4:40</span>
                         </div>
                     </div>
                     <div class="card-footer">
@@ -281,8 +327,8 @@
 
             <!-- 重新生成 -->
             <div class="result-actions">
-                <button class="regenerate-btn">🔄 重新生成</button>
-                <button class="save-btn">💾 保存到作品库</button>
+                <button class="regenerate-btn" id="regenerateBtn">🔄 重新生成 (消耗 2 积分)</button>
+                <button class="save-btn" id="saveBtn">💾 保存到作品库</button>
             </div>
         </section>
 
@@ -318,45 +364,52 @@
                 <div class="feature-card">
                     <div class="feature-icon">💰</div>
                     <h3>免费试用</h3>
-                    <p>每月3首免费额度，先体验再付费</p>
+                    <p>新用户赠送10积分，先体验再付费</p>
                 </div>
             </div>
         </section>
 
-        <!-- 使用流程 -->
-        <section class="steps-section">
-            <h2 class="section-title">使用流程</h2>
-            <div class="steps-grid">
-                <div class="step-card">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <h3>输入歌词</h3>
-                        <p>在输入框中填写你的歌词，支持多段落结构</p>
-                    </div>
+        <!-- 定价 -->
+        <section class="pricing-section" id="pricing">
+            <h2 class="section-title">💎 会员套餐</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-icon">🎵</div>
+                    <h3>免费用户</h3>
+                    <div class="pricing-price">¥0</div>
+                    <ul class="pricing-features">
+                        <li>✅ 新人赠送 10 积分</li>
+                        <li>✅ 可生成 5 首歌曲</li>
+                        <li>✅ 30秒/1分钟时长</li>
+                        <li>✅ 标准音质</li>
+                        <li>❌ 无法商用</li>
+                    </ul>
                 </div>
-                <div class="step-arrow">→</div>
-                <div class="step-card">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <h3>选择风格</h3>
-                        <p>选择喜欢的音乐风格和时长</p>
-                    </div>
+                <div class="pricing-card popular">
+                    <div class="popular-tag">最划算</div>
+                    <div class="pricing-icon">👑</div>
+                    <h3>月度会员</h3>
+                    <div class="pricing-price">¥29<span>/月</span></div>
+                    <ul class="pricing-features">
+                        <li>✅ 无限生成</li>
+                        <li>✅ 5分钟完整版</li>
+                        <li>✅ 320kbps高品质</li>
+                        <li>✅ 商用授权</li>
+                        <li>✅ 专属人声</li>
+                    </ul>
+                    <button class="pricing-btn" data-plan="month">立即开通</button>
                 </div>
-                <div class="step-arrow">→</div>
-                <div class="step-card">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <h3>一键生成</h3>
-                        <p>点击生成，等待AI编曲</p>
-                    </div>
-                </div>
-                <div class="step-arrow">→</div>
-                <div class="step-card">
-                    <div class="step-number">4</div>
-                    <div class="step-content">
-                        <h3>试听下载</h3>
-                        <p>试听满意后下载歌曲</p>
-                    </div>
+                <div class="pricing-card">
+                    <div class="pricing-icon">🌟</div>
+                    <h3>年度会员</h3>
+                    <div class="pricing-price">¥259<span>/年</span></div>
+                    <ul class="pricing-features">
+                        <li>✅ 月度会员全部权益</li>
+                        <li>✅ 8折优惠</li>
+                        <li>✅ 优先生成队列</li>
+                        <li>✅ 专属客服</li>
+                    </ul>
+                    <button class="pricing-btn" data-plan="year">立即开通</button>
                 </div>
             </div>
         </section>
@@ -379,6 +432,126 @@
             </div>
         </footer>
     </main>
+
+    <!-- 登录弹窗 -->
+    <div class="modal hidden" id="loginModal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content login-modal">
+            <button class="modal-close" id="loginModalClose">×</button>
+            <div class="modal-header">
+                <h2>🎵 SONG AI - 登录</h2>
+                <p>登录后即可开始创作</p>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>用户名</label>
+                    <input type="text" id="loginUsername" placeholder="请输入用户名" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" id="loginPassword" placeholder="请输入密码" autocomplete="current-password">
+                </div>
+                <button class="submit-btn" id="loginSubmit">⭐ 登录</button>
+                <div class="form-footer">
+                    <span>还没有账号？</span>
+                    <a href="#" id="goToRegister">立即注册</a>
+                    <span>（新用户送 10 积分）</span>
+                </div>
+            </div>
+            <div class="modal-social">
+                <p>社交账号登录</p>
+                <div class="social-btns">
+                    <button class="social-btn wechat">微信</button>
+                    <button class="social-btn qq">QQ</button>
+                    <button class="social-btn tiktok">抖音</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 注册弹窗 -->
+    <div class="modal hidden" id="registerModal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content register-modal">
+            <button class="modal-close" id="registerModalClose">×</button>
+            <div class="modal-header">
+                <h2>🎵 SONG AI - 注册</h2>
+                <p>新用户赠送 <strong>10 积分</strong></p>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>用户名</label>
+                    <input type="text" id="regUsername" placeholder="请输入用户名" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" id="regPassword" placeholder="请设置密码" autocomplete="new-password">
+                </div>
+                <div class="form-group">
+                    <label>确认密码</label>
+                    <input type="password" id="regPassword2" placeholder="请再次输入密码" autocomplete="new-password">
+                </div>
+                <button class="submit-btn" id="registerSubmit">✨ 立即注册</button>
+                <div class="form-footer">
+                    <span>已有账号？</span>
+                    <a href="#" id="goToLogin">立即登录</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 充值弹窗 -->
+    <div class="modal hidden" id="rechargeModal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content recharge-modal">
+            <button class="modal-close" id="rechargeModalClose">×</button>
+            <div class="modal-header">
+                <h2>💰 积分充值</h2>
+                <p>当前积分: <strong id="currentPoints">10</strong></p>
+            </div>
+            <div class="modal-body">
+                <div class="recharge-options">
+                    <div class="recharge-card" data-amount="10" data-points="10">
+                        <div class="recharge-amount">¥10</div>
+                        <div class="recharge-points">10 积分</div>
+                    </div>
+                    <div class="recharge-card" data-amount="30" data-points="35">
+                        <div class="recharge-amount">¥30</div>
+                        <div class="recharge-points">35 积分</div>
+                        <div class="recharge-tag">，送5</div>
+                    </div>
+                    <div class="recharge-card" data-amount="50" data-points="60">
+                        <div class="recharge-amount">¥50</div>
+                        <div class="recharge-points">60 积分</div>
+                        <div class="recharge-tag">，送10</div>
+                    </div>
+                    <div class="recharge-card" data-amount="100" data-points="130">
+                        <div class="recharge-amount">¥100</div>
+                        <div class="recharge-points">130 积分</div>
+                        <div class="recharge-tag">，送30</div>
+                    </div>
+                </div>
+                <div class="recharge-vip">
+                    <h3>💎 开通会员</h3>
+                    <div class="vip-cards">
+                        <div class="vip-card" data-plan="month" data-price="29">
+                            <div class="vip-name">月度会员</div>
+                            <div class="vip-price">¥29/月</div>
+                            <div class="vip-feature">无限生成 + 商用授权</div>
+                        </div>
+                        <div class="vip-card" data-plan="year" data-price="259">
+                            <div class="vip-name">年度会员</div>
+                            <div class="vip-price">¥259/年</div>
+                            <div class="vip-feature">8折优惠</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 消息提示 -->
+    <div class="toast hidden" id="toast"></div>
 
     <script src="app.js"></script>
 </body>
