@@ -32,7 +32,12 @@
                 <span class="text-amber-400">积分：</span>
                 <span id="displayPoints" class="text-amber-400 font-bold"></span>
             </div>
-            <button onclick="logout()" class="text-slate-400 hover:text-white text-sm">退出</button>
+            <div>
+                <span id="adminLink" class="hidden mr-2">
+                    <button onclick="showAdminPanel()" class="text-blue-400 hover:text-blue-300 text-sm mr-2">管理后台</button>
+                </span>
+                <button onclick="logout()" class="text-slate-400 hover:text-white text-sm">退出</button>
+            </div>
         </div>
 
         <div class="glass rounded-3xl p-6">
@@ -94,49 +99,82 @@
                 </div>
             </div>
 
-            <!-- 充值面板 -->
-            <div id="rechargePanel" class="hidden mt-6 pt-6 border-t border-slate-700">
-                <h3 class="text-lg font-semibold mb-4 text-center">积分充值</h3>
-                <div class="grid grid-cols-2 gap-3 mb-4">
-                    <button onclick="recharge(10)" class="p-3 bg-slate-700 rounded-xl">
-                        <div class="text-xl font-bold text-amber-400">10元</div>
-                        <div class="text-sm text-slate-400">10积分</div>
-                    </button>
-                    <button onclick="recharge(30)" class="p-3 bg-slate-700 rounded-xl">
-                        <div class="text-xl font-bold text-amber-400">30元</div>
-                        <div class="text-sm text-slate-400">35积分</div>
-                    </button>
-                    <button onclick="recharge(50)" class="p-3 bg-slate-700 rounded-xl">
-                        <div class="text-xl font-bold text-amber-400">50元</div>
-                        <div class="text-sm text-slate-400">60积分</div>
-                    </button>
-                    <button onclick="recharge(100)" class="p-3 bg-slate-700 rounded-xl">
-                        <div class="text-xl font-bold text-amber-400">100元</div>
-                        <div class="text-sm text-slate-400">130积分</div>
-                    </button>
-                </div>
-                
-                <h4 class="text-md font-semibold mb-2 text-center">开通会员</h4>
-                <div class="grid grid-cols-2 gap-3">
-                    <button onclick="buyMember('month')" class="p-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl">
-                        <div class="font-bold">月度会员</div>
-                        <div class="text-sm">28元/月</div>
-                        <div class="text-xs text-slate-300">无限评查</div>
-                    </button>
-                    <button onclick="buyMember('year')" class="p-3 bg-gradient-to-r from-amber-600 to-orange-600 rounded-xl">
-                        <div class="font-bold">年度会员</div>
-                        <div class="text-sm">268元/年</div>
-                        <div class="text-xs text-slate-300">无限评查</div>
-                    </button>
-                </div>
-                
-                <div class="mt-4 p-3 bg-slate-800 rounded-xl text-center">
-                    <p class="text-sm text-slate-400 mb-2">扫码支付</p>
-                    <p class="text-xs text-slate-500">（联系管理员微信：a2172026）</p>
-                </div>
-                
-                <button onclick="showMain()" class="mt-4 w-full py-2 bg-slate-700 rounded-xl">返回</button>
+        // 充值面板
+        <div id="rechargePanel" class="hidden mt-6 pt-6 border-t border-slate-700">
+            <h3 class="text-lg font-semibold mb-4 text-center">积分充值</h3>
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <button onclick="recharge(10)" class="p-3 bg-slate-700 rounded-xl hover:bg-slate-600">
+                    <div class="text-xl font-bold text-amber-400">¥10</div>
+                    <div class="text-sm text-slate-400">10积分</div>
+                </button>
+                <button onclick="recharge(30)" class="p-3 bg-slate-700 rounded-xl hover:bg-slate-600">
+                    <div class="text-xl font-bold text-amber-400">¥30</div>
+                    <div class="text-sm text-slate-400">35积分</div>
+                    <div class="text-xs text-green-400">+5</div>
+                </button>
+                <button onclick="recharge(50)" class="p-3 bg-slate-700 rounded-xl hover:bg-slate-600">
+                    <div class="text-xl font-bold text-amber-400">¥50</div>
+                    <div class="text-sm text-slate-400">60积分</div>
+                    <div class="text-xs text-green-400">+10</div>
+                </button>
+                <button onclick="recharge(100)" class="p-3 bg-slate-700 rounded-xl hover:bg-slate-600">
+                    <div class="text-xl font-bold text-amber-400">¥100</div>
+                    <div class="text-sm text-slate-400">130积分</div>
+                    <div class="text-xs text-green-400">+30</div>
+                </button>
             </div>
+            
+            <h4 class="text-md font-semibold mb-2 text-center">开通会员</h4>
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="buyMember('month')" class="p-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl hover:opacity-90">
+                    <div class="font-bold">月度会员</div>
+                    <div class="text-sm">¥28/月</div>
+                    <div class="text-xs text-slate-300">无限评查</div>
+                </button>
+                <button onclick="buyMember('year')" class="p-3 bg-gradient-to-r from-amber-600 to-orange-600 rounded-xl hover:opacity-90">
+                    <div class="font-bold">年度会员</div>
+                    <div class="text-sm">¥268/年</div>
+                    <div class="text-xs text-slate-300">无限评查</div>
+                </button>
+            </div>
+            
+            <div class="mt-4 p-4 bg-slate-800 rounded-xl text-center">
+                <p class="text-sm text-slate-400 mb-2">扫码支付</p>
+                <p class="text-xs text-slate-500">微信/QQ：7879113</p>
+            </div>
+            
+            <button onclick="showMain()" class="mt-4 w-full py-2 bg-slate-700 rounded-xl hover:bg-slate-600">返回</button>
+        </div>
+        
+        <!-- 管理员后台 -->
+        <div id="adminPanel" class="hidden mt-6 pt-6 border-t border-slate-700">
+            <h3 class="text-lg font-semibold mb-4 text-center">管理员后台</h3>
+            
+            <div class="mb-4">
+                <h4 class="text-md font-semibold mb-2">用户列表</h4>
+                <div id="userList" class="bg-slate-800 rounded-xl p-3 max-h-60 overflow-y-auto text-sm"></div>
+            </div>
+            
+            <div class="grid grid-cols-3 gap-2 mb-4">
+                <button onclick="addPoints(10)" class="py-2 bg-green-600 rounded-xl text-sm">+10积分</button>
+                <button onclick="addPoints(50)" class="py-2 bg-green-600 rounded-xl text-sm">+50积分</button>
+                <button onclick="addPoints(100)" class="py-2 bg-green-600 rounded-xl text-sm">+100积分</button>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-2 mb-4">
+                <button onclick="setMember('month')" class="py-2 bg-purple-600 rounded-xl text-sm">开通月度</button>
+                <button onclick="setMember('year')" class="py-2 bg-purple-600 rounded-xl text-sm">开通年度</button>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="deleteUser()" class="py-2 bg-red-600 rounded-xl text-sm">删除用户</button>
+                <button onclick="showMain()" class="py-2 bg-slate-600 rounded-xl text-sm">返回</button>
+            </div>
+            
+            <div class="mt-4 p-3 bg-slate-800 rounded-xl text-center text-xs text-slate-500">
+                <p>联系管理员QQ：7879113 处理充值</p>
+            </div>
+        </div>
             
             <!-- 快速充值链接 -->
             <div id="rechargeLink" class="hidden mt-4 text-center">
@@ -146,7 +184,7 @@
     </div>
 
     <footer class="text-center py-6 text-slate-500 text-sm">
-        <p>联系微信：a2172026 | QQ：7879113</p>
+        <p>联系微信/QQ：7879113 | 版本 V2.1</p>
     </footer>
 
     <script>
@@ -201,10 +239,17 @@
                 document.getElementById('displayName').textContent = user.username;
                 document.getElementById('displayPoints').textContent = user.points;
                 
+                // 显示管理员入口
+                if (user.isAdmin) {
+                    document.getElementById('adminLink').classList.remove('hidden');
+                } else {
+                    document.getElementById('adminLink').classList.add('hidden');
+                }
+                
                 // 更新按钮文字
                 const btnText = document.getElementById('btnText');
                 if (user.isAdmin || user.isMember) {
-                    btnText.textContent = '生成评查报告（会员无限）';
+                    btnText.textContent = '生成评查报告（无限）';
                     rechargeLink.classList.add('hidden');
                 } else {
                     btnText.textContent = '生成评查报告（消耗5积分）';
@@ -291,7 +336,74 @@
 
         function buyMember(plan) {
             const price = plan === 'month' ? 28 : 268;
-            alert('请联系管理员微信：a2172026 开通会员\n金额：' + price + '元');
+            const name = plan === 'month' ? '月度会员' : '年度会员';
+            alert('请联系管理员QQ：7879113 开通' + name + '\n金额：' + price + '元');
+        }
+        
+        // ============ 管理员功能 ============
+        let selectedUserId = null;
+        
+        function showAdminPanel() {
+            if (!DB.currentUser || !DB.currentUser.isAdmin) { alert('需要管理员权限'); return; }
+            document.getElementById('mainPanel').classList.add('hidden');
+            document.getElementById('adminPanel').classList.remove('hidden');
+            loadUserList();
+        }
+        
+        function loadUserList() {
+            const list = document.getElementById('userList');
+            list.innerHTML = DB.users.map(u => `
+                <div class="flex justify-between items-center p-2 ${selectedUserId === u.id ? 'bg-blue-600' : 'bg-slate-700'} rounded-lg mb-1 cursor-pointer" onclick="selectUser('${u.id}')">
+                    <span>${u.username}</span>
+                    <span class="text-amber-400">${u.points}分</span>
+                    <span class="text-xs">${u.isMember ? '会员' : '普通'}</span>
+                </div>
+            `).join('') || '<p class="text-slate-500">暂无用户</p>';
+        }
+        
+        function selectUser(id) {
+            selectedUserId = id;
+            loadUserList();
+        }
+        
+        function addPoints(amount) {
+            if (!selectedUserId) { alert('请先选择一个用户'); return; }
+            const user = DB.users.find(u => u.id === selectedUserId);
+            if (user) {
+                user.points += amount;
+                localStorage.setItem('case_users', JSON.stringify(DB.users));
+                alert('已给 ' + user.username + ' 增加' + amount + '积分');
+                loadUserList();
+            }
+        }
+        
+        function setMember(plan) {
+            if (!selectedUserId) { alert('请先选择一个用户'); return; }
+            const user = DB.users.find(u => u.id === selectedUserId);
+            if (user) {
+                user.isMember = true;
+                const expire = new Date();
+                if (plan === 'month') expire.setMonth(expire.getMonth() + 1);
+                else expire.setFullYear(expire.getFullYear() + 1);
+                user.memberExpire = expire.toISOString();
+                localStorage.setItem('case_users', JSON.stringify(DB.users));
+                alert('已给 ' + user.username + ' 开通' + (plan === 'month' ? '月度' : '年度') + '会员');
+                loadUserList();
+            }
+        }
+        
+        function deleteUser() {
+            if (!selectedUserId) { alert('请先选择一个用户'); return; }
+            if (selectedUserId === 'admin') { alert('不能删除管理员'); return; }
+            if (!confirm('确定要删除该用户吗？')) return;
+            const idx = DB.users.findIndex(u => u.id === selectedUserId);
+            if (idx > -1) {
+                DB.users.splice(idx, 1);
+                localStorage.setItem('case_users', JSON.stringify(DB.users));
+                alert('用户已删除');
+                selectedUserId = null;
+                loadUserList();
+            }
         }
 
         // ============ AI生成 ============
