@@ -193,7 +193,8 @@
         const CONFIG = {
             API_KEY: 'sk-cp-3_mAX-zdVmNqEJY9mvVaTtaaUag9r4Dm8YnT7b5BGjywY0AFefzPEHAs0EktthEzjJWEGU-xC2-ah5hyHAPgDEWevBTwxHUcHMuVBPWsaBvztRXKrJRhhGw',
             API_URL: 'https://api.minimax.chat/v1/text/chatcompletion_v2',
-            MODEL: 'MiniMax-M2.5'
+            MODEL: 'MiniMax-M2.5',
+            CORS_PROXY: 'https://corsproxy.io/?'
         };
 
         // ============ 用户系统 ============
@@ -342,11 +343,20 @@
 
             document.getElementById('status').classList.remove('hidden');
             document.getElementById('reportSection').classList.add('hidden');
+            document.getElementById('statusText').textContent = '正在连接AI...';
 
             try {
-                const response = await fetch(CONFIG.API_URL, {
+                // 使用CORS代理
+                const targetUrl = CONFIG.API_URL;
+                const proxyUrl = CONFIG.CORS_PROXY + encodeURIComponent(targetUrl);
+                
+                const response = await fetch(proxyUrl, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': CONFIG.API_KEY },
+                    headers: { 
+                        'Content-Type': 'application/json', 
+                        'Authorization': CONFIG.API_KEY,
+                        'Accept': 'application/json'
+                    },
                     body: JSON.stringify({
                         model: CONFIG.MODEL,
                         messages: [
@@ -357,14 +367,18 @@
                 });
 
                 const data = await response.json();
+                console.log('API响应:', data);
+                
                 if (data.choices && data.choices[0]) {
                     reportText = data.choices[0].message.content;
                     document.getElementById('reportContent').textContent = reportText;
                     document.getElementById('reportSection').classList.remove('hidden');
                 } else {
-                    throw new Error(data.message || '生成失败');
+                    console.log('错误:', data);
+                    throw new Error(data.message || 'API返回格式错误');
                 }
             } catch (e) {
+                console.error('生成错误:', e);
                 alert('生成失败: ' + e.message);
                 if (!user.isAdmin && !user.isMember) {
                     user.points += 5;
