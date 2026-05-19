@@ -920,6 +920,19 @@ footer {
 .toast.error { border-color: var(--error); color: var(--error); }
 .toast.warning { border-color: var(--warning); color: var(--warning); }
 
+/* ===== 作品库样式 ===== */
+.works-list { max-height: 400px; overflow-y: auto; }
+.empty-works { text-align: center; padding: 2rem; color: var(--text-muted); }
+.work-item { display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--bg-input); border-radius: var(--radius-md); margin-bottom: 0.75rem; }
+.work-number { width: 40px; height: 40px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.work-details { flex: 1; }
+.work-details h4 { margin-bottom: 0.25rem; }
+.work-details p { color: var(--text-muted); font-size: 0.85rem; }
+.work-time { color: var(--text-muted); font-size: 0.8rem; }
+.work-btns { display: flex; gap: 0.5rem; }
+.work-btns button { padding: 0.4rem 0.8rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; }
+.work-btns button:hover { border-color: var(--primary); }
+
 /* 响应式 */
 @media (max-width: 900px) {
     .config-grid { grid-template-columns: repeat(2, 1fr); }

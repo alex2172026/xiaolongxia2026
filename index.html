@@ -553,6 +553,21 @@
     <!-- 消息提示 -->
     <div class="toast hidden" id="toast"></div>
 
+    <!-- 作品库弹窗 -->
+    <div class="modal hidden" id="worksModal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content works-modal">
+            <button class="modal-close" id="worksModalClose">×</button>
+            <div class="modal-header">
+                <h2>🎶 我的作品库</h2>
+                <p>共 <span id="worksCount">0</span> 首歌曲</p>
+            </div>
+            <div class="modal-body">
+                <div id="worksList" class="works-list"></div>
+            </div>
+        </div>
+    </div>
+
     <script src="app.js"></script>
 </body>
 </html>

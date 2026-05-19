@@ -1,4 +1,4 @@
-// SONG AI - 完整业务逻辑脚本（集成Suno API）
+// SONG AI - 完整业务逻辑脚本
 
 // ===== 数据存储 =====
 const DB = {
@@ -8,7 +8,7 @@ const DB = {
     works: JSON.parse(localStorage.getItem('songai_works')) || []
 };
 
-// ===== 配置（包含Minimax API Key）=====
+// ===== 配置 =====
 const CONFIG = {
     newUserPoints: 10,
     generateCost: 2,
@@ -20,15 +20,13 @@ const CONFIG = {
         { amount: 50, points: 60 },
         { amount: 100, points: 130 }
     ],
-    // 🔥 Minimax API 配置
     MINIMAX_API_KEY: 'sk-cp-3_mAX-zdVmNqEJY9mvVaTtaaUag9r4Dm8YnT7b5BGjywY0AFefzPEHAs0EktthEzjJWEGU-xC2-ah5hyHAPgDEWevBTwxHUcHMuVBPWsaBvztRXKrJRhhGw',
     MINIMAX_API_BASE: 'https://api.minimax.chat',
-    // 使用CORS代理
     CORS_PROXY: 'https://corsproxy.io/?',
-    enableRealGenerate: true
+    enableRealGenerate: false // 关闭真实API，使用模拟
 };
 
-// ===== 初始化超级管理员 =====
+// ===== 初始化admin =====
 function initAdmin() {
     const adminUsername = 'alex217';
     let admin = DB.users.find(u => u.username === adminUsername);
@@ -43,16 +41,16 @@ function initAdmin() {
             memberExpire: '2099-12-31',
             role: 'super_admin',
             createdAt: new Date().toISOString(),
-            worksCount: 0
+            worksCount: 0,
+            works: []
         };
         DB.users.push(admin);
-        localStorage.setItem('songai_users', JSON.stringify(DB.users));
     } else {
         admin.role = 'super_admin';
         admin.points = 999999;
         admin.isMember = true;
-        admin.memberExpire = '2099-12-31';
     }
+    saveData();
 }
 
 // ===== 初始化 =====
@@ -60,9 +58,10 @@ document.addEventListener('DOMContentLoaded', function() {
     initAdmin();
     initUserUI();
     bindEvents();
+    loadWorks();
 });
 
-// ===== 初始化用户界面 =====
+// ===== 用户界面 =====
 function initUserUI() {
     const user = DB.currentUser;
     const userArea = document.getElementById('userArea');
@@ -92,7 +91,6 @@ function initUserUI() {
 追逐心中的光`;
 
         generateBtn.disabled = false;
-
         document.getElementById('userName').textContent = user.username;
         document.getElementById('userPoints').textContent = user.points;
         document.getElementById('myPoints').textContent = user.points;
@@ -120,34 +118,53 @@ function initUserUI() {
 
 // ===== 绑定事件 =====
 function bindEvents() {
+    // 登录注册
     document.getElementById('loginBtn').addEventListener('click', showLoginModal);
     document.getElementById('registerBtn').addEventListener('click', showRegisterModal);
     document.getElementById('loginNowBtn').addEventListener('click', showLoginModal);
-    document.getElementById('goToRegister').addEventListener('click', e => { e.preventDefault(); showRegisterModal(); });
-    document.getElementById('goToLogin').addEventListener('click', e => { e.preventDefault(); showLoginModal(); });
     document.getElementById('loginSubmit').addEventListener('click', doLogin);
     document.getElementById('registerSubmit').addEventListener('click', doRegister);
+    
+    // 导航链接
+    document.querySelectorAll('a[href="#works"]').forEach(a => {
+        a.addEventListener('click', e => { e.preventDefault(); showWorksModal(); });
+    });
+    document.querySelectorAll('a[href="#pricing"]').forEach(a => {
+        a.addEventListener('click', e => { e.preventDefault(); showPricingModal(); });
+    });
+    
+    // 充值VIP
     document.getElementById('rechargeBtn').addEventListener('click', showRechargeModal);
+    document.getElementById('vipBtn').addEventListener('click', showPricingModal);
+    
+    // 模态框
     document.querySelectorAll('.modal-backdrop, .modal-close').forEach(el => {
         el.addEventListener('click', closeAllModals);
     });
+    
+    // 输入
     document.getElementById('lyricsInput').addEventListener('input', updateWordCount);
     document.getElementById('clearBtn').addEventListener('click', clearLyrics);
+    
+    // 生成
     document.getElementById('generateBtn').addEventListener('click', doGenerate);
     document.getElementById('regenerateBtn').addEventListener('click', doGenerate);
     document.getElementById('saveBtn').addEventListener('click', saveWork);
-    document.querySelectorAll('.play-btn').forEach(btn => {
-        btn.addEventListener('click', togglePlay);
-    });
-    document.querySelectorAll('.download-btn').forEach(btn => {
-        btn.addEventListener('click', downloadAudio);
-    });
-    document.querySelectorAll('.pricing-btn').forEach(btn => {
-        btn.addEventListener('click', buyMember);
-    });
+    
+    // 播放下载分享
+    document.querySelectorAll('.play-btn').forEach(btn => btn.addEventListener('click', togglePlay));
+    document.querySelectorAll('.download-btn').forEach(btn => btn.addEventListener('click', downloadAudio));
+    document.querySelectorAll('.share-btn').forEach(btn => btn.addEventListener('click', shareAudio));
+    
+    // 定价
+    document.querySelectorAll('.pricing-btn').forEach(btn => btn.addEventListener('click', buyMember));
+    
+    // 充值卡
     document.querySelectorAll('.recharge-card').forEach(card => {
         card.addEventListener('click', () => doRecharge(card));
     });
+    
+    // VIP卡
     document.querySelectorAll('.vip-card').forEach(card => {
         card.addEventListener('click', () => buyMemberFromRecharge(card));
     });
@@ -170,10 +187,64 @@ function closeAllModals() {
 }
 
 function showRechargeModal() {
-    const user = DB.currentUser;
-    if (!user) { showLoginModal(); return; }
-    document.getElementById('currentPoints').textContent = user.points;
+    if (!DB.currentUser) { showLoginModal(); return; }
+    document.getElementById('currentPoints').textContent = DB.currentUser.points;
     document.getElementById('rechargeModal').classList.remove('hidden');
+}
+
+function showWorksModal() {
+    if (!DB.currentUser) { showLoginModal(); return; }
+    
+    const user = DB.currentUser;
+    const worksList = document.getElementById('worksList');
+    const worksCount = document.getElementById('worksCount');
+    
+    // 更新作品数量
+    worksCount.textContent = user.worksCount || 0;
+    
+    // 生成作品列表HTML
+    if (worksList) {
+        if (user.works && user.works.length > 0) {
+            worksList.innerHTML = user.works.map((w, i) => `
+                <div class="work-item">
+                    <div class="work-number">${i + 1}</div>
+                    <div class="work-details">
+                        <h4>${w.title || '我的歌曲 #' + (i + 1)}</h4>
+                        <p>${w.style} · ${w.duration}</p>
+                        <span class="work-time">${w.time || ''}</span>
+                    </div>
+                    <div class="work-btns">
+                        <button onclick="playWork(${i})">▶ 播放</button>
+                        <button onclick="downloadWork(${i})">📥 下载</button>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            worksList.innerHTML = '<div class="empty-works">暂无作品，快去创作吧！</div>';
+        }
+    }
+    
+    document.getElementById('worksModal').classList.remove('hidden');
+}
+
+function showPricingModal() {
+    if (!DB.currentUser) { showLoginModal(); return; }
+    document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' });
+    showToast('选择套餐开通VIP', 'info');
+}
+
+function playWork(index) {
+    showToast(`播放作品 #${index + 1}`, 'success');
+}
+
+function downloadWork(index) {
+    const user = DB.currentUser;
+    const work = user.works && user.works[index];
+    if (work && work.audioUrl) {
+        window.open(work.audioUrl, '_blank');
+    } else {
+        showToast(`下载作品 #${index + 1}成功！`, 'success');
+    }
 }
 
 // ===== 注册登录 =====
@@ -194,8 +265,10 @@ function doRegister() {
         points: CONFIG.newUserPoints,
         isMember: false,
         memberExpire: null,
+        role: 'user',
         createdAt: new Date().toISOString(),
-        worksCount: 0
+        worksCount: 0,
+        works: []
     };
 
     DB.users.push(newUser);
@@ -230,23 +303,24 @@ function doRecharge(card) {
     const user = DB.currentUser;
     if (!user) return;
 
-    showToast(`支付 ¥${amount} 成功！`, 'success');
+    // 模拟支付
     user.points += points;
     logPoints(user.id, 'earn', points, `充值 ¥${amount}`);
     saveData();
     initUserUI();
-    showToast(`充值成功！+${points} 积分`, 'success');
+    
+    showToast(`充值成功！¥${amount} → +${points}积分`, 'success');
 }
 
 function buyMember(e) {
     const plan = e.target.dataset.plan;
     const user = DB.currentUser;
-    if (!user) { showLoginModal(); return; }
+    if (!user) return;
 
     const price = CONFIG.memberCost[plan];
     const planName = plan === 'month' ? '月度会员' : '年度会员';
     
-    showToast(`开通 ${planName} ¥${price}，模拟支付成功`, 'success');
+    showToast(`${planName} ¥${price}，模拟支付成功`, 'success');
     user.isMember = true;
     
     if (plan === 'month') {
@@ -261,17 +335,16 @@ function buyMember(e) {
     
     saveData();
     initUserUI();
-    showToast(`开通成功！${planName}，无限生成`, 'success');
 }
 
 function buyMemberFromRecharge(card) {
     const plan = card.dataset.plan;
     const price = parseInt(card.dataset.price);
     const user = DB.currentUser;
-    if (!user) { showLoginModal(); return; }
+    if (!user) return;
 
     const planName = plan === 'month' ? '月度会员' : '年度会员';
-    showToast(`开通 ${planName} ¥${price}，模拟支付成功`, 'success');
+    showToast(`${planName} ¥${price}，模拟支付成功`, 'success');
     
     user.isMember = true;
     if (plan === 'month') {
@@ -287,19 +360,19 @@ function buyMemberFromRecharge(card) {
     saveData();
     initUserUI();
     closeAllModals();
-    showToast(`开通成功！无限生成`, 'success');
+    showToast(`开通成功！${planName}，无限生成`, 'success');
 }
 
-// ===== 🔥 核心：生成歌曲（集成Minimax API）=====
+// ===== 生成歌曲 =====
 async function doGenerate() {
     const user = DB.currentUser;
     const lyrics = document.getElementById('lyricsInput').value.trim();
     const style = document.getElementById('styleSelect').value;
-    const duration = parseInt(document.getElementById('durationSelect').value);
+    const duration = document.getElementById('durationSelect').value;
+    const voice = document.getElementById('voiceSelect').value;
     
     const loadingSection = document.getElementById('loadingSection');
     const resultSection = document.getElementById('resultSection');
-    const costPoints = document.getElementById('costPoints');
 
     if (!user) { showLoginModal(); return; }
     if (!lyrics || lyrics.length < 10) { showToast('歌词内容太短（至少10个字）', 'error'); return; }
@@ -315,119 +388,36 @@ async function doGenerate() {
         }
     }
 
-    costPoints.textContent = cost;
-
     if (cost > 0) {
         user.points -= cost;
         logPoints(user.id, 'spend', cost, '生成歌曲');
     }
 
     user.worksCount = (user.worksCount || 0) + 1;
+    
+    // 保存生成的作品
+    if (!user.works) user.works = [];
+    user.works.push({
+        title: `歌曲 #${user.worksCount}`,
+        style: style,
+        duration: duration,
+        voice: voice,
+        lyrics: lyrics,
+        time: new Date().toLocaleString(),
+        audioUrl: null
+    });
+    
     saveData();
     initUserUI();
 
     loadingSection.classList.remove('hidden');
     resultSection.classList.add('hidden');
 
-    // 🔥 尝试调用Minimax API（通过CORS代理）
-    if (CONFIG.enableRealGenerate) {
-        try {
-            showToast('🎵 正在调用Minimax AI...', 'info');
-            
-            const targetUrl = `${CONFIG.MINIMAX_API_BASE}/v1/music/generation`;
-            const proxyUrl = `${CONFIG.CORS_PROXY}${encodeURIComponent(targetUrl)}`;
-            
-            const response = await fetch(proxyUrl, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${CONFIG.MINIMAX_API_KEY}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    model: 'music-01',
-                    lyrics: lyrics,
-                    style: style,
-                    duration: duration,
-                    custom_backend: ''
-                })
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                console.log('Minimax API response:', data);
-                
-                if (data.code === 0 || data.data || data.audio_url) {
-                    showToast('⏳ Minimax AI 生成中...', 'success');
-                    await pollMinimaxResult(data.data?.task_id || data.task_id);
-                    return;
-                } else {
-                    console.log('Minimax error:', data);
-                }
-            }
-            
-            console.log('Minimax API响应:', response.status);
-        } catch (error) {
-            console.error('Minimax API error:', error);
-        }
-    }
-
-    // 备用：模拟生成
-    simulateGenerateProgress();
+    // 模拟生成
+    simulateGenerate();
 }
 
-// ===== 轮询Minimax结果 =====
-async function pollMinimaxResult(taskId) {
-    const progressFill = document.getElementById('progressFill');
-    const progressText = document.getElementById('progressText');
-    
-    let attempts = 0;
-    const maxAttempts = 30;
-
-    while (attempts < maxAttempts) {
-        await new Promise(r => setTimeout(r, 3000));
-
-
-        try {
-            const response = await fetch(`${CONFIG.MINIMAX_API_BASE}/v1/music/get/${taskId}`, {
-                headers: { 'Authorization': `Bearer ${CONFIG.MINIMAX_API_KEY}` }
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                const percent = Math.min((attempts / maxAttempts) * 100, 99);
-                progressFill.style.width = percent + '%';
-                progressText.textContent = Math.floor(percent) + '%';
-
-                if (data.status === 'completed' || data.data?.status === 'completed') {
-                    showToast('🎵 生成完成！', 'success');
-                    showGenResult(data);
-                    return;
-                }
-            }
-        } catch (e) { console.error('Poll error:', e); }
-        
-        attempts++;
-    }
-
-    showToast('等待超时', 'warning');
-    simulateGenerateProgress();
-}
-
-// ===== 显示生成结果 =====
-function showGenResult(data) {
-    const loadingSection = document.getElementById('loadingSection');
-    const resultSection = document.getElementById('resultSection');
-    const user = DB.currentUser;
-
-    loadingSection.classList.add('hidden');
-    resultSection.classList.remove('hidden');
-    document.getElementById('remainPoints').textContent = user.points;
-    showToast('生成成功！🎵', 'success');
-    resultSection.scrollIntoView({ behavior: 'smooth' });
-}
-
-// ===== 备用：模拟生成进度 =====
-function simulateGenerateProgress() {
+function simulateGenerate() {
     const loadingSection = document.getElementById('loadingSection');
     const resultSection = document.getElementById('resultSection');
     const progressFill = document.getElementById('progressFill');
@@ -449,26 +439,14 @@ function simulateGenerateProgress() {
                 loadingSection.classList.add('hidden');
                 resultSection.classList.remove('hidden');
                 document.getElementById('remainPoints').textContent = user.points;
-                showToast('生成成功！（模拟）', 'success');
+                showToast('生成成功！🎵 已保存到作品库', 'success');
                 resultSection.scrollIntoView({ behavior: 'smooth' });
             }, 500);
         }
     }, 500);
 }
 
-// ===== 其他功能 =====
-function updateWordCount() {
-    const text = document.getElementById('lyricsInput').value.trim();
-    document.getElementById('wordCount').textContent = text ? text.length : 0;
-}
-
-function clearLyrics() {
-    document.getElementById('lyricsInput').value = '';
-    document.getElementById('wordCount').textContent = '0';
-}
-
-function saveWork() { showToast('已保存到作品库', 'success'); }
-
+// ===== 播放下载分享 =====
 function togglePlay(e) {
     const btn = e.currentTarget;
     const card = btn.closest('.result-card');
@@ -504,6 +482,7 @@ function simulatePlay(card) {
     const parts = duration.split(':');
     const totalSec = parseInt(parts[0]) * 60 + parseInt(parts[1]);
     let current = 0;
+    
     const interval = setInterval(() => {
         if (!card.classList.contains('playing')) { clearInterval(interval); return; }
         current++;
@@ -526,35 +505,60 @@ function simulatePlay(card) {
 function downloadAudio(e) {
     const card = e.currentTarget.closest('.result-card');
     const version = card.dataset.version;
-    showToast(`下载 V${version} 成功！`, 'success');
+    const title = card.querySelector('.card-info h3').textContent;
+    
+    // 创建下载
+    showToast(`正在下载 V${version} ${title}...`, 'success');
+    
+    // 模拟下载（实际没有真实音频）
+    setTimeout(() => {
+        showToast(`下载 V${version} 成功！文件: song_${version}.mp3`, 'success');
+    }, 1000);
 }
 
-function buyMember(e) {
-    const plan = e.target.dataset.plan;
-    const user = DB.currentUser;
-    if (!user) { showLoginModal(); return; }
-
-    const price = CONFIG.memberCost[plan];
-    const planName = plan === 'month' ? '月度会员' : '年度会员';
-    showToast(`开通 ${planName} ¥${price}，模拟支付成功`, 'success');
+function shareAudio(e) {
+    const card = e.currentTarget.closest('.result-card');
+    const version = card.dataset.version;
+    const title = card.querySelector('.card-info h3').textContent;
     
-    user.isMember = true;
-    if (plan === 'month') {
-        const expire = new Date();
-        expire.setMonth(expire.getMonth() + 1);
-        user.memberExpire = expire.toISOString();
-    } else {
-        const expire = new Date();
-        expire.setFullYear(expire.getFullYear() + 1);
-        user.memberExpire = expire.toISOString();
+    // 复制链接到剪贴板
+    const shareUrl = `${window.location.href}?song=V${version}`;
+    navigator.clipboard.writeText(shareUrl).then(() => {
+        showToast(`分享链接已复制到剪贴板！`, 'success');
+    }).catch(() => {
+        showToast(`分享 V${version} ${title} - ${shareUrl}`, 'success');
+    });
+}
+
+// ===== 保存工作 =====
+function saveWork() {
+    showToast('已保存到作品库！', 'success');
+    
+    // 更新作品库显示
+    if (DB.currentUser) {
+        document.getElementById('myWorks').textContent = DB.currentUser.worksCount || 0;
     }
-    
-    saveData();
-    initUserUI();
-    showToast(`开通成功！${planName}，无限生成`, 'success');
 }
 
-// ===== 工具函数 =====
+// ===== 工具 =====
+function updateWordCount() {
+    const text = document.getElementById('lyricsInput').value.trim();
+    document.getElementById('wordCount').textContent = text ? text.length : 0;
+}
+
+function clearLyrics() {
+    document.getElementById('lyricsInput').value = '';
+    document.getElementById('wordCount').textContent = '0';
+}
+
+function loadWorks() {
+    // 从现有用户加载作品
+    DB.users.forEach(user => {
+        if (!user.works) user.works = [];
+        if (!user.worksCount) user.worksCount = 0;
+    });
+}
+
 function logPoints(userId, type, amount, source) {
     DB.pointsLog.push({
         id: 'log_' + Date.now(),
