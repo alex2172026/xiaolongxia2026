@@ -65,7 +65,7 @@
                     <h2 class="text-xl font-semibold mb-4 text-center">注册</h2>
                     <div class="space-y-4">
                         <input type="text" id="regUser" class="w-full bg-slate-200 border border-slate-400 rounded-xl p-3 text-black" placeholder="用户名">
-                        <input type="password" id="regPass" class="w-full bg-slate-200 border border-slate-400 rounded-xl p-3 text-black" placeholder="密码（至少6位）">
+                        <input type="password" id="regPass" class="w-full bg-slate-200 border border-slate-400 rounded-xl p-3 text-black" placeholder="密码(至少6位)">
                         <button onclick="doRegister()" class="btn-primary w-full py-3 rounded-xl font-semibold">注册(送10积分)</button>
                         <p class="text-center text-slate-500 text-sm">已有账号?<a href="#" onclick="showLogin()" class="text-blue-400">立即登录</a></p>
                     </div>
@@ -90,7 +90,7 @@
                 <div class="mb-4">
                     <h2 class="text-lg font-semibold mb-2">案件内容</h2>
                     <textarea id="caseContent" class="w-full h-40 bg-slate-200 border border-slate-400 rounded-xl p-3 text-black placeholder-gray-500" placeholder="请输入案件内容...
-例：原告张三诉被告李四民间借贷纠纷..."></textarea>
+例:原告张三诉被告李四民间借贷纠纷..."></textarea>
                 </div>
 
                 <!-- 生成按钮 -->
@@ -385,17 +385,131 @@
                 </div>
             `).join('');
         }
+        
+        // ============ 读取上传文件内容 ============
+        async function mergeFileContent() {
+            let content = '';
+            for (const file of uploadedFiles) {
+                try {
+                    const text = await readFileContent(file);
+                    content += `\n[文件: ${file.name}]\n${text}\n`;
+                } catch (e) {
+                    content += `\n[文件: ${file.name}]\n读取失败: ${e.message}\n`;
+                }
+            }
+            return content;
+        }
+        
+        async function readFileContent(file) {
+            const ext = file.name.split('.').pop().toLowerCase();
+            const name = file.name;
+            
+            if (['txt', 'log', 'json', 'xml', 'csv'].includes(ext)) {
+                return await readTextFile(file);
+            } else if (['doc', 'docx'].includes(ext)) {
+                return await readDocxFile(file);
+            } else if (['xls', 'xlsx'].includes(ext)) {
+                return await readExcelFile(file);
+            } else if (['pdf'].includes(ext)) {
+                return await readPdfFile(file);
+            } else if (['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'].includes(ext)) {
+                return await readImageFile(file);
+            } else {
+                // 尝试读取为文本
+                try { return await readTextFile(file); } catch { return '[无法识别的文件格式]' }
+            }
+        }
+        
+        function readTextFile(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = e => resolve(e.target.result);
+                reader.onerror = () => reject(new Error('文件读取失败'));
+                reader.readAsText(file, 'utf-8');
+            });
+        }
+        
+        function readDocxFile(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    mammoth.extractRawText({arrayBuffer: e.target.result})
+                        .then(r => resolve(r.value || '[Word文件为空]'))
+                        .catch(() => reject(new Error('Word解析失败')));
+                };
+                reader.onerror = () => reject(new Error('文件读取失败'));
+                reader.readAsArrayBuffer(file);
+            });
+        }
+        
+        function readExcelFile(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    try {
+                        const wb = XLSX.read(e.target.result, {type: 'array'});
+                        let text = '';
+                        wb.SheetNames.forEach(name => {
+                            text += '\n--- ' + name + ' ---\n' + XLSX.utils.sheet_to_csv(wb.Sheets[name]);
+                        });
+                        resolve(text || '[Excel文件为空]');
+                    } catch { reject(new Error('Excel解析失败')) }
+                };
+                reader.onerror = () => reject(new Error('文件读取失败'));
+                reader.readAsArrayBuffer(file);
+            });
+        }
+        
+        function readPdfFile(file) {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const arr = await file.arrayBuffer();
+                    const pdf = await pdfjsLib.getDocument({data: arr}).promise;
+                    let text = '';
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const content = await page.getTextContent();
+                        text += content.items.map(item => item.str).join(' ') + '\n';
+                    }
+                    resolve(text || '[PDF无文字]');
+                } catch { reject(new Error('PDF解析失败')) }
+            });
+        }
+        
+        function readImageFile(file) {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    // 使用Tesseract进行OCR
+                    const result = await Tesseract.recognize(file, 'chi_sim+eng');
+                    resolve(result.data.text.trim() || '[图片无文字]');
+                } catch { reject(new Error('OCR识别失败')) }
+            });
+        }
 
         // ============ AI生成 ============
-        // ============ 生成评查报告(模拟版本)===========
+        // ============ 生成评查报告(真实AI)===========
         async function generateReport() {
             const user = DB.currentUser;
             if (!user) return alert('请先登录');
             if (!user.isAdmin && !user.isMember && user.points < 5) return showRecharge();
-
+            
             const content = document.getElementById('caseContent').value.trim();
-            if (!content && uploadedFiles.length === 0) return alert('请输入案件内容或上传文件');
-
+            
+            // 合并上传文件的内容
+            let fileContent = '';
+            if (uploadedFiles.length > 0) {
+                try {
+                    fileContent = await mergeFileContent();
+                } catch (e) {
+                    console.error('文件读取失败:', e);
+                }
+            }
+            
+            // 合并案件内容和文件内容
+            const fullContent = fileContent ? (content ? content + '\n\n=== 上传文件内容 ===\n' + fileContent : fileContent) : content;
+            
+            if (!fullContent) return alert('请输入案件内容或上传文件');
+            
             if (!user.isAdmin && !user.isMember) {
                 user.points -= 5;
                 user.usedCount = (user.usedCount || 0) + 1;
@@ -405,41 +519,63 @@
             }
 
             document.getElementById('status').classList.remove('hidden');
-            document.getElementById('statusText').textContent = '正在生成评查报告...';
+            document.getElementById('statusText').textContent = '正在连接AI...';
 
-            // 显示模拟生成进度
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += 15;
-                if (progress > 90) clearInterval(interval);
-            }, 300);
+            try {
+                // 尝试直接调用API
+                const response = await fetch(CONFIG.API_URL, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json', 
+                        'Authorization': 'Bearer ' + CONFIG.API_KEY,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: CONFIG.MODEL,
+                        messages: [
+                            { role: 'system', content: '你是法律案件评查专家。请生成专业、详细的评查报告。' },
+                            { role: 'user', content: '【案件内容】\n' + content + '\n\n请生成评查报告。' }
+                        ]
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('API请求失败: ' + response.status);
+                }
+                
+                const data = await response.json();
+                console.log('API响应:', JSON.stringify(data, null, 2));
+                
+                // 检查是否有choices
+                if (data.choices && data.choices[0] && data.choices[0].message) {
+                    reportText = data.choices[0].message.content;
+                    document.getElementById('reportContent').textContent = reportText;
+                    document.getElementById('reportSection').classList.remove('hidden');
+                } 
+                // 检查是否有base_resp错误
+                else if (data.base_resp) {
+                    throw new Error(data.base_resp.status_msg || 'API返回错误: ' + JSON.stringify(data));
+                }
+                // 其他格式
+                else if (data.message && data.message.content) {
+                    reportText = data.message.content;
+                    document.getElementById('reportContent').textContent = reportText;
+                    document.getElementById('reportSection').classList.remove('hidden');
+                }
+                else {
+                    console.log('完整响应:', data);
+                    throw new Error('API返回格式未知: ' + JSON.stringify(data).substring(0, 200));
+                }
+            } catch (e) {
+                console.error('生成错误:', e);
+                alert('生成失败: ' + e.message + '\n\n请检查网络后重试');
+                if (!user.isAdmin && !user.isMember) {
+                    user.points += 5;
+                    localStorage.setItem('case_users', JSON.stringify(DB.users));
+                }
+            }
 
-            // 模拟生成成功
-            setTimeout(() => {
-                clearInterval(interval);
-                document.getElementById('status').classList.add('hidden');
-
-                // 模拟报告内容
-                reportText = `# 案件评查报告\n\n` +
-                    `一、案件概述\n` +
-                    `${content}\n\n` +
-                    `二、法律分析\n` +
-                    `根据原告陈述的案件事实,本案属于民间借贷纠纷...\n\n` +
-                    `三、证据审查\n` +
-                    `原告提供的证据包括借条、转账记录等...\n\n` +
-                    `四、法律建议\n` +
-                    `1. 建议收集完整的借贷证据...\n` +
-                    `2. 可通过协商或诉讼方式解决...\n\n` +
-                    `五、风险提示\n` +
-                    `本案诉讼时效为三年,请及时主张权利。\n\n` +
-                    `=== 报告生成时间:${new Date().toLocaleString()} ===`;
-
-                document.getElementById('reportContent').textContent = reportText;
-                document.getElementById('reportSection').classList.remove('hidden');
-
-                // 如果需要真实AI生成,请联系管理员
-                // alert('如需更精确的AI分析,请联系管理员QQ:7879113');
-            }, 2000);
+            document.getElementById('status').classList.add('hidden');
         }
 
         function copyReport() { navigator.clipboard.writeText(reportText).then(() => alert('已复制')); }
