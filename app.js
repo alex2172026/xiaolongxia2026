@@ -12,6 +12,38 @@ const DB = {
     works: JSON.parse(localStorage.getItem('songai_works')) || []
 };
 
+// 初始化超级管理员
+function initAdmin() {
+    const adminUsername = 'alex217';
+    let admin = DB.users.find(u => u.username === adminUsername);
+    
+    if (!admin) {
+        // 创建超级管理员
+        admin = {
+            id: 'admin_001',
+            username: adminUsername,
+            password: 'alex217',  // 初始密码
+            points: 999999,       // 无限积分
+            isMember: true,        // 终身VIP
+            memberExpire: '2099-12-31',
+            role: 'super_admin',   // 超级管理员权限
+            createdAt: new Date().toISOString(),
+            worksCount: 0
+        };
+        DB.users.push(admin);
+        localStorage.setItem('songai_users', JSON.stringify(DB.users));
+        console.log('✅ 超级管理员 alex217 已创建');
+    } else {
+        // 确保admin权限
+        admin.role = 'super_admin';
+        admin.points = 999999;
+        admin.isMember = true;
+        admin.memberExpire = '2099-12-31';
+    }
+}
+
+// 页面加载时初始化admin
+
 // ===== 配置 =====
 const CONFIG = {
     newUserPoints: 10,           // 新用户赠送积分
@@ -31,6 +63,7 @@ const CONFIG = {
 
 // ===== 初始化 =====
 document.addEventListener('DOMContentLoaded', function() {
+    initAdmin();  // 初始化超级管理员
     initUserUI();
     bindEvents();
 });
@@ -78,7 +111,12 @@ function initUserUI() {
         if (user.isMember) {
             vipBtn.classList.remove('hidden');
             memberBadge.classList.remove('hidden');
-            generateBtn.innerHTML = '<span class="btn-icon">👑</span><span class="btn-text">VIP无限生成</span>';
+            
+            if (user.role === 'super_admin') {
+                generateBtn.innerHTML = '<span class="btn-icon">⚡</span><span class="btn-text">管理员无限生成</span>';
+            } else {
+                generateBtn.innerHTML = '<span class="btn-icon">👑</span><span class="btn-text">VIP无限生成</span>';
+            }
         }
     } else {
         // 未登录
@@ -373,7 +411,11 @@ function doGenerate() {
 
     // 检查积分
     let cost = 0;
-    if (!user.isMember) {
+    
+    // 超级管理员 unlimited 生成
+    if (user.role === 'super_admin') {
+        cost = 0; // 免费
+    } else if (!user.isMember) {
         cost = CONFIG.generateCost;
         if (user.points < cost) {
             showToast('积分不足！请充值', 'error');
