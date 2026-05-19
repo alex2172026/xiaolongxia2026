@@ -8,7 +8,7 @@ const DB = {
     works: JSON.parse(localStorage.getItem('songai_works')) || []
 };
 
-// ===== 配置（包含Suno API Key）=====
+// ===== 配置（包含Minimax API Key）=====
 const CONFIG = {
     newUserPoints: 10,
     generateCost: 2,
@@ -20,9 +20,10 @@ const CONFIG = {
         { amount: 50, points: 60 },
         { amount: 100, points: 130 }
     ],
-    // 🔥 Suno API 配置
+    // 🔥 Minimax API 配置
     SUNO_API_KEY: 'sk-cp-3_mAX-zdVmNqEJY9mvVaTtaaUag9r4Dm8YnT7b5BGjywY0AFefzPEHAs0EktthEzjJWEGU-xC2-ah5hyHAPgDEWevBTwxHUcHMuVBPWsaBvztRXKrJRhhGw',
-    SUNO_API_BASE: 'https://api.suno.ai',
+    MINIMAX_API_KEY: 'sk-cp-3_mAX-zdVmNqEJY9mvVaTtaaUag9r4Dm8YnT7b5BGjywY0AFefzPEHAs0EktthEzjJWEGU-xC2-ah5hyHAPgDEWevBTwxHUcHMuVBPWsaBvztRXKrJRhhGw',
+    MINIMAX_API_BASE: 'https://api.minimax.chat',
     enableRealGenerate: true
 };
 
@@ -288,7 +289,7 @@ function buyMemberFromRecharge(card) {
     showToast(`开通成功！无限生成`, 'success');
 }
 
-// ===== 🔥 核心：生成歌曲（集成Suno API）=====
+// ===== 🔥 核心：生成歌曲（集成Minimax API）=====
 async function doGenerate() {
     const user = DB.currentUser;
     const lyrics = document.getElementById('lyricsInput').value.trim();
@@ -327,38 +328,43 @@ async function doGenerate() {
     loadingSection.classList.remove('hidden');
     resultSection.classList.add('hidden');
 
-    // 🔥 尝试调用Suno API
+    // 🔥 尝试调用Minimax API
     if (CONFIG.enableRealGenerate) {
         try {
-            showToast('🎵 正在调用Suno AI...', 'info');
+            showToast('🎵 正在调用Minimax AI...', 'info');
             
-            const response = await fetch(`${CONFIG.SUNO_API_BASE}/api/generate`, {
+            // 构建Minimax音乐生成请求
+            const response = await fetch(`${CONFIG.MINIMAX_API_BASE}/v1/music/generation`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${CONFIG.SUNO_API_KEY}`,
+                    'Authorization': `Bearer ${CONFIG.MINIMAX_API_KEY}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    prompt: lyrics,
-                    make_asInstrumental: false,
-                    title: `SONG_AI_${Date.now()}`
+                    model: 'music-01',
+                    lyrics: lyrics,
+                    style: style,
+                    duration: duration,
+                    custom_backend: ''
                 })
             });
 
             if (response.ok) {
                 const data = await response.json();
-                console.log('Suno API response:', data);
+                console.log('Minimax API response:', data);
                 
-                if (data.id || data任务ID) {
-                    showToast('⏳ Suno AI 生成中...', 'success');
-                    await pollSunoResult(data.id || data任务ID);
+                if (data.code === 0 || data.data || data.audio_url) {
+                    showToast('⏳ Minimax AI 生成中...', 'success');
+                    await pollMinimaxResult(data.data?.task_id || data.task_id);
                     return;
+                } else {
+                    console.log('Minimax error:', data);
                 }
             }
             
-            console.log('Suno API响应:', response.status);
+            console.log('Minimax API响应:', response.status);
         } catch (error) {
-            console.error('Suno API error:', error);
+            console.error('Minimax API error:', error);
         }
     }
 
@@ -366,8 +372,8 @@ async function doGenerate() {
     simulateGenerateProgress();
 }
 
-// ===== 轮询Suno结果 =====
-async function pollSunoResult(taskId) {
+// ===== 轮询Minimax结果 =====
+async function pollMinimaxResult(taskId) {
     const progressFill = document.getElementById('progressFill');
     const progressText = document.getElementById('progressText');
     
@@ -377,9 +383,10 @@ async function pollSunoResult(taskId) {
     while (attempts < maxAttempts) {
         await new Promise(r => setTimeout(r, 3000));
 
+
         try {
-            const response = await fetch(`${CONFIG.SUNO_API_BASE}/api/get?id=${taskId}`, {
-                headers: { 'Authorization': `Bearer ${CONFIG.SUNO_API_KEY}` }
+            const response = await fetch(`${CONFIG.MINIMAX_API_BASE}/v1/music/get/${taskId}`, {
+                headers: { 'Authorization': `Bearer ${CONFIG.MINIMAX_API_KEY}` }
             });
 
             if (response.ok) {
@@ -388,7 +395,7 @@ async function pollSunoResult(taskId) {
                 progressFill.style.width = percent + '%';
                 progressText.textContent = Math.floor(percent) + '%';
 
-                if (data.status === 'completed') {
+                if (data.status === 'completed' || data.data?.status === 'completed') {
                     showToast('🎵 生成完成！', 'success');
                     showGenResult(data);
                     return;
