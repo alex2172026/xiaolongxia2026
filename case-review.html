@@ -3,874 +3,378 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>行政案件评查系统V2.0 - AI智能分析</title>
+    <title>案件评查系统 - AI智能分析</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- OCR识别库 -->
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-    <!-- 文件解析库 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
         * { font-family: 'Noto Sans SC', sans-serif; }
         :root { --bg-dark: #0f172a; --bg-card: #1e293b; --border: #334155; }
         body { background: var(--bg-dark); }
         .glass { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(20px); border: 1px solid var(--border); }
-        .btn-primary { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); transition: all 0.3s ease; }
+        .btn-primary { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(59, 130, 246, 0.4); }
-        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .spinner { animation: spin 1s linear infinite; }
-        .file-item { animation: slideIn 0.3s ease; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: var(--bg-dark); }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
     </style>
 </head>
 <body class="min-h-screen text-white">
-    <div class="container mx-auto px-4 py-8 max-w-4xl">
+    <div class="container mx-auto px-4 py-8 max-w-3xl">
         <header class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">行政案件评查系统V2.0</h1>
-            <p class="text-slate-400">AI智能行政/刑事案件分析与评查报告生成</p>
+            <h1 class="text-3xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">案件评查系统</h1>
+            <p class="text-slate-400">AI智能案件分析与评查报告生成</p>
         </header>
 
-        <div class="glass rounded-3xl p-6 md:p-8">
-            <!-- 上传案件附件 -->
-            <div class="mb-6">
-                <div class="flex items-center gap-3 mb-4">
-                    <span class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold">1</span>
-                    <h2 class="text-xl font-semibold">上传案件附件</h2>
+        <!-- 用户信息 -->
+        <div id="userInfo" class="hidden mb-4 flex justify-between items-center glass px-4 py-2 rounded-xl">
+            <div>
+                <span class="text-slate-400">用户：</span>
+                <span id="displayName" class="text-white font-bold"></span>
+                <span class="text-slate-500 mx-2">|</span>
+                <span class="text-amber-400">积分：</span>
+                <span id="displayPoints" class="text-amber-400 font-bold"></span>
+            </div>
+            <button onclick="logout()" class="text-slate-400 hover:text-white text-sm">退出</button>
+        </div>
+
+        <div class="glass rounded-3xl p-6">
+            <!-- 登录/注册面板 -->
+            <div id="authPanel">
+                <!-- 登录表单 -->
+                <div id="loginForm">
+                    <h2 class="text-xl font-semibold mb-4 text-center">登录</h2>
+                    <div class="space-y-4">
+                        <input type="text" id="loginUser" class="w-full bg-slate-700 border border-slate-600 rounded-xl p-3 text-white" placeholder="用户名">
+                        <input type="password" id="loginPass" class="w-full bg-slate-700 border border-slate-600 rounded-xl p-3 text-white" placeholder="密码">
+                        <button onclick="doLogin()" class="btn-primary w-full py-3 rounded-xl font-semibold">登录</button>
+                        <p class="text-center text-slate-500 text-sm">新用户？<a href="#" onclick="showRegister()" class="text-blue-400">立即注册</a>（送10积分）</p>
+                    </div>
                 </div>
-                
-                <div class="flex flex-col items-center gap-4">
-                    <!-- 文件选择按钮 -->
-                    <button type="button" id="uploadBtn" class="block w-full p-8 bg-slate-800 border-2 border-dashed border-slate-700 rounded-xl text-center cursor-pointer hover:border-blue-500 transition" onclick="document.getElementById('fileInput').click()">
-                        <svg class="w-12 h-12 mx-auto mb-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13ll-3-3m0 0l-3 3m3-3v12"/></svg>
-                        <p class="text-lg mb-1">点击选择案件文件</p>
-                        <p class="text-sm text-slate-500">支持 TXT、Word、Excel、图片(OCR识别)、PDF</p>
-                    </button>
-                    <input type="file" id="fileInput" multiple onchange="handleFiles()" style="display: none;">
+
+                <!-- 注册表单 -->
+                <div id="registerForm" class="hidden">
+                    <h2 class="text-xl font-semibold mb-4 text-center">注册</h2>
+                    <div class="space-y-4">
+                        <input type="text" id="regUser" class="w-full bg-slate-700 border border-slate-600 rounded-xl p-3 text-white" placeholder="用户名">
+                        <input type="password" id="regPass" class="w-full bg-slate-700 border border-slate-600 rounded-xl p-3 text-white" placeholder="密码（至少6位）">
+                        <button onclick="doRegister()" class="btn-primary w-full py-3 rounded-xl font-semibold">注册（送10积分）</button>
+                        <p class="text-center text-slate-500 text-sm">已有账号？<a href="#" onclick="showLogin()" class="text-blue-400">立即登录</a></p>
+                    </div>
                 </div>
-                
-                <!-- 免责声明 -->
-                <div class="mt-3 p-3 bg-amber-900/30 border border-amber-700/50 rounded-xl">
-                    <p class="text-sm text-amber-200">⚠️ 免责声明：分析结果仅供参考，不作为正式法律意见。请勿上传涉密信息！本系统数据仅保存在本地浏览器，不会泄露。</p>
-                </div>
-                
-                <div id="fileList" class="mt-4 space-y-2"></div>
             </div>
 
-            <!-- 案件内容输入 - 核心 -->
-            <div class="mb-6">
-                <div class="flex items-center gap-3 mb-4">
-                    <span class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center font-bold">2</span>
-                    <h2 class="text-xl font-semibold">案件内容（选填）</h2>
+            <!-- 主功能面板 -->
+            <div id="mainPanel" class="hidden">
+                <!-- 案件内容输入 -->
+                <div class="mb-4">
+                    <h2 class="text-lg font-semibold mb-2">案件内容</h2>
+                    <textarea id="caseContent" class="w-full h-48 bg-slate-700 border border-slate-600 rounded-xl p-3 text-white placeholder-slate-500" placeholder="请输入案件内容...
+例：原告张三诉被告李四民间借贷纠纷..."></textarea>
                 </div>
-                <p class="text-sm text-slate-400 mb-2">请直接在这里粘贴或输入案件的全部内容（Ctrl+V粘贴，PDF请复制文字后粘贴）</p>
-                <textarea id="caseDesc" class="w-full h-40 bg-slate-800 border border-slate-700 rounded-xl p-3 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none resize-none" placeholder="在此粘贴案件内容：
-例：原告张三诉被告李四民间借贷纠纷一案...
-诉讼请求：要求被告偿还借款10万元...
-事实与理由：2023年1月...（请完整粘贴案件所有内容）"></textarea>
-                <p class="text-xs text-slate-500 mt-1">💡 提示：可单独上传笔录、证据等任意材料进行评查，PDF文件请选中文字Ctrl+C复制后粘贴。</p>
-            </div>
 
-            <!-- AI分析 -->
-            <div class="mb-6">
-                <div class="flex items-center gap-3 mb-4">
-                    <span class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold">3</span>
-                    <h2 class="text-xl font-semibold">AI智能分析</h2>
-                </div>
-                
-                <button id="analyzeBtn" class="btn-primary w-full py-4 rounded-xl font-semibold text-lg flex items-center justify-center gap-3 disabled:opacity-50" onclick="generateReport()">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.3 3.3 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
-                    <span>生成评查报告</span>
+                <!-- 生成按钮 -->
+                <button id="generateBtn" onclick="generateReport()" class="btn-primary w-full py-4 rounded-xl font-semibold text-lg flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.3 3.3 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                    <span id="btnText">生成评查报告</span>
                 </button>
 
-                <div id="analyzeStatus" class="hidden mt-4 p-4 rounded-xl bg-slate-800/50">
-                    <div class="flex items-center gap-3">
+                <!-- 状态 -->
+                <div id="status" class="hidden mt-4 p-4 rounded-xl bg-slate-800/50">
+                    <div class="flex items-center gap-2">
                         <div class="spinner w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full"></div>
-                        <span id="statusText" class="text-blue-400">正在生成评查报告...</span>
+                        <span id="statusText" class="text-blue-400">正在生成...</span>
                     </div>
-                    <div id="progressBar" class="mt-3 h-1 bg-slate-700 rounded-full overflow-hidden"><div class="h-full bg-blue-500 rounded-full transition-all duration-300" style="width: 0%"></div></div>
                 </div>
-                
-                <div id="errorInfo" class="hidden mt-4 p-4 rounded-xl bg-red-900/50 text-red-300 text-sm"></div>
+
+                <!-- 报告结果 -->
+                <div id="reportSection" class="hidden mt-4">
+                    <div class="flex gap-2 mb-2">
+                        <button onclick="copyReport()" class="px-4 py-2 bg-slate-700 rounded-lg">复制报告</button>
+                        <button onclick="downloadReport()" class="px-4 py-2 bg-green-600 rounded-lg">下载报告</button>
+                    </div>
+                    <div id="reportContent" class="bg-slate-800/50 rounded-xl p-4 max-h-80 overflow-y-auto text-sm whitespace-pre-wrap"></div>
+                </div>
             </div>
 
-            <!-- 报告 -->
-            <div id="reportSection" class="hidden">
-                <div class="flex items-center gap-3 mb-4">
-                    <span class="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center font-bold">4</span>
-                    <h2 class="text-xl font-semibold">评查报告</h2>
+            <!-- 充值面板 -->
+            <div id="rechargePanel" class="hidden mt-6 pt-6 border-t border-slate-700">
+                <h3 class="text-lg font-semibold mb-4 text-center">积分充值</h3>
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <button onclick="recharge(10)" class="p-3 bg-slate-700 rounded-xl">
+                        <div class="text-xl font-bold text-amber-400">10元</div>
+                        <div class="text-sm text-slate-400">10积分</div>
+                    </button>
+                    <button onclick="recharge(30)" class="p-3 bg-slate-700 rounded-xl">
+                        <div class="text-xl font-bold text-amber-400">30元</div>
+                        <div class="text-sm text-slate-400">35积分</div>
+                    </button>
+                    <button onclick="recharge(50)" class="p-3 bg-slate-700 rounded-xl">
+                        <div class="text-xl font-bold text-amber-400">50元</div>
+                        <div class="text-sm text-slate-400">60积分</div>
+                    </button>
+                    <button onclick="recharge(100)" class="p-3 bg-slate-700 rounded-xl">
+                        <div class="text-xl font-bold text-amber-400">100元</div>
+                        <div class="text-sm text-slate-400">130积分</div>
+                    </button>
                 </div>
-
-                <div class="flex flex-wrap gap-3 mb-4">
-                    <button onclick="copyReport()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>复制报告</button>
-                    <button onclick="downloadReport()" class="px-4 py-2 bg-green-600 hover:bg-green-500 rounded-lg flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>下载报告</button>
-                    <button onclick="goBack()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>返回</button>
+                
+                <h4 class="text-md font-semibold mb-2 text-center">开通会员</h4>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="buyMember('month')" class="p-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl">
+                        <div class="font-bold">月度会员</div>
+                        <div class="text-sm">28元/月</div>
+                        <div class="text-xs text-slate-300">无限评查</div>
+                    </button>
+                    <button onclick="buyMember('year')" class="p-3 bg-gradient-to-r from-amber-600 to-orange-600 rounded-xl">
+                        <div class="font-bold">年度会员</div>
+                        <div class="text-sm">268元/年</div>
+                        <div class="text-xs text-slate-300">无限评查</div>
+                    </button>
                 </div>
-
-                <div id="reportContent" class="bg-slate-800/50 rounded-xl p-6 max-h-96 overflow-y-auto text-sm leading-relaxed whitespace-pre-wrap"></div>
+                
+                <div class="mt-4 p-3 bg-slate-800 rounded-xl text-center">
+                    <p class="text-sm text-slate-400 mb-2">扫码支付</p>
+                    <p class="text-xs text-slate-500">（联系管理员微信：a2172026）</p>
+                </div>
+                
+                <button onclick="showMain()" class="mt-4 w-full py-2 bg-slate-700 rounded-xl">返回</button>
+            </div>
+            
+            <!-- 快速充值链接 -->
+            <div id="rechargeLink" class="hidden mt-4 text-center">
+                <button onclick="showRecharge()" class="text-amber-400 hover:text-amber-300">积分不足？点击充值</button>
             </div>
         </div>
     </div>
 
-    <script>
-        // 配置PDF.js
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    <footer class="text-center py-6 text-slate-500 text-sm">
+        <p>联系微信：a2172026 | QQ：7879113</p>
+    </footer>
 
-        // 默认API配置
-        const DEFAULT_API = {
-            minimax: { url: 'https://api.minimax.chat/v1/text/chatcompletion_v2', model: 'MiniMax-M2.5', keyPrefix: 'sk-' },
-            kimi: { url: 'https://api.moonshot.cn/v1/chat/completions', model: 'kimi-k2-0711-preview', keyPrefix: 'sk-' },
-            openai: { url: 'https://api.openai.com/v1/chat/completions', model: 'gpt-4o', keyPrefix: 'sk-' },
-            tongyi: { url: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', model: 'qwen-plus', keyPrefix: 'sk-' },
-            wenxin: { url: 'https://qianfan.baidu.com/v2/chat/completions', model: 'ernie-4.0-8k', keyPrefix: '' }
+    <script>
+        // ============ 核心配置 ============
+        const CONFIG = {
+            // 内置MiniMax API
+            API_KEY: 'sk-cp-3_mAX-zdVmNqEJY9mvVaTtaaUag9r4Dm8YnT7b5BGjywY0AFefzPEHAs0EktthEzjJWEGU-xC2-ah5hyHAPgDEWevBTwxHUcHMuVBPWsaBvztRXKrJRhhGw',
+            API_URL: 'https://api.minimax.chat/v1/text/chatcompletion_v2',
+            MODEL: 'MiniMax-M2.5'
         };
 
-        // 从localStorage加载配置
-        function loadApiConfig() {
-            const saved = localStorage.getItem('case_review_api');
-            if (saved) {
-                return JSON.parse(saved);
-            }
-            return { model: 'minimax', apiKey: '' };
-        }
-
-        // 保存配置到localStorage
-        function saveApiConfig() {
-            const model = document.getElementById('modelSelect').value;
-            const apiKey = document.getElementById('apiKeyInput').value.trim();
-            const config = { model, apiKey };
-            localStorage.setItem('case_review_api', JSON.stringify(config));
-            return config;
-        }
-
-        // 当前API配置
-        let API_KEY = '';
-        let API_URL = '';
-        let MODEL = '';
-
-        // 初始化配置
-        function initApiConfig() {
-            const cfg = loadApiConfig();
-            document.getElementById('modelSelect').value = cfg.model;
-            document.getElementById('apiKeyInput').value = cfg.apiKey;
-            
-            const defaultCfg = DEFAULT_API[cfg.model];
-            API_KEY = cfg.apiKey || 'sk-your-key-here';
-            API_URL = defaultCfg.url;
-            MODEL = defaultCfg.model;
-        }
-
-        // 设置面板
-        function openSettings() {
-            document.getElementById('settingsMask').classList.remove('hidden');
-            document.getElementById('settingsPanel').classList.remove('hidden');
-        }
-        
-        function closeSettings() {
-            document.getElementById('settingsMask').classList.add('hidden');
-            document.getElementById('settingsPanel').classList.add('hidden');
-        }
-        
-        function saveApiSettings() {
-            const model = document.getElementById('modelSelect').value;
-            const apiKey = document.getElementById('apiKeyInput').value.trim();
-            const defaultCfg = DEFAULT_API[model];
-            
-            const config = { model, apiKey };
-            localStorage.setItem('case_review_api', JSON.stringify(config));
-            
-            API_KEY = apiKey || defaultCfg.keyPrefix + 'your-key-here';
-            API_URL = defaultCfg.url;
-            MODEL = defaultCfg.model;
-            
-            closeSettings();
-            alert('API配置已保存！');
-        }
-
-        let uploadedFiles = [];
-        let reportText = '';
-        let isProcessing = false;
-
-        // 页面加载完成后初始化
-        let ocrWorker = null;
-        let isOcrProcessing = false;
-        
-        function initPage() {
-            initApiConfig();
-        }
-        
-        function handleFiles() {
-            var fileInput = document.getElementById('fileInput');
-            var files = Array.from(fileInput.files);
-            if (files.length > 0) {
-                files.forEach(function(file) {
-                    uploadedFiles.push(file);
-                });
-                renderFileList();
-                mergeFileContent();
-                fileInput.value = '';
-            }
-        }
-        
-        function generateReport() {
-            if (isProcessing) return;
-            isProcessing = true;
-            
-            var btn = document.getElementById('analyzeBtn');
-            var status = document.getElementById('analyzeStatus');
-            var statusText = document.getElementById('statusText');
-            var progressBar = document.querySelector('#progressBar div');
-            var errorInfo = document.getElementById('errorInfo');
-            var reportSection = document.getElementById('reportSection');
-            var reportContent = document.getElementById('reportContent');
-            var caseDesc = document.getElementById('caseDesc').value.trim();
-
-            if (!caseDesc && uploadedFiles.length === 0) {
-                alert('请上传案件材料或输入案件内容\n\n💡 提示：支持单独上传笔录、证据材料等任意案件材料进行评查');
-                isProcessing = false;
-                return;
-            }
-
-            btn.disabled = true;
-            status.classList.remove('hidden');
-            errorInfo.classList.add('hidden');
-            reportSection.classList.add('hidden');
-
-            var progress = 0;
-            var progressInterval = setInterval(function() {
-                progress += Math.random() * 10;
-                if (progress > 80) progress = 80;
-                progressBar.style.width = progress + '%';
-            }, 300);
-            
-            var fetchResp = null;
-            fetch(API_URL, {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json', 
-                    'Authorization': 'Bearer ' + API_KEY,
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    model: MODEL,
-                    messages: [
-                        { role: 'system', content: '你是法律案件评查专家。请生成详细的评查报告。报告末尾添加：报告完成日期为今天日期（如：2026年5月19日）、评查人员：人工智能。标题格式：XX公司/XX人 行政/刑事案件评查报告' },
-                        { role: 'user', content: '【案件材料】\n' + caseDesc + '\n\n请生成评查报告。' }
-                    ],
-                    temperature: 0.7,
-                    max_tokens: 60000
-                })
-            })
-            .then(function(response) { fetchResp = response; return response.text(); })
-            .then(function(responseText) {
-                var data = JSON.parse(responseText);
-                if (!fetchResp.ok || data.base_resp && data.base_resp.status_code !== 0) {
-                    throw new Error('API错误');
-                }
-                var result = data.choices[0].message.content;
-                if (!result) throw new Error('AI返回为空');
-                
-                progressBar.style.width = '100%';
-                statusText.textContent = '生成完成！';
-                
-                reportText = result;
-                reportContent.innerHTML = result;
-                reportSection.classList.remove('hidden');
-            })
-            .catch(function(error) {
-                errorInfo.textContent = '错误: ' + error.message;
-                errorInfo.classList.remove('hidden');
-            })
-            .then(function() {
-                clearInterval(progressInterval);
-                btn.disabled = false;
-                isProcessing = false;
-            });
-        }
-        
-        window.addEventListener('DOMContentLoaded', initPage);
-
-        function formatSize(bytes) {
-            if (bytes < 1024) return bytes + ' B';
-            if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
-            return (bytes/(1024*1024)).toFixed(1) + ' MB';
-        }
-
-        // 处理文件选择 - uploadedFiles已在外部声明
-        function handleFileSelect(input) {
-            var files = Array.from(input.files);
-            if (files.length > 0) {
-                var msg = '本次选择了 ' + files.length + ' 个文件: ' + files.map(function(f){return f.name}).join(', ');
-                alert(msg);
-                files.forEach(function(file) {
-                    uploadedFiles.push(file);
-                });
-                renderFileList();
-                // 清空input，这样下次选择可以继续叠加
-                input.value = '';
-            }
-        }
-
-        function getFileIcon(filename) {
-            const ext = filename.split('.').pop().toLowerCase();
-            if (ext === 'pdf') return '<svg class="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 2l5 5h-5V4zM8.5 18.5a.5.5 0 01.5-.5h6a.5.5 0 01.5.5v2a.5.5 0 01-.5.5H9a.5.5 0 01-.5-.5v-2z"/></svg>';
-            if (['doc','docx'].includes(ext)) return '<svg class="w-8 h-8 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 2l5 5h-5V4zm-3 9h6v1H10v-1zm0 2h6v1H10v-1z"/></svg>';
-            if (['xls','xlsx'].includes(ext)) return '<svg class="w-8 h-8 text-green-500" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 2l5 5h-5V4zm-3 9h2v2h-2v-2zm0 3h2v2h-2v-2z"/></svg>';
-            if (ext === 'zip') return '<svg class="w-8 h-8 text-yellow-500" fill="currentColor" viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2zm-6 10h-2v-2h2v2zm0-4h-2V8h2v4z"/></svg>';
-            if (['png','jpg','jpeg','bmp','gif','webp'].includes(ext)) return '<svg class="w-8 h-8 text-purple-500" fill="currentColor" viewBox="0 0 24 24"><path d="M21 19V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>';
-            return '<svg class="w-8 h-8 text-slate-500" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 2l5 5h-5V4z"/></svg>';
-        }
-
-        // 读取文件内容
-        async function readFileContent(file) {
-            const ext = file.name.split('.').pop().toLowerCase();
-            const fileName = file.name;
-            
-            try {
-                if (ext === 'txt' || ext === 'md') {
-                    const text = await readTextFile(file);
-                    return `[${fileName}]\n${text}`;
-                } else if (ext === 'docx') {
-                    const text = await readDocxFile(file);
-                    return `[${fileName}]\n${text}`;
-                } else if (ext === 'xlsx' || ext === 'xls') {
-                    const text = await readExcelFile(file);
-                    return `[${fileName}]\n${text}`;
-                } else if (ext === 'doc') {
-                    return `[${fileName}]\n[.doc格式需要转换为.docx或手动复制内容]`;
-                } else if (ext === 'zip') {
-                    const text = await readZipFile(file);
-                    return text;
-                } else if (ext === 'pdf') {
-                    const text = await readPdfFile(file);
-                    if (text.includes('PDF解析失败') || text.includes('图片格式')) {
-                        return `[${fileName}]\n[该PDF无法自动提取文字，请手动复制内容粘贴到下方文本框]`;
-                    }
-                    return `[${fileName}]\n${text}`;
-                } else if (['png', 'jpg', 'jpeg', 'bmp', 'gif', 'webp'].includes(ext)) {
-                    // 图片格式：进行OCR识别
-                    const text = await readImageFile(file);
-                    return `[${fileName}]\n${text}`;
-                } else {
-                    const text = await readTextFile(file);
-                    return `[${fileName}]\n${text}`;
-                }
-            } catch (e) {
-                console.error('读取文件失败:', e);
-                return `[${fileName}]\n[文件读取失败: ${e.message}]`;
-            }
-        }
-
-        // 图片OCR识别
-        async function readImageFile(file) {
-            try {
-                updateOcrStatus('正在初始化OCR引擎...');
-                
-                // 使用Tesseract.js进行OCR识别
-                const result = await Tesseract.recognize(file, 'chi_sim+eng', {
-                    logger: m => {
-                        if (m.status === 'recognizing text') {
-                            updateOcrStatus(`OCR识别中: ${Math.round(m.progress * 100)}%`);
-                        }
-                    }
-                });
-                
-                const text = result.data.text.trim();
-                if (!text) {
-                    return '[图片中未识别到文字]';
-                }
-                return `[OCR识别结果]\n${text}`;
-            } catch (e) {
-                console.error('OCR识别失败:', e);
-                return `[${fileName}]\n[OCR识别失败: ${e.message}]`;
-            }
-        }
-
-        // 更新OCR状态
-        function updateOcrStatus(message) {
-            console.log(message);
-        }
-
-        function readTextFile(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = (e) => resolve(e.target.result);
-                reader.onerror = () => reject(new Error('文件读取失败'));
-                reader.readAsText(file, 'utf-8');
-            });
-        }
-
-        function readDocxFile(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const arrayBuffer = e.target.result;
-                    mammoth.extractRawText({arrayBuffer: arrayBuffer})
-                        .then(result => resolve(result.value || '[Word文件为空]'))
-                        .catch(() => reject(new Error('Word解析失败')));
-                };
-                reader.onerror = () => reject(new Error('文件读取失败'));
-                reader.readAsArrayBuffer(file);
-            });
-        }
-
-        function readExcelFile(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    try {
-                        const data = new Uint8Array(e.target.result);
-                        const workbook = XLSX.read(data, {type: 'array'});
-                        let text = '';
-                        workbook.SheetNames.forEach(sheetName => {
-                            const sheet = workbook.Sheets[sheetName];
-                            text += '\n--- ' + sheetName + ' ---\n';
-                            text += XLSX.utils.sheet_to_csv(sheet);
-                        });
-                        resolve(text || 'Excel文件为空');
-                    } catch (err) {
-                        reject(new Error('Excel解析失败'));
-                    }
-                };
-                reader.onerror = () => reject(new Error('文件读取失败'));
-                reader.readAsArrayBuffer(file);
-            });
-        }
-
-        async function readPdfFile(file) {
-            try {
-                const arrayBuffer = await file.arrayBuffer();
-                const loadingTask = pdfjsLib.getDocument({data: arrayBuffer});
-                const pdf = await loadingTask.promise;
-                
-                let fullText = '';
-                const maxPages = pdf.numPages;
-                let hasText = false;
-                
-                // 先尝试提取文本
-                for (let i = 1; i <= maxPages; i++) {
-                    const page = await pdf.getPage(i);
-                    const textContent = await page.getTextContent();
-                    const pageText = textContent.items.map(item => item.str).join(' ').replace(/\s+/g, ' ').trim();
-                    if (pageText) {
-                        fullText += `[第${i}页] ${pageText}\n`;
-                        hasText = true;
-                    }
-                }
-                
-                // 如果没有文本，说明是扫描版PDF，需要OCR识别
-                if (!hasText) {
-                    updateOcrStatus('检测到扫描版PDF正在OCR识别...');
-                    const status = document.getElementById('analyzeStatus');
-                    const statusText = document.getElementById('statusText');
-                    status.classList.remove('hidden');
-                    
-                    for (let i = 1; i <= maxPages; i++) {
-                        const page = await pdf.getPage(i);
-                        const scale = 2;
-                        const viewport = await page.getViewport({scale: scale});
-                        
-                        const canvas = document.createElement('canvas');
-                        const context = canvas.getContext('2d');
-                        canvas.height = viewport.height;
-                        canvas.width = viewport.width;
-                        
-                        await page.render({
-                            canvasContext: context,
-                            viewport: viewport
-                        }).promise;
-                        
-                        statusText.textContent = `OCR识别第${i}页...`;
-                        const result = await Tesseract.recognize(canvas, 'chi_sim+eng');
-                        const pageText = result.data.text.trim();
-                        if (pageText) {
-                            fullText += `[第${i}页] ${pageText}\n`;
-                        }
-                    }
-                    status.classList.add('hidden');
-                }
-                
-                if (!fullText.trim()) {
-                    return '[PDF内容无法识别]';
-                }
-                
-                if (pdf.numPages > maxPages) {
-                    fullText += `[...共${pdf.numPages}页，显示前${maxPages}页...]`;
-                }
-                
-                return fullText;
-            } catch (e) {
-                console.error('PDF解析失败: ', e);
-                return 'PDF解析失败';
-            }
-        }
-
-        // 读取ZIP压缩包
-        async function readZipFile(file) {
-            try {
-                const arrayBuffer = await file.arrayBuffer();
-                const zip = await JSZip.loadAsync(arrayBuffer);
-                
-                let text = '[ZIP压缩包文件列表]\n';
-                const files = [];
-                
-                zip.forEach((relativePath, zipEntry) => {
-                    if (!zipEntry.dir) {
-                        files.push(relativePath);
-                    }
-                });
-                
-                text += `共${files.length}个文件:\n`;
-                files.slice(0, 20).forEach((f, i) => {
-                    text += `${i + 1}. ${f}\n`;
-                });
-                
-                if (files.length > 20) {
-                    text += `...还有${files.length - 20}个文件\n`;
-                }
-                
-                // 尝试读取常见文档格式文件
-                const docFiles = files.filter(f => {
-                    const ext = f.split('.').pop().toLowerCase();
-                    return ['txt', 'md', 'docx', 'xlsx', 'pdf'].includes(ext);
-                });
-                
-                if (docFiles.length > 0) {
-                    text += '\n--- 文档内容摘要 ---\n';
-                    for (const docFile of docFiles.slice(0, 5)) {
-                        try {
-                            const content = await zip.file(docFile).async('string');
-                            const preview = content.substring(0, 2000);
-                            text += `\n【${docFile}】\n${preview}${content.length > 2000 ? '\n...(内容截断)' : ''}\n`;
-                        } catch (e) {
-                            text += `\n【${docFile}】读取失败\n`;
-                        }
-                    }
-                }
-                
-                return text;
-            } catch (e) {
-                console.error('ZIP解析失败:', e);
-                return '[ZIP解压失败，请检查文件格式]';
-            }
-        }
-
-        async function mergeFileContent() {
-            const caseDesc = document.getElementById('caseDesc');
-            const statusText = document.getElementById('statusText');
-            const status = document.getElementById('analyzeStatus');
-            let existingContent = caseDesc.value.trim();
-            
-            for (let i = 0; i < uploadedFiles.length; i++) {
-                const file = uploadedFiles[i];
-                const ext = file.name.split('.').pop().toLowerCase();
-                
-                // 如果是图片，显示OCR状态
-                if (['png','jpg','jpeg','bmp','gif','webp'].includes(ext)) {
-                    status.classList.remove('hidden');
-                    statusText.textContent = `正在OCR识别: ${file.name}...`;
-                }
-                
-                try {
-                    const content = await readFileContent(file);
-                    caseDesc.value = existingContent + '\n\n' + content;
-                    existingContent = caseDesc.value;
-                } catch (e) {
-                    console.error('合并失败:', e);
-                }
-            }
-            
-            status.classList.add('hidden');
-        }
-
-        function renderFileList() {
-            document.getElementById('fileList').innerHTML = uploadedFiles.map((file, i) => `
-                <div class="file-item flex items-center justify-between p-3 bg-slate-800/50 rounded-xl">
-                    <div class="flex items-center gap-3">
-                        ${getFileIcon(file.name)}
-                        <div>
-                            <p class="font-medium">${file.name}</p>
-                            <p class="text-sm text-slate-500">${formatSize(file.size)}</p>
-                        </div>
-                    </div>
-                    <button onclick="removeFile(${i})" class="p-2 hover:bg-slate-700 rounded-lg"><svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
-                </div>
-            `).join('');
-        }
-
-        function removeFile(i) { uploadedFiles.splice(i, 1); renderFileList(); }
-
-        function copyReport() { navigator.clipboard.writeText(reportText).then(() => alert('已复制到剪贴板')); }
-        function downloadReport() {
-            // 从报告中提取案件名称
-            let caseName = '案件评查报告';
-            const titleMatch = reportText.match(/^#\s+(.+?)(行政|刑事|民事|劳动|行政处罚)[\/\u4e00-\u9fa5]*?报告/);
-            if (titleMatch) {
-                caseName = titleMatch[1] + titleMatch[2] + titleMatch[3];
-            } else {
-                const lines = reportText.split('\n');
-                for (const line of lines) {
-                    if (line.startsWith('# ') && line.length > 2) {
-                        caseName = line.replace(/^#\s+/, '').replace(/\s*评查报告.*$/, '');
-                        break;
-                    }
-                }
-            }
-            caseName = caseName.replace(/[\\/:*?"<>|]/g, '').trim() || '案件评查报告';
-            
-            const blob = new Blob([reportText], { type: 'text/plain;charset=utf-8' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = caseName + '_评查报告_' + new Date().toISOString().slice(0,10) + '.txt';
-            a.click();
-        }
-        function goBack() {
-            document.getElementById('reportSection').classList.add('hidden');
-            document.getElementById('caseDesc').value = '';
-            uploadedFiles = [];
-            renderFileList();
-        }
-    </script>
-
-    <!-- 用户系统JS -->
-    <script>
-        // 用户数据存储
+        // ============ 用户系统 ============
         const DB = {
             users: JSON.parse(localStorage.getItem('case_users')) || [],
             currentUser: JSON.parse(localStorage.getItem('case_currentUser')) || null
         };
 
-        // 初始化超级管理员
-        function initAdmin() {
-            const adminUsername = 'alex217';
-            let admin = DB.users.find(u => u.username === adminUsername);
+        function init() {
+            // 初始化超级管理员
+            const admin = DB.users.find(u => u.username === 'alex217');
             if (!admin) {
-                admin = {
-                    id: 'admin_001',
-                    username: adminUsername,
+                DB.users.push({
+                    id: 'admin',
+                    username: 'alex217',
                     password: 'alex217',
                     points: 999999,
                     isAdmin: true,
-                    role: 'super_admin',
-                    createdAt: new Date().toISOString()
-                };
-                DB.users.push(admin);
-                localStorage.setItem('case_users', JSON.stringify(DB.users));
+                    isMember: true,
+                    memberExpire: '2099-12-31'
+                });
             } else {
                 admin.points = 999999;
                 admin.isAdmin = true;
+                admin.isMember = true;
             }
+            localStorage.setItem('case_users', JSON.stringify(DB.users));
+            
+            initUI();
         }
 
-        // 页面加载
-        document.addEventListener('DOMContentLoaded', function() {
-            initAdmin();
-            initUserUI();
-        });
-
-
-        function initUserUI() {
+        function initUI() {
             const user = DB.currentUser;
-            const userPanel = document.getElementById('userPanel');
+            const authPanel = document.getElementById('authPanel');
+            const mainPanel = document.getElementById('mainPanel');
             const userInfo = document.getElementById('userInfo');
-            const analyzeBtn = document.getElementById('analyzeBtn');
+            const rechargeLink = document.getElementById('rechargeLink');
 
             if (user) {
-                userPanel.classList.add('hidden');
+                authPanel.classList.add('hidden');
+                mainPanel.classList.remove('hidden');
                 userInfo.classList.remove('hidden');
-                document.getElementById('userName').textContent = user.username;
-                document.getElementById('userPoints').textContent = user.points;
+                document.getElementById('displayName').textContent = user.username;
+                document.getElementById('displayPoints').textContent = user.points;
                 
-                // 更新分析按钮文字
-                if (user.isAdmin) {
-                    analyzeBtn.innerHTML = '<span>生成评查报告（管理员无限次数）</span>';
+                // 更新按钮文字
+                const btnText = document.getElementById('btnText');
+                if (user.isAdmin || user.isMember) {
+                    btnText.textContent = '生成评查报告（会员无限）';
+                    rechargeLink.classList.add('hidden');
                 } else {
-                    analyzeBtn.innerHTML = '<span>生成评查报告（消耗5积分）</span>';
+                    btnText.textContent = '生成评查报告（消耗5积分）';
+                    rechargeLink.classList.remove('hidden');
                 }
             } else {
-                userPanel.classList.remove('hidden');
+                authPanel.classList.remove('hidden');
+                mainPanel.classList.add('hidden');
                 userInfo.classList.add('hidden');
-                analyzeBtn.innerHTML = '<span>请先登录</span>';
+                rechargeLink.classList.add('hidden');
             }
         }
 
-        function openUserPanel() {
-            document.getElementById('userPanel').classList.remove('hidden');
-            document.getElementById('settingsMask').classList.remove('hidden');
-        }
-
-        function closeUserPanel() {
-            document.getElementById('userPanel').classList.add('hidden');
-            document.getElementById('settingsMask').classList.add('hidden');
-        }
-
-        function switchToRegister() {
+        function showRegister() {
             document.getElementById('loginForm').classList.add('hidden');
             document.getElementById('registerForm').classList.remove('hidden');
         }
 
-        function switchToLogin() {
+        function showLogin() {
             document.getElementById('registerForm').classList.add('hidden');
             document.getElementById('loginForm').classList.remove('hidden');
         }
 
         function doRegister() {
-            const username = document.getElementById('regUsername').value.trim();
-            const password = document.getElementById('regPassword').value;
-
-            if (!username || !password) { alert('请填写用户名和密码'); return; }
-            if (password.length < 6) { alert('密码至少6位'); return; }
-            if (DB.users.find(u => u.username === username)) { alert('用户名已存在'); return; }
+            const user = document.getElementById('regUser').value.trim();
+            const pass = document.getElementById('regPass').value;
+            
+            if (!user || !pass) { alert('请填写用户名和密码'); return; }
+            if (pass.length < 6) { alert('密码至少6位'); return; }
+            if (DB.users.find(u => u.username === user)) { alert('用户名已存在'); return; }
 
             const newUser = {
                 id: 'user_' + Date.now(),
-                username: username,
-                password: password,
-                points: 10,
+                username: user,
+                password: pass,
+                points: 10,  // 新用户送10积分
                 isAdmin: false,
-                createdAt: new Date().toISOString()
+                isMember: false
             };
             DB.users.push(newUser);
             DB.currentUser = newUser;
             localStorage.setItem('case_users', JSON.stringify(DB.users));
             localStorage.setItem('case_currentUser', JSON.stringify(DB.currentUser));
             
-            closeUserPanel();
-            initUserUI();
             alert('注册成功！赠送10积分');
+            initUI();
         }
 
         function doLogin() {
-            const username = document.getElementById('loginUsername').value.trim();
-            const password = document.getElementById('loginPassword').value;
+            const user = document.getElementById('loginUser').value.trim();
+            const pass = document.getElementById('loginPass').value;
+            
+            if (!user || !pass) { alert('请填写用户名和密码'); return; }
+            
+            const found = DB.users.find(u => u.username === user && u.password === pass);
+            if (!found) { alert('用户名或密码错误'); return; }
 
-            if (!username || !password) { alert('请填写用户名和密码'); return; }
-
-            const user = DB.users.find(u => u.username === username && u.password === password);
-            if (!user) { alert('用户名或密码错误'); return; }
-
-            DB.currentUser = user;
+            DB.currentUser = found;
             localStorage.setItem('case_currentUser', JSON.stringify(DB.currentUser));
             
-            closeUserPanel();
-            initUserUI();
-            alert('欢迎回来，' + user.username + '！');
+            alert('欢迎回来，' + found.username + '！');
+            initUI();
         }
 
         function logout() {
             DB.currentUser = null;
             localStorage.removeItem('case_currentUser');
-            initUserUI();
+            initUI();
         }
 
-        // 修改原分析函数
-        const originalGenerateReport = generateReport;
-        generateReport = function() {
+        function showRecharge() {
+            document.getElementById('mainPanel').classList.add('hidden');
+            document.getElementById('rechargePanel').classList.remove('hidden');
+        }
+
+        function showMain() {
+            document.getElementById('rechargePanel').classList.add('hidden');
+            document.getElementById('mainPanel').classList.remove('hidden');
+        }
+
+        function recharge(amount) {
+            alert('请联系管理员微信：a2172026 充值\n金额：' + amount + '元');
+        }
+
+        function buyMember(plan) {
+            const price = plan === 'month' ? 28 : 268;
+            alert('请联系管理员微信：a2172026 开通会员\n金额：' + price + '元');
+        }
+
+        // ============ AI生成 ============
+        let reportText = '';
+
+        async function generateReport() {
             const user = DB.currentUser;
-            if (!user) { openUserPanel(); return; }
+            if (!user) { alert('请先登录'); return; }
             
             // 检查积分
-            if (!user.isAdmin && user.points < 5) {
-                alert('积分不足！需要5积分，请充值');
+            if (!user.isAdmin && !user.isMember && user.points < 5) {
+                showRecharge();
                 return;
             }
 
-            // 扣除积分（非管理员）
-            if (!user.isAdmin) {
+            const content = document.getElementById('caseContent').value.trim();
+            if (!content) { alert('请输入案件内容'); return; }
+
+            // 扣除积分
+            if (!user.isAdmin && !user.isMember) {
                 user.points -= 5;
                 localStorage.setItem('case_users', JSON.stringify(DB.users));
                 localStorage.setItem('case_currentUser', JSON.stringify(DB.currentUser));
-                document.getElementById('userPoints').textContent = user.points;
+                document.getElementById('displayPoints').textContent = user.points;
             }
 
-            // 调用原分析函数
-            originalGenerateReport();
+            // 显示状态
+            document.getElementById('status').classList.remove('hidden');
+            document.getElementById('reportSection').classList.add('hidden');
+
+            try {
+                const response = await fetch(CONFIG.API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': CONFIG.API_KEY
+                    },
+                    body: JSON.stringify({
+                        model: CONFIG.MODEL,
+                        messages: [
+                            { role: 'system', content: '你是法律案件评查专家。请生成专业、详细的评查报告。' },
+                            { role: 'user', content: '【案件内容】\n' + content + '\n\n请生成评查报告。' }
+                        ],
+                        temperature: 0.7
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.choices && data.choices[0]) {
+                    reportText = data.choices[0].message.content;
+                    document.getElementById('reportContent').textContent = reportText;
+                    document.getElementById('reportSection').classList.remove('hidden');
+                } else {
+                    throw new Error(data.message || '生成失败');
+                }
+            } catch (e) {
+                alert('生成失败: ' + e.message);
+                // 恢复积分
+                if (!user.isAdmin && !user.isMember) {
+                    user.points += 5;
+                    localStorage.setItem('case_users', JSON.stringify(DB.users));
+                    localStorage.setItem('case_currentUser', JSON.stringify(DB.currentUser));
+                }
+            }
+
+            document.getElementById('status').classList.add('hidden');
         }
+
+        function copyReport() {
+            navigator.clipboard.writeText(reportText).then(() => alert('已复制到剪贴板'));
+        }
+
+        function downloadReport() {
+            const blob = new Blob([reportText], { type: 'text/plain;charset=utf-8' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = '案件评查报告_' + new Date().toLocaleDateString() + '.txt';
+            a.click();
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', init);
     </script>
-
-    <!-- 底部 -->
-    <footer class="text-center py-6 text-slate-500 text-sm">
-        <p>版本号 V2.0 | 联系QQ：7879113</p>
-        <p class="mt-1 text-amber-400 text-xs">⚠️ 免责声明：分析结果仅供参考，不作为正式法律意见</p>
-        <button onclick="openSettings()" class="mt-2 text-blue-400 hover:text-blue-300">[API配置]</button>
-    </footer>
-
-    <!-- 设置面板遮罩 -->
-    <div id="settingsMask" class="fixed inset-0 bg-black/50 hidden" onclick="closeSettings()"></div>
-    
-    <!-- 设置面板 -->
-    <div id="settingsPanel" class="fixed bottom-0 left-0 right-0 bg-slate-800 rounded-t-3xl p-6 transform transition-transform duration-300 hidden z-50">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold">API 配置</h3>
-            <button onclick="closeSettings()" class="text-slate-400 text-2xl">&times;</button>
-        </div>
-        
-        <div class="space-y-4">
-            <div>
-                <label class="block text-sm text-slate-400 mb-2">选择AI模型</label>
-                <select id="modelSelect" class="w-full bg-slate-700 border border-slate-600 rounded-xl p-3 text-white">
-                    <option value="minimax">MiniMax</option>
-                    <option value="kimi">月之暗面Kimi</option>
-                    <option value="openai">OpenAI</option>
-                    <option value="tongyi">阿里通义</option>
-                    <option value="wenxin">百度文心</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm text-slate-400 mb-2">API Key</label>
-                <input type="password" id="apiKeyInput" class="w-full bg-slate-700 border border-slate-600 rounded-xl p-3 text-white" placeholder="请输入API Key">
-            </div>
-            <button onclick="saveApiSettings()" class="w-full py-3 bg-blue-600 hover:bg-blue-500 rounded-xl font-semibold">保存配置</button>
-            <p class="text-xs text-slate-500 text-center">* 配置仅保存在本地浏览器中</p>
-        </div>
-    </div>
-
-    <!-- 用户登录面板 -->
-    <div id="userPanel" class="fixed bottom-0 left-0 right-0 bg-slate-800 rounded-t-3xl p-6 transform transition-transform duration-300 hidden z-50">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold">用户登录</h3>
-            <button onclick="closeUserPanel()" class="text-slate-400 text-2xl">&times;</button>
-        </div>
-        <div id="loginForm" class="space-y-4">
-            <div>
-                <label class="block text-sm text-slate-400 mb-2">用户名</label>
-                <input type="text" id="loginUsername" class="w-full bg-slate-700 border border-slate-600 rounded-xl p-3 text-white" placeholder="请输入用户名">
-            </div>
-            <div>
-                <label class="block text-sm text-slate-400 mb-2">密码</label>
-                <input type="password" id="loginPassword" class="w-full bg-slate-700 border border-slate-600 rounded-xl p-3 text-white" placeholder="请输入密码">
-            </div>
-            <button onclick="doLogin()" class="w-full py-3 bg-blue-600 hover:bg-blue-500 rounded-xl font-semibold">登录</button>
-            <p class="text-xs text-slate-500 text-center">新用户注册送10积分 | 5积分评查1次 | <a href="#" onclick="switchToRegister()" class="text-blue-400">立即注册</a></p>
-        </div>
-        <div id="registerForm" class="space-y-4 hidden">
-            <div>
-                <label class="block text-sm text-slate-400 mb-2">用户名</label>
-                <input type="text" id="regUsername" class="w-full bg-slate-700 border border-slate-600 rounded-xl p-3 text-white" placeholder="请输入用户名">
-            </div>
-            <div>
-                <label class="block text-sm text-slate-400 mb-2">密码</label>
-                <input type="password" id="regPassword" class="w-full bg-slate-700 border border-slate-600 rounded-xl p-3 text-white" placeholder="请输入密码">
-            </div>
-            <button onclick="doRegister()" class="w-full py-3 bg-green-600 hover:bg-green-500 rounded-xl font-semibold">注册（送10积分）</button>
-            <p class="text-xs text-slate-500 text-center">已有账号？<a href="#" onclick="switchToLogin()" class="text-blue-400">立即登录</a></p>
-        </div>
-    </div>
-
-    <!-- 用户信息显示 -->
-    <div id="userInfo" class="fixed top-4 right-4 hidden z-40">
-        <div class="flex items-center gap-3 glass px-4 py-2 rounded-xl">
-            <span class="text-slate-400">积分:</span>
-            <span id="userPoints" class="text-amber-400 font-bold">10</span>
-            <span class="text-slate-500">|</span>
-            <span id="userName" class="text-white">用户</span>
-            <button onclick="logout()" class="text-slate-400 hover:text-white">退出</button>
-        </div>
-    </div>
 </body>
 </html>
