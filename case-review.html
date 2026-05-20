@@ -6,852 +6,266 @@
     <title>ü¶û ÊàëÁöÑÂÆ†Áâ©‰πêÂõ≠</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Nunito', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        h1 {
-            text-align: center;
-            color: white;
-            font-size: 2em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .new-egg-btn {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 25px;
-            font-family: inherit;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .new-egg-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-        }
-        .stats-bar {
-            display: flex;
-            gap: 15px;
-            background: rgba(255,255,255,0.2);
-            padding: 10px 20px;
-            border-radius: 20px;
-            color: white;
-            font-weight: 600;
-        }
-        .pet-count {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .pets-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
-        }
-        .pet-card {
-            background: white;
-            border-radius: 25px;
-            padding: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-            position: relative;
-            overflow: hidden;
-        }
-        .pet-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 80px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        }
-        .pet-header {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 15px;
-        }
-        .pet-avatar {
-            width: 80px;
-            height: 80px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 45px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-        .pet-avatar:hover {
-            transform: scale(1.1);
-        }
-        .pet-avatar.shake {
-            animation: petShake 0.5s ease-in-out infinite;
-        }
-        @keyframes petShake {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(-5deg); }
-            75% { transform: rotate(5deg); }
-        }
-        .pet-avatar.happy {
-            animation: petBounce 0.6s ease;
-        }
-        @keyframes petBounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-        .pet-info {
-            flex: 1;
-            margin-left: 15px;
-        }
-        .pet-name {
-            font-size: 18px;
-            font-weight: 700;
-            color: #2d3748;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .pet-name .edit-icon {
-            font-size: 12px;
-            cursor: pointer;
-            opacity: 0.5;
-            transition: opacity 0.2s;
-        }
-        .pet-name .edit-icon:hover {
-            opacity: 1;
-        }
-        .pet-type {
-            font-size: 12px;
-            color: #718096;
-            margin-top: 2px;
-        }
-        .pet-level {
-            background: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        .name-input-container {
-            display: none;
-            margin-top: 10px;
-        }
-        .name-input-container input {
-            width: 100%;
-            padding: 8px 12px;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            font-family: inherit;
-            font-size: 14px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        .name-input-container input:focus {
-            border-color: #667eea;
-        }
-        .pet-stats {
-            margin-bottom: 15px;
-        }
-        .stat-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-        .stat-icon {
-            width: 24px;
-            font-size: 14px;
-        }
-        .stat-bar-container {
-            flex: 1;
-            height: 12px;
-            background: #edf2f7;
-            border-radius: 6px;
-            overflow: hidden;
-            margin: 0 10px;
-        }
-        .stat-bar {
-            height: 100%;
-            border-radius: 6px;
-            transition: width 0.5s ease;
-        }
-        .stat-bar.hunger { background: linear-gradient(90deg, #f56565, #e53e3e); }
-        .stat-bar.happy { background: linear-gradient(90deg, #48bb78, #38a169); }
-        .stat-bar.energy { background: linear-gradient(90deg, #4299e1, #3182ce); }
-        .stat-value {
-            width: 30px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #4a5568;
-            text-align: right;
-        }
-        .pet-status {
-            text-align: center;
-            padding: 8px;
-            background: #f7fafc;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            font-size: 13px;
-            color: #4a5568;
-        }
-        .pet-status.hungry { background: #fed7d7; color: #c53030; }
-        .pet-status.tired { background: #feebc8; color: #c05621; }
-        .pet-status.sad { background: #e9d8fd; color: #6b46c1; }
-        .pet-status.happy { background: #c6f6d5; color: #276749; }
-        .pet-actions {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-        }
-        .action-btn {
-            padding: 10px 5px;
-            border: none;
-            border-radius: 12px;
-            font-family: inherit;
-            font-size: 24px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .action-btn:hover {
-            transform: translateY(-2px);
-        }
-        .action-btn span {
-            font-size: 10px;
-            margin-top: 2px;
-        }
-        .action-btn.feed {
-            background: linear-gradient(135deg, #fbb6ce 0%, #f687b3 100%);
-            box-shadow: 0 4px 10px rgba(246,135,179,0.4);
-        }
-        .action-btn.play {
-            background: linear-gradient(135deg, #90cdf4 0%, #4299e1 100%);
-            box-shadow: 0 4px 10px rgba(66,153,225,0.4);
-        }
-        .action-btn.sleep {
-            background: linear-gradient(135deg, #c3dafe 0%, #a3bffa 100%);
-            box-shadow: 0 4px 10px rgba(163,191,250,0.4);
-        }
-        .hatch-panel {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        .hatch-panel.show { display: flex; }
-        .hatch-modal {
-            background: white;
-            border-radius: 30px;
-            padding: 30px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .hatch-modal h2 {
-            text-align: center;
-            color: #2d3748;
-            margin-bottom: 25px;
-        }
-        .egg-types {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-        }
-        .egg-type {
-            background: #f7fafc;
-            border: 3px solid transparent;
-            border-radius: 20px;
-            padding: 20px 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .egg-type:hover {
-            border-color: #667eea;
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(102,126,234,0.3);
-        }
-        .egg-type .icon {
-            font-size: 50px;
-            display: block;
-            margin-bottom: 10px;
-        }
-        .egg-type .name {
-            font-weight: 700;
-            color: #2d3748;
-            font-size: 14px;
-        }
-        .egg-type .desc {
-            font-size: 11px;
-            color: #718096;
-            margin-top: 5px;
-        }
-        .close-btn {
-            position: absolute;
-            top: 15px; right: 15px;
-            width: 35px; height: 35px;
-            background: #f7fafc;
-            border: none;
-            border-radius: 50%;
-            font-size: 20px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .close-btn:hover { background: #e2e8f0; }
-        .empty-pets {
-            text-align: center;
-            padding: 60px 20px;
-            color: white;
-        }
-        .empty-pets .icon {
-            font-size: 100px;
-            margin-bottom: 20px;
-        }
-        .empty-pets h2 {
-            margin-bottom: 15px;
-        }
-        .empty-pets p {
-            opacity: 0.9;
-            margin-bottom: 25px;
-        }
-        .food-panel {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        .food-panel.show { display: flex; }
-        .food-modal {
-            background: white;
-            border-radius: 25px;
-            padding: 25px;
-            max-width: 350px;
-            width: 90%;
-        }
-        .food-modal h3 {
-            text-align: center;
-            color: #2d3748;
-            margin-bottom: 20px;
-        }
-        .food-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-        .food-item {
-            background: #f7fafc;
-            border-radius: 15px;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .food-item:hover {
-            background: #edf2f7;
-            transform: scale(1.05);
-        }
-        .food-item .icon {
-            font-size: 35px;
-            display: block;
-            margin-bottom: 5px;
-        }
-        .food-item .name {
-            font-size: 13px;
-            font-weight: 600;
-            color: #2d3748;
-        }
-        .food-item .effect {
-            font-size: 11px;
-            color: #718096;
-        }
-        .message-toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 12px 25px;
-            border-radius: 25px;
-            font-size: 14px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            z-index: 2000;
-        }
-        .message-toast.show { opacity: 1; }
-        .pet-card.sleeping .pet-avatar {
-            opacity: 0.7;
-        }
-        .pet-card.sleeping .pet-avatar::after {
-            content: 'üí§';
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            font-size: 20px;
-        }
-    </style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px}
+        .container{max-width:900px;margin:0 auto}
+        h1{text-align:center;color:white;font-size:2em;margin-bottom:10px;text-shadow:2px 2px 4px rgba(0,0,0,0.2)}
+        .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+        .stats-bar{display:flex;gap:15px;background:rgba(255,255,255,0.2);padding:10px 20px;border-radius:20px;color:white;font-weight:600}
+        .new-egg-btn{background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);color:white;border:none;padding:12px 24px;border-radius:25px;font-family:inherit;font-size:16px;font-weight:600;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.2);transition:transform 0.2s}
+        .new-egg-btn:hover{transform:translateY(-2px)}
+        .pets-container{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+        .pet-card{background:white;border-radius:25px;padding:20px;box-shadow:0 10px 40px rgba(0,0,0,0.15)}
+        .pet-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+        .pet-info{flex:1;margin-left:15px}
+        .pet-name{font-size:20px;font-weight:700;color:#2d3748;display:flex;align-items:center;gap:8px}
+        .pet-name .edit-icon{font-size:14px;cursor:pointer;opacity:0.5}
+        .pet-name .edit-icon:hover{opacity:1}
+        .pet-type{font-size:12px;color:#718096;margin-top:2px}
+        .pet-level{background:linear-gradient(135deg,#ffd700,#ffb347);color:white;padding:5px 12px;border-radius:15px;font-size:13px;font-weight:700}
+        .name-input-container{display:none;margin-top:8px}
+        .name-input-container input{width:100%;padding:8px 12px;border:2px solid #e2e8f0;border-radius:10px;font-family:inherit;font-size:14px;outline:none}
+        .pet-avatar-container{display:flex;justify-content:center;align-items:center;height:150px;margin:15px 0}
+        .pet-avatar{width:120px;height:120px;position:relative;cursor:pointer;transition:transform 0.3s}
+        .pet-avatar:hover{transform:scale(1.1)}
+        @keyframes lookAround{0%,30%{transform:translate(-50%,-50%)}35%,45%{transform:translate(-40%,-50%)}50%,70%{transform:translate(-50%,-50%)}75%,85%{transform:translate(-60%,-50%)}90%,100%{transform:translate(-50%,-50%)}}
+        @keyframes antL{0%,100%{transform:rotate(-20deg)}50%{transform:rotate(-35deg)}}
+        @keyframes antR{0%,100%{transform:rotate(20deg)}50%{transform:rotate(35deg)}}
+        @keyframes tailWag{0%,100%{transform:rotate(-15deg)}50%{transform:rotate(15deg)}}
+        @keyframes catBlink{0%,90%,100%{transform:scaleY(1)}95%{transform:scaleY(0.1)}}
+        @keyframes tailSway{0%,100%{transform:rotate(-20deg)}50%{transform:rotate(20deg)}}
+        @keyframes tongueOut{0%,70%,100%{height:18px}80%,90%{height:25px}}
+        @keyframes earWiggle{0%,100%{transform:rotate(-15deg)}50%{transform:rotate(-10deg)}}
+        @keyframes rabbitBlink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(0.1)}}
+        @keyframes wingFlap{0%,100%{transform:translateX(-50%) rotate(0deg)}50%{transform:translateX(-50%) rotate(-10deg)}}
+        @keyframes dogLook{0%,40%{transform:translateX(0)}45%,55%{transform:translateX(3px)}60%,100%{transform:translateX(0)}}
+        @keyframes happy{0%,100%{transform:translateY(0) scale(1)}25%{transform:translateY(-10px) scale(1.05)}50%{transform:translateY(-5px)}75%{transform:translateY(-8px)}}
+        .pet-avatar.happy{animation:happy 0.6s ease}
+        /* Crayfish */
+        .pc-body{position:absolute;width:70px;height:80px;background:linear-gradient(145deg,#e74c3c,#c0392b,#a93226);border-radius:50% 50% 45% 45%;left:50%;top:50%;transform:translate(-50%,-50%);box-shadow:inset -10px -10px 20px rgba(0,0,0,0.3),inset 5px 5px 15px rgba(255,255,255,0.2)}
+        .pc-body::before{content:'';position:absolute;width:50px;height:15px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);border-radius:50%;top:12px;left:50%;transform:translateX(-50%)}
+        .pc-head{position:absolute;width:60px;height:40px;background:linear-gradient(180deg,#e74c3c,#c0392b);border-radius:50% 50% 40% 40%;left:50%;top:5px;transform:translateX(-50%)}
+        .pc-eye{position:absolute;width:16px;height:18px;background:white;border-radius:50%;top:12px;box-shadow:inset 2px 2px 5px rgba(0,0,0,0.1)}
+        .pc-eye.left{left:20px}.pc-eye.right{right:20px}
+        .pc-eye::after{content:'';position:absolute;width:10px;height:10px;background:#1a1a2e;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);animation:lookAround 4s ease-in-out infinite}
+        .pc-ant{position:absolute;width:4px;height:35px;background:linear-gradient(180deg,#e74c3c,#a93226);border-radius:50%;top:-20px}
+        .pc-ant.left{left:35px;animation:antL 2s ease-in-out infinite}.pc-ant.right{right:35px;animation:antR 2s ease-in-out infinite 0.3s}
+        .pc-claw{position:absolute;width:35px;height:45px;background:linear-gradient(145deg,#e74c3c,#c0392b);border-radius:50% 50% 40% 40%;top:45px;box-shadow:inset -5px -5px 15px rgba(0,0,0,0.3)}
+        .pc-claw.left{left:-5px;transform:rotate(25deg)}.pc-claw.right{right:-5px;transform:rotate(-25deg)}
+        .pc-claw::before{content:'';position:absolute;width:20px;height:25px;background:#c0392b;border-radius:50%;top:8px;left:8px}
+        .pc-leg{position:absolute;width:6px;height:20px;background:#c0392b;border-radius:50%;bottom:15px;animation:legWiggle 0.8s ease-in-out infinite}
+        @keyframes legWiggle{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+        .pc-leg:nth-child(7){left:25px;animation-delay:0s}.pc-leg:nth-child(8){left:40px;animation-delay:0.1s}.pc-leg:nth-child(9){left:55px;animation-delay:0.2s}.pc-leg:nth-child(10){right:55px;animation-delay:0.3s}
+        .pc-tail{position:absolute;width:40px;height:25px;background:linear-gradient(180deg,#c0392b,#a93226);border-radius:0 0 50% 50%;bottom:0;left:50%;transform:translateX(-50%);animation:tailWag 1s ease-in-out infinite}
+        /* Cat */
+        .pca-body{position:absolute;width:80px;height:60px;background:linear-gradient(145deg,#f5a623,#e8941c,#d4820b);border-radius:50% 50% 45% 45%;left:50%;top:55%;transform:translate(-50%,-50%);box-shadow:inset -8px -8px 15px rgba(0,0,0,0.2)}
+        .pca-head{position:absolute;width:75px;height:65px;background:linear-gradient(145deg,#f5a623,#e8941c);border-radius:50%;left:50%;top:15px;transform:translateX(-50%)}
+        .pca-ear{position:absolute;width:0;height:0;border-left:15px solid transparent;border-right:15px solid transparent;border-bottom:25px solid #e8941c;top:0}
+        .pca-ear.left{left:15px;transform:rotate(-15deg)}.pca-ear.right{right:15px;transform:rotate(15deg)}
+        .pca-ear::after{content:'';position:absolute;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:15px solid #ffb6c1;top:8px;left:-8px}
+        .pca-eye{position:absolute;width:18px;height:20px;background:#2ecc71;border-radius:50%;top:30px;animation:catBlink 4s ease-in-out infinite}
+        .pca-eye.left{left:18px}.pca-eye.right{right:18px}
+        .pca-eye::after{content:'';position:absolute;width:4px;height:14px;background:#1a1a2e;border-radius:2px;top:3px;left:7px}
+        .pca-eye::before{content:'';position:absolute;width:5px;height:5px;background:white;border-radius:50%;top:4px;left:4px}
+        .pca-nose{position:absolute;width:10px;height:8px;background:#ff6b81;border-radius:50% 50% 40% 40%;top:50px;left:50%;transform:translateX(-50%)}
+        .pca-mouth{position:absolute;width:20px;height:10px;top:56px;left:50%;transform:translateX(-50%)}
+        .pca-mouth::before,.pca-mouth::after{content:'';position:absolute;width:10px;height:8px;border-bottom:2px solid #333;border-radius:0 0 50% 50%}
+        .pca-mouth::before{left:0}.pca-mouth::after{right:0}
+        .pca-whisker{position:absolute;width:25px;height:2px;background:#333;top:52px}
+        .pca-whisker:nth-child(9){left:-5px;transform:rotate(-10deg)}.pca-whisker:nth-child(10){left:-5px;top:56px;transform:rotate(5deg)}.pca-whisker:nth-child(11){right:-5px;transform:rotate(10deg)}.pca-whisker:nth-child(12){right:-5px;top:56px;transform:rotate(-5deg)}
+        .pca-tail{position:absolute;width:15px;height:50px;background:linear-gradient(180deg,#e8941c,#d4820b);border-radius:10px;right:5px;top:50px;transform-origin:bottom center;animation:tailSway 2s ease-in-out infinite}
+        /* Dog */
+        .pd-body{position:absolute;width:75px;height:55px;background:linear-gradient(145deg,#8b4513,#654321);border-radius:50% 50% 45% 45%;left:50%;top:55%;transform:translate(-50%,-50%)}
+        .pd-head{position:absolute;width:70px;height:65px;background:linear-gradient(145deg,#8b4513,#7a3d12);border-radius:50%;left:50%;top:12px;transform:translateX(-50%)}
+        .pd-ear{position:absolute;width:22px;height:35px;background:linear-gradient(145deg,#654321,#4a3015);border-radius:50% 50% 50% 50%;top:8px;animation:earWiggle 3s ease-in-out infinite}
+        .pd-ear.left{left:5px;transform:rotate(-15deg)}.pd-ear.right{right:5px;transform:rotate(15deg)}
+        .pd-eye{position:absolute;width:18px;height:18px;background:#1a1a2e;border-radius:50%;top:28px;animation:dogLook 5s ease-in-out infinite}
+        .pd-eye.left{left:15px}.pd-eye.right{right:15px}
+        .pd-eye::after{content:'';position:absolute;width:6px;height:6px;background:white;border-radius:50%;top:3px;left:3px}
+        .pd-nose{position:absolute;width:18px;height:14px;background:#1a1a2e;border-radius:50% 50% 45% 45%;top:42px;left:50%;transform:translateX(-50%)}
+        .pd-nose::after{content:'';position:absolute;width:6px;height:3px;background:#333;border-radius:50%;top:2px;left:6px}
+        .pd-tongue{position:absolute;width:12px;height:18px;background:linear-gradient(180deg,#ff6b6b,#e74c3c);border-radius:0 0 50% 50%;top:55px;left:50%;transform:translateX(-50%);animation:tongueOut 3s ease-in-out infinite}
+        .pd-tail{position:absolute;width:12px;height:35px;background:linear-gradient(180deg,#8b4513,#654321);border-radius:10px;right:8px;top:35px;transform-origin:bottom center;animation:tailWag 0.5s ease-in-out infinite}
+        /* Rabbit */
+        .pr-body{position:absolute;width:70px;height:65px;background:linear-gradient(145deg,#fff,#f0f0f0);border-radius:50%;left:50%;top:55%;transform:translate(-50%,-50%);box-shadow:inset -5px -5px 15px rgba(0,0,0,0.05)}
+        .pr-head{position:absolute;width:60px;height:55px;background:linear-gradient(145deg,#fff,#f5f5f5);border-radius:50%;left:50%;top:18px;transform:translateX(-50%)}
+        .pr-ear{position:absolute;width:18px;height:55px;background:linear-gradient(145deg,#fff,#f0f0f0);border-radius:50%;top:-25px;animation:earWiggle 2s ease-in-out infinite}
+        .pr-ear.left{left:25px;transform:rotate(-15deg);animation-delay:0.2s}.pr-ear.right{right:25px;transform:rotate(15deg)}
+        .pr-ear::after{content:'';position:absolute;width:10px;height:45px;background:linear-gradient(145deg,#ffb6c1,#ff9aa2);border-radius:50%;top:5px;left:4px}
+        .pr-eye{position:absolute;width:14px;height:14px;background:#e74c3c;border-radius:50%;top:30px;animation:rabbitBlink 5s ease-in-out infinite}
+        .pr-eye.left{left:18px}.pr-eye.right{right:18px}
+        .pr-eye::after{content:'';position:absolute;width:5px;height:5px;background:white;border-radius:50%;top:2px;left:2px}
+        .pr-nose{position:absolute;width:12px;height:10px;background:#ffb6c1;border-radius:50%;top:43px;left:50%;transform:translateX(-50%)}
+        .pr-cheek{position:absolute;width:15px;height:10px;background:rgba(255,182,193,0.5);border-radius:50%;top:40px}
+        .pr-cheek.left{left:8px}.pr-cheek.right{right:8px}
+        .pr-tail{position:absolute;width:20px;height:20px;background:white;border-radius:50%;bottom:25px;left:50%;transform:translateX(-50%);box-shadow:inset -3px -3px 8px rgba(0,0,0,0.1)}
+        /* Bird */
+        .pb-body{position:absolute;width:55px;height:60px;background:linear-gradient(145deg,#3498db,#2980b9);border-radius:50% 50% 45% 45%;left:50%;top:50%;transform:translate(-50%,-50%)}
+        .pb-head{position:absolute;width:50px;height:50px;background:linear-gradient(145deg,#3498db,#2980b9);border-radius:50%;left:50%;top:8px;transform:translateX(-50%)}
+        .pb-eye{position:absolute;width:14px;height:14px;background:white;border-radius:50%;top:18px}
+        .pb-eye.left{left:12px}.pb-eye.right{right:12px}
+        .pb-eye::after{content:'';position:absolute;width:8px;height:8px;background:#1a1a2e;border-radius:50%;top:3px;left:3px}
+        .pb-beak{position:absolute;width:0;height:0;border-top:8px solid transparent;border-bottom:10px solid transparent;border-left:18px solid #f39c12;top:28px;left:50%;transform:translateX(-50%);z-index:1}
+        .pb-wing{position:absolute;width:30px;height:40px;background:linear-gradient(145deg,#2980b9,#1f6dad);border-radius:50%;top:35px;left:50%;transform:translateX(-50%);transform-origin:top center;animation:wingFlap 0.8s ease-in-out infinite}
+        .pb-tuft{position:absolute;width:8px;height:15px;background:#3498db;border-radius:50%;top:5px;left:50%;transform:translateX(-50%) rotate(-20deg)}
+        /* Panda */
+        .pp-body{position:absolute;width:75px;height:60px;background:linear-gradient(145deg,#fff,#f5f5f5);border-radius:50% 50% 45% 45%;left:50%;top:55%;transform:translate(-50%,-50%)}
+        .pp-head{position:absolute;width:80px;height:70px;background:linear-gradient(145deg,#fff,#f0f0f0);border-radius:50%;left:50%;top:10px;transform:translateX(-50%)}
+        .pp-ear{position:absolute;width:30px;height:30px;background:#1a1a2e;border-radius:50%;top:0}
+        .pp-ear.left{left:5px;transform:rotate(-20deg)}.pp-ear.right{right:5px;transform:rotate(20deg)}
+        .pp-patch{position:absolute;width:25px;height:20px;background:#1a1a2e;border-radius:50%;top:25px}
+        .pp-patch.left{left:12px;transform:rotate(-10deg)}.pp-patch.right{right:12px;transform:rotate(10deg)}
+        .pp-eye{position:absolute;width:12px;height:12px;background:white;border-radius:50%;top:28px}
+        .pp-eye.left{left:18px}.pp-eye.right{right:18px}
+        .pp-eye::after{content:'';position:absolute;width:6px;height:6px;background:#1a1a2e;border-radius:50%;top:3px;left:3px}
+        .pp-nose{position:absolute;width:15px;height:12px;background:#1a1a2e;border-radius:50% 50% 45% 45%;top:48px;left:50%;transform:translateX(-50%)}
+        .pp-mouth{position:absolute;width:20px;height:10px;top:58px;left:50%;transform:translateX(-50%)}
+        .pp-mouth::before,.pp-mouth::after{content:'';position:absolute;width:10px;height:8px;border-bottom:2px solid #333;border-radius:0 0 50% 50%}
+        .pp-mouth::before{left:0}.pp-mouth::after{right:0}
+        /* Penguin */
+        .ppe-body{position:absolute;width:70px;height:80px;background:linear-gradient(145deg,#1a1a2e,#0f0f1a);border-radius:50% 50% 45% 45%;left:50%;top:50%;transform:translate(-50%,-50%)}
+        .ppe-belly{position:absolute;width:50px;height:60px;background:linear-gradient(145deg,#fff,#f0f0f0);border-radius:50%;left:50%;top:35px;transform:translateX(-50%)}
+        .ppe-head{position:absolute;width:60px;height:50px;background:linear-gradient(145deg,#1a1a2e,#0f0f1a);border-radius:50%;left:50%;top:5px;transform:translateX(-50%)}
+        .ppe-eye{position:absolute;width:14px;height:14px;background:white;border-radius:50%;top:18px}
+        .ppe-eye.left{left:15px}.ppe-eye.right{right:15px}
+        .ppe-eye::after{content:'';position:absolute;width:8px;height:8px;background:#1a1a2e;border-radius:50%;top:3px;left:3px}
+        .ppe-beak{position:absolute;width:0;height:0;border-top:10px solid #f39c12;border-left:10px solid transparent;border-right:10px solid transparent;top:32px;left:50%;transform:translateX(-50%)}
+        .ppe-wing{position:absolute;width:15px;height:40px;background:#1a1a2e;border-radius:50%;top:35px;animation:wingFlap 1.5s ease-in-out infinite}
+        .ppe-wing.left{left:0;transform:rotate(15deg)}.ppe-wing.right{right:0;transform:rotate(-15deg)}
+        .ppe-foot{position:absolute;width:20px;height:10px;background:#f39c12;border-radius:50%;bottom:5px}
+        .ppe-foot.left{left:25px}.ppe-foot.right{right:25px}
+        /* Fox */
+        .pf-body{position:absolute;width:70px;height:55px;background:linear-gradient(145deg,#e67e22,#d35400);border-radius:50% 50% 45% 45%;left:50%;top:55%;transform:translate(-50%,-50%)}
+        .pf-head{position:absolute;width:70px;height:60px;background:linear-gradient(145deg,#e67e22,#d35400);border-radius:50% 50% 45% 45%;left:50%;top:15px;transform:translateX(-50%)}
+        .pf-ear{position:absolute;width:0;height:0;border-left:15px solid transparent;border-right:15px solid transparent;border-bottom:30px solid #e67e22;top:0}
+        .pf-ear.left{left:8px;transform:rotate(-15deg)}.pf-ear.right{right:8px;transform:rotate(15deg)}
+        .pf-ear::after{content:'';position:absolute;width:8px;height:20px;background:#ffeaa7;border-radius:50%;top:10px;left:-8px}
+        .pf-eye{position:absolute;width:14px;height:16px;background:#2d3436;border-radius:50%;top:25px}
+        .pf-eye.left{left:18px}.pf-eye.right{right:18px}
+        .pf-eye::after{content:'';position:absolute;width:4px;height:4px;background:white;border-radius:50%;top:3px;left:3px}
+        .pf-nose{position:absolute;width:12px;height:10px;background:#1a1a2e;border-radius:50%;top:42px;left:50%;transform:translateX(-50%)}
+        .pf-mouth{position:absolute;width:15px;height:8px;top:48px;left:50%;transform:translateX(-50%)}
+        .pf-mouth::before{content:'';position:absolute;width:100%;height:100%;border-bottom:2px solid #333;border-radius:0 0 50% 50%}
+        .pf-tail{position:absolute;width:15px;height:45px;background:linear-gradient(180deg,#e67e22 50%,#fff 50%);border-radius:10px;right:5px;top:45px;transform-origin:bottom center;animation:tailSway 1.5s ease-in-out infinite}
+        /* Owl */
+        .po-body{position:absolute;width:70px;height:70px;background:linear-gradient(145deg,#8b7355,#6b5344);border-radius:50% 50% 45% 45%;left:50%;top:50%;transform:translate(-50%,-50%)}
+        .po-head{position:absolute;width:75px;height:65px;background:linear-gradient(145deg,#8b7355,#6b5344);border-radius:50%;left:50%;top:5px;transform:translateX(-50%)}
+        .po-ear{position:absolute;width:20px;height:25px;background:#6b5344;border-radius:50% 50% 0 0;top:0}
+        .po-ear.left{left:10px;transform:rotate(-15deg)}.po-ear.right{right:10px;transform:rotate(15deg)}
+        .po-face{position:absolute;width:60px;height:50px;background:#f5f0e6;border-radius:50%;left:50%;top:15px;transform:translateX(-50%)}
+        .po-eye{position:absolute;width:22px;height:22px;background:#ffd700;border-radius:50%;top:20px;box-shadow:inset 2px 2px 5px rgba(0,0,0,0.2)}
+        .po-eye.left{left:12px}.po-eye.right{right:12px}
+        .po-eye::after{content:'';position:absolute;width:12px;height:12px;background:#1a1a2e;border-radius:50%;top:5px;left:5px}
+        .po-eye::before{content:'';position:absolute;width:4px;height:4px;background:white;border-radius:50%;top:6px;left:6px}
+        .po-beak{position:absolute;width:15px;height:15px;background:#f39c12;border-radius:50% 50% 50% 50% / 30% 30% 70% 70%;top:42px;left:50%;transform:translateX(-50%)}
+        .po-wing{position:absolute;width:25px;height:40px;background:#6b5344;border-radius:50%;top:40px;animation:wingFlap 1.2s ease-in-out infinite}
+        .po-wing.left{left:0;transform:rotate(10deg)}.po-wing.right{right:0;transform:rotate(-10deg)}
+        .po-foot{position:absolute;width:15px;height:10px;background:#f39c12;border-radius:50%;bottom:5px}
+        .po-foot.left{left:35px}.po-foot.right{right:35px}
+        /* Stats & Actions */
+        .pet-stats{margin-bottom:15px}
+        .stat-row{display:flex;align-items:center;margin-bottom:8px}
+        .stat-icon{width:24px;font-size:14px}
+        .stat-bar-container{flex:1;height:12px;background:#edf2f7;border-radius:6px;overflow:hidden;margin:0 10px}
+        .stat-bar{height:100%;border-radius:6px;transition:width 0.5s ease}
+        .stat-bar.hunger{background:linear-gradient(90deg,#f56565,#e53e3e)}
+        .stat-bar.happy{background:linear-gradient(90deg,#48bb78,#38a169)}
+        .stat-bar.energy{background:linear-gradient(90deg,#4299e1,#3182ce)}
+        .stat-value{width:30px;font-size:12px;font-weight:600;color:#4a5568;text-align:right}
+        .pet-status{text-align:center;padding:8px;background:#f7fafc;border-radius:10px;margin-bottom:15px;font-size:13px;color:#4a5568}
+        .pet-status.hungry{background:#fed7d7;color:#c53030}.pet-status.tired{background:#feebc8;color:#c05621}.pet-status.sad{background:#e9d8fd;color:#6b46c1}.pet-status.happy{background:#c6f6d5;color:#276749}
+        .pet-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+        .action-btn{padding:10px 5px;border:none;border-radius:12px;font-family:inherit;font-size:24px;cursor:pointer;transition:transform 0.2s;display:flex;flex-direction:column;align-items:center}
+        .action-btn:hover{transform:translateY(-2px)}
+        .action-btn span{font-size:10px;margin-top:2px}
+        .action-btn.feed{background:linear-gradient(135deg,#fbb6ce,#f687b3);box-shadow:0 4px 10px rgba(246,135,179,0.4)}
+        .action-btn.play{background:linear-gradient(135deg,#90cdf4,#4299e1);box-shadow:0 4px 10px rgba(66,153,225,0.4)}
+        .action-btn.sleep{background:linear-gradient(135deg,#c3dafe,#a3bffa);box-shadow:0 4px 10px rgba(163,191,250,0.4)}
+        .hatch-panel,.food-panel{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:1000}
+        .hatch-panel.show,.food-panel.show{display:flex}
+        .hatch-modal{background:white;border-radius:30px;padding:30px;max-width:500px;width:90%;max-height:90vh;overflow-y:auto}
+        .hatch-modal h2{text-align:center;color:#2d3748;margin-bottom:25px}
+        .egg-types{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+        .egg-type{background:#f7fafc;border:3px solid transparent;border-radius:20px;padding:20px 10px;text-align:center;cursor:pointer;transition:all 0.3s}
+        .egg-type:hover{border-color:#667eea;transform:translateY(-5px);box-shadow:0 10px 30px rgba(102,126,234,0.3)}
+        .egg-type .icon{font-size:50px;display:block;margin-bottom:10px}
+        .egg-type .name{font-weight:700;color:#2d3748;font-size:14px}
+        .egg-type .desc{font-size:11px;color:#718096;margin-top:5px}
+        .food-modal{background:white;border-radius:25px;padding:25px;max-width:350px;width:90%}
+        .food-modal h3{text-align:center;color:#2d3748;margin-bottom:20px}
+        .food-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+        .food-item{background:#f7fafc;border-radius:15px;padding:15px;text-align:center;cursor:pointer;transition:all 0.2s}
+        .food-item:hover{background:#edf2f7;transform:scale(1.05)}
+        .food-item .icon{font-size:35px;display:block;margin-bottom:5px}
+        .food-item .name{font-size:13px;font-weight:600;color:#2d3748}
+        .food-item .effect{font-size:11px;color:#718096}
+        .close-btn{position:absolute;top:15px;right:15px;width:35px;height:35px;background:#f7fafc;border:none;border-radius:50%;font-size:20px;cursor:pointer}
+        .close-btn:hover{background:#e2e8f0}
+        .message-toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.8);color:white;padding:12px 25px;border-radius:25px    </style>
 </head>
 <body>
     <div class="container">
-        <h1>üè† ÊàëÁöÑÂÆ†Áâ©‰πêÂõ≠</h1>
-        
+        <h1>?? Œ“µƒ≥ËŒÔ¿÷‘∞</h1>
         <div class="header">
-            <div class="stats-bar">
-                <div class="pet-count">üêæ ÊàëÁöÑÂÆ†Áâ©: <span id="petCount">0</span> Âè™</div>
-            </div>
-            <button class="new-egg-btn" onclick="showHatchPanel()">ü•öü•ö È¢ÜÂÖªÊñ∞ÂÆ†Áâ©</button>
+            <div class="stats-bar">?? Œ“µƒ≥ËŒÔ: <span id="petCount">0</span> ÷ª</div>
+            <button class="new-egg-btn" onclick="showHatchPanel()">???? ¡Ï—¯–¬≥ËŒÔ</button>
         </div>
-
-        <div class="pets-container" id="petsContainer">
-            <div class="empty-pets" id="emptyState">
-                <div class="icon">ü•ö</div>
-                <h2>ËøòÊ≤°ÊúâÂÆ†Áâ©Âì¶~</h2>
-                <p>Âø´ÂéªÈ¢ÜÂÖª‰∏ÄÂè™Â±û‰∫é‰Ω†ÁöÑÂ∞èÂÆ†Áâ©ÂêßÔºÅ</p>
-                <button class="new-egg-btn" onclick="showHatchPanel()">ü•öü•ö È¢ÜÂÖªÊñ∞ÂÆ†Áâ©</button>
-            </div>
-        </div>
+        <div class="pets-container" id="petsContainer"></div>
     </div>
-
-    <!-- È¢ÜÂÖªÈù¢Êùø -->
     <div class="hatch-panel" id="hatchPanel">
-        <button class="close-btn" onclick="hideHatchPanel()">‚úï</button>
+        <button class="close-btn" onclick="hideHatchPanel()">?</button>
         <div class="hatch-modal">
-            <h2>üéÅ ÈÄâÊã©‰Ω†ÊÉ≥Ë¶ÅÈ¢ÜÂÖªÁöÑÂÆ†Áâ©</h2>
+            <h2>?? —°‘Òƒ„œÎ“™¡Ï—¯µƒ≥ËŒÔ</h2>
             <div class="egg-types">
-                <div class="egg-type" onclick="hatchPet('crayfish')">
-                    <span class="icon">ü¶û</span>
-                    <span class="name">Â∞èÈæôËôæ</span>
-                    <span class="desc">Ê¥ªÊ≥ºÂ•ΩÂä®</span>
-                </div>
-                <div class="egg-type" onclick="hatchPet('cat')">
-                    <span class="icon">üê±</span>
-                    <span class="name">Â∞èÁå´Âí™</span>
-                    <span class="desc">È´òÂÜ∑ÂÇ≤Â®á</span>
-                </div>
-                <div class="egg-type" onclick="hatchPet('dog')">
-                    <span class="icon">üê∂</span>
-                    <span class="name">Â∞èÁãóÁãó</span>
-                    <span class="desc">Âø†ËØöÂèãÂñÑ</span>
-                </div>
-                <div class="egg-type" onclick="hatchPet('rabbit')">
-                    <span class="icon">üê∞</span>
-                    <span class="name">Â∞èÂÖîÂ≠ê</span>
-                    <span class="desc">Ê∏©ÊüîÂèØÁà±</span>
-                </div>
-                <div class="egg-type" onclick="hatchPet('bird')">
-                    <span class="icon">üê¶</span>
-                    <span class="name">Â∞èÈ∏ü</span>
-                    <span class="desc">Ê≠åÂ£∞ÁîúÁæé</span>
-                </div>
-                <div class="egg-type" onclick="hatchPet('panda')">
-                    <span class="icon">üêº</span>
-                    <span class="name">Â∞èÁÜäÁå´</span>
-                    <span class="desc">ÊÜ®ÂéöÂëÜËêå</span>
-                </div>
-                <div class="egg-type" onclick="hatchPet('penguin')">
-                    <span class="icon">üêß</span>
-                    <span class="name">Â∞è‰ºÅÈπÖ</span>
-                    <span class="desc">ÂëÜËêåÂèØÁà±</span>
-                </div>
-                <div class="egg-type" onclick="hatchPet('fox')">
-                    <span class="icon">ü¶ä</span>
-                    <span class="name">Â∞èÁãêÁã∏</span>
-                    <span class="desc">ËÅ™Êòé‰º∂‰øê</span>
-                </div>
-                <div class="egg-type" onclick="hatchPet('owl')">
-                    <span class="icon">ü¶â</span>
-                    <span class="name">Â∞èÁå´Â§¥Èπ∞</span>
-                    <span class="desc">ÁùøÊô∫Ê≤âÁ®≥</span>
-                </div>
+                <div class="egg-type" onclick="hatchPet('crayfish')"><span class="icon">??</span><span class="name">–°¡˙œ∫</span><span class="desc">ªÓ∆√∫√∂Ø</span></div>
+                <div class="egg-type" onclick="hatchPet('cat')"><span class="icon">??</span><span class="name">–°√®ﬂ‰</span><span class="desc">∏ﬂ¿‰∞¡Ωø</span></div>
+                <div class="egg-type" onclick="hatchPet('dog')"><span class="icon">??</span><span class="name">–°π∑π∑</span><span class="desc">÷“≥œ”—…∆</span></div>
+                <div class="egg-type" onclick="hatchPet('rabbit')"><span class="icon">??</span><span class="name">–°Õ√◊”</span><span class="desc">Œ¬»·ø…∞Æ</span></div>
+                <div class="egg-type" onclick="hatchPet('bird')"><span class="icon">??</span><span class="name">–°ƒÒ</span><span class="desc">∏Ë…˘Ã√¿</span></div>
+                <div class="egg-type" onclick="hatchPet('panda')"><span class="icon">??</span><span class="name">–°–‹√®</span><span class="desc">∫©∫Ò¥Ù√»</span></div>
+                <div class="egg-type" onclick="hatchPet('penguin')"><span class="icon">??</span><span class="name">–°∆Û∂Ï</span><span class="desc">¥Ù√»ø…∞Æ</span></div>
+                <div class="egg-type" onclick="hatchPet('fox')"><span class="icon">??</span><span class="name">–°∫¸¿Í</span><span class="desc">¥œ√˜¡Ê¿˛</span></div>
+                <div class="egg-type" onclick="hatchPet('owl')"><span class="icon">??</span><span class="name">–°√®Õ∑”•</span><span class="desc">Ó£÷«≥¡Œ»</span></div>
             </div>
         </div>
     </div>
-
-    <!-- ÂñÇÈ£üÈù¢Êùø -->
     <div class="food-panel" id="foodPanel">
         <div class="food-modal">
-            <h3>üçΩÔ∏è ÈÄâÊã©È£üÁâ©</h3>
+            <h3>??? —°‘Ò ≥ŒÔ</h3>
             <div class="food-grid">
-                <div class="food-item" onclick="feedPet('apple')">
-                    <span class="icon">üçé</span>
-                    <span class="name">ËãπÊûú</span>
-                    <span class="effect">+15 È•±È£üÂ∫¶</span>
-                </div>
-                <div class="food-item" onclick="feedPet('carrot')">
-                    <span class="icon">ü•ï</span>
-                    <span class="name">ËÉ°ËêùÂçú</span>
-                    <span class="effect">+12 È•±È£üÂ∫¶</span>
-                </div>
-                <div class="food-item" onclick="feedPet('fish')">
-                    <span class="icon">üêü</span>
-                    <span class="name">Â∞èÈ±ºÂπ≤</span>
-                    <span class="effect">+20 È•±È£üÂ∫¶</span>
-                </div>
-                <div class="food-item" onclick="feedPet('cake')">
-                    <span class="icon">üç∞</span>
-                    <span class="name">Â∞èËõãÁ≥ï</span>
-                    <span class="effect">+25 È•±È£üÂ∫¶</span>
-                </div>
+                <div class="food-item" onclick="feedPet('apple')"><span class="icon">??</span><span class="name">∆ªπ˚</span><span class="effect">+15 ±• ≥∂»</span></div>
+                <div class="food-item" onclick="feedPet('carrot')"><span class="icon">??</span><span class="name">∫˙¬‹≤∑</span><span class="effect">+12 ±• ≥∂»</span></div>
+                <div class="food-item" onclick="feedPet('fish')"><span class="icon">??</span><span class="name">–°”„∏…</span><span class="effect">+20 ±• ≥∂»</span></div>
+                <div class="food-item" onclick="feedPet('cake')"><span class="icon">??</span><span class="name">–°µ∞∏‚</span><span class="effect">+25 ±• ≥∂»</span></div>
             </div>
         </div>
     </div>
-
-    <!-- Ê∂àÊÅØÊèêÁ§∫ -->
     <div class="message-toast" id="messageToast"></div>
-
     <script>
         let pets = [];
         let currentPetId = null;
-
-        const PET_ICONS = {
-            crayfish: 'ü¶û', cat: 'üê±', dog: 'üê∂', rabbit: 'üê∞',
-            bird: 'üê¶', panda: 'üêº', penguin: 'üêß', fox: 'ü¶ä', owl: 'ü¶â'
-        };
-        const PET_NAMES = {
-            crayfish: 'Â∞èÈæôËôæ', cat: 'Â∞èÁå´Âí™', dog: 'Â∞èÁãóÁãó', rabbit: 'Â∞èÂÖîÂ≠ê',
-            bird: 'Â∞èÈ∏ü', panda: 'Â∞èÁÜäÁå´', penguin: 'Â∞è‰ºÅÈπÖ', fox: 'Â∞èÁãêÁã∏', owl: 'Â∞èÁå´Â§¥Èπ∞'
-        };
-        const PET_MESSAGES = {
-            hungry: ['ËÇöÂ≠êÈ•ø‰∫Ü...', 'ÊÉ≥ÂêÉ‰∏úË•ø~', 'Â•ΩÈ•øÂïä...'],
-            tired: ['Â•ΩÂõ∞...', 'ÊÉ≥Áù°Ëßâ‰∫Ü', 'Êâì‰∫Ü‰∏™ÂìàÊ¨†'],
-            sad: ['‰∏çÂºÄÂøÉ...', 'Èô™ÊàëÁé©Âòõ~', 'ÊúâÁÇπÊó†ËÅä'],
-            happy: ['Â•ΩÂºÄÂøÉÂëÄÔºÅ', 'ÊúÄÂñúÊ¨¢‰Ω†‰∫ÜÔºÅ', '‰ªäÂ§©ÁúüÂø´‰πê~'],
-            full: ['ÂêÉÈ•±Âï¶~', 'ÂêÉ‰∏ç‰∏ã‰∫Ü', 'Â•ΩÊª°Ë∂≥~'],
-            playing: ['Â§™Â•ΩÁé©‰∫ÜÔºÅ', 'ÂÜçÊù•‰∏ÄÊ¨°ÔºÅ', 'ÂìàÂìà~']
-        };
-
-        function loadGame() {
-            const saved = localStorage.getItem('myPetGame');
-            if (saved) {
-                pets = JSON.parse(saved);
-            }
-            renderPets();
-        }
-
-        function saveGame() {
-            localStorage.setItem('myPetGame', JSON.stringify(pets));
-        }
-
-        function generateId() {
-            return Date.now() + Math.random().toString(36).substr(2, 9);
-        }
-
-        function showHatchPanel() {
-            document.getElementById('hatchPanel').classList.add('show');
-        }
-
-        function hideHatchPanel() {
-            document.getElementById('hatchPanel').classList.remove('show');
-        }
-
-        function showFoodPanel(petId) {
-            currentPetId = petId;
-            document.getElementById('foodPanel').classList.add('show');
-        }
-
-        function hideFoodPanel() {
-            document.getElementById('foodPanel').classList.remove('show');
-            currentPetId = null;
-        }
-
-        function hatchPet(type) {
-            hideHatchPanel();
-            const pet = {
-                id: generateId(),
-                type: type,
-                name: PET_NAMES[type],
-                level: 1,
-                exp: 0,
-                hunger: 80,
-                happy: 80,
-                energy: 100,
-                isSleeping: false,
-                createdAt: Date.now()
-            };
-            pets.push(pet);
-            saveGame();
-            renderPets();
-            showMessage(`üéâ ÊÅ≠ÂñúËé∑Âæó ${PET_NAMES[type]}ÔºÅ`);
-        }
-
-        function feedPet(food) {
-            hideFoodPanel();
-            if (!currentPetId) return;
-            
-            const pet = pets.find(p => p.id === currentPetId);
-            if (!pet) return;
-            
-            const foodEffects = { apple: 15, carrot: 12, fish: 20, cake: 25 };
-            pet.hunger = Math.min(100, pet.hunger + (foodEffects[food] || 10));
-            pet.happy = Math.min(100, pet.happy + 3);
-            pet.exp += 10;
-            
-            checkLevelUp(pet);
-            saveGame();
-            renderPets();
-            
-            const foods = { apple: 'ËãπÊûú', carrot: 'ËÉ°ËêùÂçú', fish: 'Â∞èÈ±ºÂπ≤', cake: 'Â∞èËõãÁ≥ï' };
-            showMessage(`${pet.name} ÂêÉ‰∫Ü ${foods[food]}Ôºå+${foodEffects[food]} È•±È£üÂ∫¶`);
-        }
-
-        function playWithPet(petId) {
-            const pet = pets.find(p => p.id === petId);
-            if (!pet) return;
-            
-            if (pet.isSleeping) {
-                showMessage(`${pet.name} Ê≠£Âú®Áù°Ëßâ...`);
-                return;
-            }
-            
-            if (pet.energy < 20) {
-                showMessage(`${pet.name} Â§™Á¥Ø‰∫ÜÔºåÊÉ≥Áù°Ëßâ~`);
-                return;
-            }
-            
-            pet.energy = Math.max(0, pet.energy - 10);
-            pet.happy = Math.min(100, pet.happy + 15);
-            pet.hunger = Math.max(0, pet.hunger - 5);
-            pet.exp += 15;
-            
-            checkLevelUp(pet);
-            saveGame();
-            renderPets();
-            
-            const avatar = document.querySelector(`[data-pet-id="${petId}"] .pet-avatar`);
-            if (avatar) {
-                avatar.classList.add('happy');
-                setTimeout(() => avatar.classList.remove('happy'), 600);
-            }
-            
-            showMessage(`${pet.name} Áé©ÂæóÂæàÂºÄÂøÉÔºÅ+15 Âø´‰πêÂ∫¶`);
-        }
-
-        function toggleSleep(petId) {
-            const pet = pets.find(p => p.id === petId);
-            if (!pet) return;
-            
-            pet.isSleeping = !pet.isSleeping;
-            if (pet.isSleeping) {
-                pet.energy = 100;
-                showMessage(`${pet.name} ÂºÄÂßãÁù°Ëßâ‰∫Ü... Zzz`);
-            } else {
-                showMessage(`${pet.name} Áù°ÈÜíÂï¶ÔºÅ`);
-            }
-            
-            saveGame();
-            renderPets();
-        }
-
-        function editPetName(petId) {
-            const pet = pets.find(p => p.id === petId);
-            if (!pet) return;
-            
-            const input = document.querySelector(`[data-pet-id="${petId}"] .name-input`);
-            const nameDisplay = document.querySelector(`[data-pet-id="${petId}"] .pet-name`);
-            
-            if (input.style.display === 'none') {
-                input.style.display = 'block';
-                input.value = pet.name;
-                input.focus();
-                nameDisplay.style.display = 'none';
-            } else {
-                if (input.value.trim()) {
-                    pet.name = input.value.trim();
-                    saveGame();
-                }
-                input.style.display = 'none';
-                nameDisplay.style.display = 'flex';
-                renderPets();
-            }
-        }
-
-        function deletePet(petId) {
-            if (confirm('Á°ÆÂÆöË¶ÅÊîæÁîüËøôÂè™ÂÆ†Áâ©ÂêóÔºü')) {
-                const pet = pets.find(p => p.id === petId);
-                pets = pets.filter(p => p.id !== petId);
-                saveGame();
-                renderPets();
-                showMessage(`${pet?.name || 'ÂÆ†Áâ©'} Ë¢´ÊîæÁîü‰∫Ü...`);
-            }
-        }
-
-        function checkLevelUp(pet) {
-            const expNeeded = pet.level * 100;
-            while (pet.exp >= expNeeded) {
-                pet.exp -= expNeeded;
-                pet.level++;
-                showMessage(`üéä ${pet.name} ÂçáÁ∫ß‰∫ÜÔºÅÁé∞Âú®ÊòØ ${pet.level} Á∫ßÔºÅ`);
-            }
-        }
-
-        function getPetStatus(pet) {
-            if (pet.isSleeping) return { text: 'üí§ Ê≠£Âú®Áù°Ëßâ...', class: '' };
-            if (pet.hunger < 30) return { text: 'üò´ ' + PET_MESSAGES.hungry[Math.floor(Math.random() * 3)], class: 'hungry' };
-            if (pet.energy < 30) return { text: 'üò¥ ' + PET_MESSAGES.tired[Math.floor(Math.random() * 3)], class: 'tired' };
-            if (pet.happy < 30) return { text: 'üò¢ ' + PET_MESSAGES.sad[Math.floor(Math.random() * 3)], class: 'sad' };
-            return { text: 'üòä ' + PET_MESSAGES.happy[Math.floor(Math.random() * 3)], class: 'happy' };
-        }
-
-        function renderPets() {
-            document.getElementById('petCount').textContent = pets.length;
-            const container = document.getElementById('petsContainer');
-            
-            if (pets.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-pets">
-                        <div class="icon">ü•ö</div>
-                        <h2>ËøòÊ≤°ÊúâÂÆ†Áâ©Âì¶~</h2>
-                        <p>Âø´ÂéªÈ¢ÜÂÖª‰∏ÄÂè™Â±û‰∫é‰Ω†ÁöÑÂ∞èÂÆ†Áâ©ÂêßÔºÅ</p>
-                        <button class="new-egg-btn" onclick="showHatchPanel()">ü•öü•ö È¢ÜÂÖªÊñ∞ÂÆ†Áâ©</button>
-                    </div>
-                `;
-                return;
-            }
-            
-            container.innerHTML = pets.map(pet => {
-                const status = getPetStatus(pet);
-                const sleepingClass = pet.isSleeping ? 'sleeping' : '';
-                return `
-                    <div class="pet-card ${sleepingClass}" data-pet-id="${pet.id}">
-                        <div class="pet-header">
-                            <div class="pet-avatar ${pet.isSleeping ? '' : 'shake'}" onclick="playWithPet('${pet.id}')">
-                                ${PET_ICONS[pet.type]}
-                            </div>
-                            <div class="pet-info">
-                                <div class="pet-name">
-                                    ${pet.name}
-                                    <span class="edit-icon" onclick="editPetName('${pet.id}')">‚úèÔ∏è</span>
-                                </div>
-                                <div class="pet-type">${PET_NAMES[pet.type]}</div>
-                                <div class="name-input-container">
-                                    <input type="text" class="name-input" maxlength="10" onkeypress="if(event.key==='Enter') editPetName('${pet.id}')">
-                                </div>
-                            </div>
-                            <div class="pet-level">Lv.${pet.level}</div>
-                        </div>
-                        
-                        <div class="pet-stats">
-                            <div class="stat-row">
-                                <span class="stat-icon">üçñ</span>
-                                <div class="stat-bar-container">
-                                    <div class="stat-bar hunger" style="width: ${pet.hunger}%"></div>
-                                </div>
-                                <span class="stat-value">${pet.hunger}</span>
-                            </div>
-                            <div class="stat-row">
-                                <span class="stat-icon">üòä</span>
-                                <div class="stat-bar-container">
-                                    <div class="stat-bar happy" style="width: ${pet.happy}%"></div>
-                                </div>
-                                <span class="stat-value">${pet.happy}</span>
-                            </div>
-                            <div class="stat-row">
-                                <span class="stat-icon">‚ö°</span>
-                                <div class="stat-bar-container">
-                                    <div class="stat-bar energy" style="width: ${pet.energy}%"></div>
-                                </div>
-                                <span class="stat-value">${pet.energy}</span>
-                            </div>
-                        </div>
-                        
-                        <div class="pet-status ${status.class}">${status.text}</div>
-                        
-                        <div class="pet-actions">
-                            <button class="action-btn feed" onclick="showFoodPanel('${pet.id}')">
-                                üçñ
-                                <span>ÂñÇÈ£ü</span>
-                            </button>
-                            <button class="action-btn play" onclick="playWithPet('${pet.id}')">
-                                üéÆ
-                                <span>Áé©ËÄç</span>
-                            </button>
-                            <button class="action-btn sleep" onclick="toggleSleep('${pet.id}')">
-                                ${pet.isSleeping ? '‚òÄÔ∏è' : 'üò¥'}
-                                <span>${pet.isSleeping ? 'Âî§ÈÜí' : 'Áù°Ëßâ'}</span>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function showMessage(text) {
-            const toast = document.getElementById('messageToast');
-            toast.textContent = text;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
-        }
-
-        // Ê∏∏ÊàèÂæ™ÁéØ - ÊØè30ÁßíÊõ¥Êñ∞‰∏ÄÊ¨°ÂÆ†Áâ©Áä∂ÊÄÅ
-        function gameLoop() {
-            let changed = false;
-            pets.forEach(pet => {
-                if (pet.isSleeping) {
-                    // Áù°ËßâÊó∂ÊÅ¢Â§ç‰ΩìÂäõ
-                    if (pet.energy < 100) {
-                        pet.energy = Math.min(100, pet.energy + 5);
-                        changed = true;
-                    }
-                } else {
-                    // ÈÜíÁùÄÊó∂Ê∂àËÄóÂ±ûÊÄß
-                    if (pet.hunger > 0) {
-                        pet.hunger = Math.max(0, pet.hunger - 1);
-                        changed = true;
-                    }
-                    if (pet.happy > 0) {
-                        pet.happy = Math.max(0, pet.happy - 0.5);
-                        changed = true;
-                    }
-                    if (pet.energy > 0) {
-                        pet.energy = Math.max(0, pet.energy - 0.3);
-                        changed = true;
-                    }
-                }
-            });
-            
-            if (changed) {
-                saveGame();
-                renderPets();
-            }
-        }
-
-        // ÂàùÂßãÂåñ
-        loadGame();
-        setInterval(gameLoop, 30000); // ÊØè30ÁßíÊ£ÄÊü•‰∏ÄÊ¨°
+        const PET_NAMES = {crayfish:'–°¡˙œ∫',cat:'–°√®ﬂ‰',dog:'–°π∑π∑',rabbit:'–°Õ√◊”',bird:'–°ƒÒ',panda:'–°–‹√®',penguin:'–°∆Û∂Ï',fox:'–°∫¸¿Í',owl:'–°√®Õ∑”•'};
+        const PET_MESSAGES = {hungry:['∂«◊”∂ˆ¡À...','œÎ≥‘∂´Œ˜~','∫√∂ˆ∞°'],tired:['∫√¿ß...','œÎÀØæı¡À','¥Ú¡À∏ˆπ˛«∑'],sad:['≤ªø™–ƒ...','≈„Œ“ÕÊ¬Ô~','”–µ„Œﬁ¡ƒ'],happy:['∫√ø™–ƒ—Ω£°','◊Óœ≤ª∂ƒ„¡À£°','ΩÒÃÏ’ÊøÏ¿÷~']};
+        function loadGame(){const s=localStorage.getItem('myPetGame2');if(s)pets=JSON.parse(s);renderPets()}
+        function saveGame(){localStorage.setItem('myPetGame2',JSON.stringify(pets))}
+        function genId(){return Date.now()+Math.random().toString(36).substr(2,9)}
+        function showHatchPanel(){document.getElementById('hatchPanel').classList.add('show')}
+        function hideHatchPanel(){document.getElementById('hatchPanel').classList.remove('show')}
+        function showFoodPanel(id){currentPetId=id;document.getElementById('foodPanel').classList.add('show')}
+        function hideFoodPanel(){document.getElementById('foodPanel').classList.remove('show');currentPetId=null}
+        function hatchPet(type){hideHatchPanel();const pet={id:genId(),type:type,name:PET_NAMES[type],level:1,exp:0,hunger:80,happy:80,energy:100,isSleeping:false,createdAt:Date.now()};pets.push(pet);saveGame();renderPets();showMessage('?? πßœ≤ªÒµ√ '+PET_NAMES[type]+'£°')}
+        function feedPet(food){hideFoodPanel();if(!currentPetId)return;const pet=pets.find(p=>p.id===currentPetId);if(!pet)return;const ef={apple:15,carrot:12,fish:20,cake:25};pet.hunger=Math.min(100,pet.hunger+(ef[food]||10));pet.happy=Math.min(100,pet.happy+3);pet.exp+=10;checkLevelUp(pet);saveGame();renderPets();const fn={apple:'∆ªπ˚',carrot:'∫˙¬‹≤∑',fish:'–°”„∏…',cake:'–°µ∞∏‚'};showMessage(pet.name+' ≥‘¡À '+fn[food]+'£¨+'+ef[food]+' ±• ≥∂»')}
+        function playWithPet(id){const pet=pets.find(p=>p.id===id);if(!pet)return;if(pet.isSleeping){showMessage(pet.name+' ’˝‘⁄ÀØæı...');return}if(pet.energy<20){showMessage(pet.name+' Ã´¿€¡À£¨œÎÀØæı~');return}pet.energy=Math.max(0,pet.energy-10);pet.happy=Math.min(100,pet.happy+15);pet.hunger=Math.max(0,pet.hunger-5);pet.exp+=15;checkLevelUp(pet);saveGame();renderPets();const av=document.querySelector('[data-pet-id="'+id+'"] .pet-avatar');if(av){av.classList.add('happy');setTimeout(()=>av.classList.remove('happy'),600)}showMessage(pet.name+' ÕÊµ√∫‹ø™–ƒ£°+15 øÏ¿÷∂»')}
+        function toggleSleep(id){const pet=pets.find(p=>p.id===id);if(!pet)return;pet.isSleeping=!pet.isSleeping;if(pet.isSleeping){pet.energy=100;showMessage(pet.name+' ø™ ºÀØæı¡À... Zzz')}else{showMessage(pet.name+' ÀØ–—¿≤£°')}saveGame();renderPets()}
+        function editPetName(id){const pet=pets.find(p=>p.id===id);if(!pet)return;const inp=document.querySelector('[data-pet-id="'+id+'"] .name-input');const nm=document.querySelector('[data-pet-id="'+id+'"] .pet-name');if(inp.style.display==='none'){inp.style.display='block';inp.value=pet.name;inp.focus();nm.style.display='none'}else{if(inp.value.trim()){pet.name=inp.value.trim();saveGame()}inp.style.display='none';nm.style.display='flex';renderPets()}}
+        function deletePet(id){if(confirm('»∑∂®“™∑≈…˙’‚÷ª≥ËŒÔ¬£ø')){const pet=pets.find(p=>p.id===id);pets=pets.filter(p=>p.id!==id);saveGame();renderPets();showMessage((pet?.name||'≥ËŒÔ')+' ±ª∑≈…˙¡À...')}}
+        function checkLevelUp(pet){const expNeeded=pet.level*100;while(pet.exp>=expNeeded){pet.exp-=expNeeded;pet.level++;showMessage('?? '+pet.name+' …˝º∂¡À£°œ÷‘⁄ « '+pet.level+' º∂£°')}}
+        function getPetStatus(pet){if(pet.isSleeping)return{text:'?? ’˝‘⁄ÀØæı...',cls:''};if(pet.hunger<30)return{text:'?? '+PET_MESSAGES.hungry[Math.floor(Math.random()*3)],cls:'hungry'};if(pet.energy<30)return{text:'?? '+PET_MESSAGES.tired[Math.floor(Math.random()*3)],cls:'tired'};if(pet.happy<30)return{text:'?? '+PET_MESSAGES.sad[Math.floor(Math.random()*3)],cls:'sad'};return{text:'?? '+PET_MESSAGES.happy[Math.floor(Math.random()*3)],cls:'happy'}}
+        function renderPetAvatar(type){switch(type){case'crayfish':return'<div class="pc-body"></div><div class="pc-head"></div><div class="pc-eye left"></div><div class="pc-eye right"></div><div class="pc-ant left"></div><div class="pc-ant right"></div><div class="pc-claw left"></div><div class="pc-claw right"></div><div class="pc-leg"></div><div class="pc-leg"></div><div class="pc-leg"></div><div class="pc-leg"></div><div class="pc-tail"></div>';case'cat':return'<div class="pca-body"></div><div class="pca-head"></div><div class="pca-ear left"></div><div class="pca-ear right"></div><div class="pca-eye left"></div><div class="pca-eye right"></div><div class="pca-nose"></div><div class="pca-mouth"></div><div class="pca-whisker"></div><div class="pca-whisker"></div><div class="pca-whisker"></div><div class="pca-whisker"></div><div class="pca-tail"></div>';case'dog':return'<div class="pd-body"></div><div class="pd-head"></div><div class="pd-ear left"></div><div class="pd-ear right"></div><div class="pd-eye left"></div><div class="pd-eye right"></div><div class="pd-nose"></div><div class="pd-tongue"></div><div class="pd-tail"></div>';case'rabbit':return'<div class="pr-body"></div><div class="pr-head"></div><div class="pr-ear left"></div><div class="pr-ear right"></div><div class="pr-eye left"></div><div class="pr-eye right"></div><div class="pr-nose"></div><div class="pr-cheek left"></div><div class="pr-cheek right"></div><div class="pr-tail"></div>';case'bird':return'<div class="pb-body"></div><div class="pb-head"></div><div class="pb-tuft"></div><div class="pb-eye left"></div><div class="pb-eye right"></div><div class="pb-beak"></div><div class="pb-wing"></div>';case'panda':return'<div class="pp-body"></div><div class="pp-head"></div><div class="pp-ear left"></div><div class="pp-ear right"></div><div class="pp-patch left"></div><div class="pp-patch right"></div><div class="pp-eye left"></div><div class="pp-eye right"></div><div class="pp-nose"></div><div class="pp-mouth"></div>';case'penguin':return'<div class="ppe-body"></div><div class="ppe-belly"></div><div class="ppe-head"></div><div class="ppe-eye left"></div><div class="ppe-eye right"></div><div class="ppe-beak"></div><div class="ppe-wing left"></div><div class="ppe-wing right"></div><div class="ppe-foot left"></div><div class="ppe-foot right"></div>';case'fox':return'<div class="pf-body"></div><div class="pf-head"></div><div class="pf-ear left"></div><div class="pf-ear right"></div><div class="pf-eye left"></div><div class="pf-eye right"></div><div class="pf-nose"></div><div class="pf-mouth"></div><div class="pf-tail"></div>';case'owl':return'<div class="po-body"></div><div class="po-head"></div><div class="po-ear left"></div><div class="po-ear right"></div><div class="po-face"></div><div class="po-eye left"></div><div class="po-eye right"></div><div class="po-beak"></div><div class="po-wing left"></div><div class="po-wing right"></div><div class="po-foot left"></div><div class="po-foot right"></div>';default:return''}}
+        function renderPets(){document.getElementById('petCount').textContent=pets.length;const c=document.getElementById('petsContainer');if(pets.length===0){c.innerHTML='<div style="text-align:center;padding:60px 20px;color:white"><div style="font-size:100px;margin-bottom:20px">??</div><h2>ªπ√ª”–≥ËŒÔ≈∂~</h2><p style="margin:15px 0 25px">øÏ»•¡Ï—¯“ª÷ª Ù”⁄ƒ„µƒ–°≥ËŒÔ∞…£°</p><button class="new-egg-btn" onclick="showHatchPanel()">???? ¡Ï—¯–¬≥ËŒÔ</button></div>';return}c.innerHTML=pets.map(pet=>{const st=getPetStatus(pet);return'<div class="pet-card"><div class="pet-card-header"><div class="pet-info"><div class="pet-name">'+pet.name+'<span class="edit-icon" onclick="editPetName(\\''+pet.id+'\\')">??</span></div><div class="pet-type">'+PET_NAMES[pet.type]+'</div><div class="name-input-container"><input type="text" class="name-input" maxlength="10" onkeypress="if(event.key===\\'Enter\\')editPetName(\\''+pet.id+'\\')"></div></div><div class="pet-level">Lv.'+pet.level+'</div></div><div class="pet-avatar-container"><div class="pet-avatar" onclick="playWithPet(\\''+pet.id+'\\')">'+renderPetAvatar(pet.type)+'</div></div><div class="pet-stats"><div class="stat-row"><span class="stat-icon">??</span><div class="stat-bar-container"><div class="stat-bar hunger" style="width:'+pet.hunger+'%"></div></div><span class="stat-value">'+pet.hunger+'</span></div><div class="stat-row"><span class="stat-icon">??</span><div class="stat-bar-container"><div class="stat-bar happy" style="width:'+pet.happy+'%"></div></div><span class="stat-value">'+pet.happy+'</span></div><div class="stat-row"><span class="stat-icon">?</span><div class="stat-bar-container"><div class="stat-bar energy" style="width:'+pet.energy+'%"></div></div><span class="stat-value">'+pet.energy+'</span></div></div><div class="pet-status '+st.cls+'">'+st.text+'</div><div class="pet-actions"><button class="action-btn feed" onclick="showFoodPanel(\\''+pet.id+'\\')">??<span>Œπ ≥</span></button><button class="action-btn play" onclick="playWithPet(\\''+pet.id+'\\')">??<span>ÕÊÀ£</span></button><button class="action-btn sleep" onclick="toggleSleep(\\''+pet.id+'\\')">'+(pet.isSleeping?'??':'??')+'<span>'+(pet.isSleeping?'ªΩ–—':'ÀØæı')+'</span></button></div></div>'}).join('')}
+        function showMessage(t){const t=document.getElementById('messageToast');t.textContent=text;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+        function gameLoop(){let ch=false;pets.forEach(pet=>{if(pet.isSleeping){if(pet.energy<100){pet.energy=Math.min(100,pet.energy+5);ch=true}}else{if(pet.hunger>0){pet.hunger=Math.max(0,pet.hunger-1);ch=true}if(pet.happy>0){pet.happy=Math.max(0,pet.happy-0.5);ch=true}if(pet.energy>0){pet.energy=Math.max(0,pet.energy-0.3);ch=true}}});if(ch){saveGame();renderPets()}}
+        loadGame();setInterval(gameLoop,30000);
     </script>
 </body>
 </html>
