@@ -203,8 +203,8 @@ h1{color:#ffd700;font-size:1.5em;animation:bounce 2s infinite;text-shadow:0 0 15
 <h1>🐾 宠物乐园</h1>
 <p>12生肖宠物养成游戏</p>
 <div class="auth-tabs">
-<button class="auth-tab active" data-tab="login">登录</button>
-<button class="auth-tab" data-tab="register">注册</button>
+<button class="auth-tab active" onclick="switchTab('login')">登录</button>
+<button class="auth-tab" onclick="switchTab('register')">注册</button>
 </div>
 <form class="auth-form active" id="loginForm">
 <input type="text" id="loginUsername" placeholder="输入用户名" required>
@@ -329,17 +329,19 @@ function hashPassword(p){
   return "x"+Math.abs(h).toString(36)
 }
 
-function bindAuthEvents(){
+window.switchTab=function(tab){
   var tabs=document.querySelectorAll(".auth-tab");
-  for(var i=0;i<tabs.length;i++){
-    tabs[i].onclick=function(){
-      tabs.forEach(function(t){t.classList.remove("active")});
-      this.classList.add("active");
-      var tab=this.getAttribute("data-tab");
-      document.getElementById("loginForm").classList.toggle("active",tab==="login");
-      document.getElementById("registerForm").classList.toggle("active",tab==="register")
-    }
+  tabs.forEach(function(t){t.classList.remove("active")});
+  if(tab==="login"){
+    document.querySelector("[data-tab=login]").classList.add("active");
+    document.getElementById("loginForm").classList.add("active");
+    document.getElementById("registerForm").classList.remove("active")
+  }else{
+    document.querySelector("[data-tab=register]").classList.add("active");
+    document.getElementById("registerForm").classList.add("active");
+    document.getElementById("loginForm").classList.remove("active")
   }
+}
   document.getElementById("loginForm").onsubmit=function(e){
     e.preventDefault();
     var u=document.getElementById("loginUsername").value.trim();
