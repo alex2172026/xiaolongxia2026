@@ -1,309 +1,158 @@
-const fs = require('fs');
-const html = `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>宠物乐园 - 12生肖</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Nunito,sans-serif;background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);min-height:100vh;padding:15px}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-@keyframes float3d{0%,100%{transform:translateY(0) rotateX(-5deg) rotateY(5deg)}50%{transform:translateY(-8px) rotateX(-5deg) rotateY(5deg)}}
-@keyframes glow{0%,100%{filter:drop-shadow(0 0 5px rgba(255,200,100,0.3))}50%{filter:drop-shadow(0 0 12px rgba(255,200,100,0.5))}}
-@keyframes happy3d{0%,100%{transform:scale(1)}30%{transform:scale(1.15)}60%{transform:scale(1.08)}}
-@keyframes fadeIn{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
-@keyframes slideUp{from{opacity:0;transform:translate(-50%,30px)}to{opacity:1;transform:translate(-50%,0)}}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
-.container{max-width:1200px;margin:0 auto}
-/* Auth */
-.auth-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);display:flex;align-items:center;justify-content:center;z-index:2000}
-.auth-box{background:rgba(255,255,255,0.1);backdrop-filter:blur(20px);border-radius:28px;padding:40px;width:360px;text-align:center;border:1px solid rgba(255,255,255,0.15);animation:fadeIn 0.5s}
-.auth-box h1{color:#ffd700;font-size:1.8em;margin-bottom:8px;text-shadow:0 0 20px rgba(255,215,0,0.5)}
-.auth-box p{color:rgba(255,255,255,0.7);margin-bottom:25px;font-size:14px}
-.auth-tabs{display:flex;margin-bottom:25px;background:rgba(0,0,0,0.2);border-radius:12px;padding:4px}
-.auth-tab{flex:1;padding:10px;border:none;background:none;color:rgba(255,255,255,0.6);cursor:pointer;border-radius:10px;transition:all 0.3s;font-size:14px;font-weight:600}
+*{margin:0;padding:0}
+body{font-family:Nunito,sans-serif;background:linear-gradient(135deg,#1a1a2e,#16213e);min-height:100vh;padding:15px}
+.auth-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;z-index:2000}
+.auth-box{background:rgba(255,255,255,0.1);padding:40px;border-radius:20px;text-align:center;width:320px}
+.auth-tabs{display:flex;margin-bottom:20px}
+.auth-tab{flex:1;padding:10px;background:none;border:none;color:rgba(255,255,255,0.6);cursor:pointer;border-radius:10px}
 .auth-tab.active{background:linear-gradient(135deg,#ffd700,#ff8c00);color:#1a1a2e}
 .auth-form{display:none}
 .auth-form.active{display:block}
-.auth-form input{width:100%;padding:14px 16px;margin-bottom:12px;border:2px solid rgba(255,255,255,0.15);border-radius:12px;background:rgba(255,255,255,0.08);color:#fff;font-size:15px;transition:border-color 0.3s;outline:none;box-sizing:border-box}
-.auth-form input::placeholder{color:rgba(255,255,255,0.4)}
-.auth-form input:focus{border-color:#ffd700}
-.auth-form button{width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#ffd700,#ff8c00);color:#1a1a2e;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.3s;margin-top:8px}
-.auth-form button:hover{transform:scale(1.03);box-shadow:0 8px 25px rgba(255,215,0,0.4)}
-.auth-error{color:#ff6b6b;font-size:13px;margin-top:10px;display:none;padding:8px;background:rgba(255,0,0,0.1);border-radius:8px}
-.auth-error.show{display:block}
-.auth-hint{color:rgba(255,255,255,0.5);font-size:12px;margin-top:15px}
-/* Main */
+.auth-form input{width:100%;padding:12px;margin-bottom:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff}
+.auth-form button{width:100%;padding:12px;background:linear-gradient(135deg,#ffd700,#ff8c00);border:none;border-radius:8px;color:#1a1a2e;font-weight:bold;cursor:pointer}
 .main-app{display:none}
 .main-app.show{display:block}
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;gap:10px;flex-wrap:wrap}
-.header-left{display:flex;align-items:center;gap:12px}
-h1{color:#ffd700;font-size:1.5em;animation:bounce 2s infinite;text-shadow:0 0 15px rgba(255,215,0,0.5);margin-bottom:12px}
-.user-info{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.1);padding:8px 16px;border-radius:20px}
-.user-name{color:#fff;font-weight:600;font-size:14px}
-.logout-btn{background:rgba(255,100,100,0.2);border:none;color:#ff8888;padding:6px 12px;border-radius:10px;cursor:pointer;font-size:12px;transition:all 0.3s}
-.logout-btn:hover{background:rgba(255,100,100,0.4)}
-.stats-bar{background:rgba(255,255,255,0.1);padding:8px 18px;border-radius:20px;color:#fff;font-size:14px}
-.new-btn{background:linear-gradient(135deg,#ffd700,#ff8c00);color:#1a1a2e;border:none;padding:10px 20px;border-radius:20px;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.3s}
-.new-btn:hover{transform:scale(1.05)}
-.pets{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-.card{background:linear-gradient(145deg,rgba(255,255,255,0.1),rgba(255,255,255,0.05));border-radius:18px;padding:14px;border:1px solid rgba(255,255,255,0.1);animation:fadeIn 0.4s;transition:all 0.3s}
-.card:hover{transform:translateY(-4px);box-shadow:0 10px 25px rgba(0,0,0,0.3)}
-.card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.name{font-size:15px;font-weight:700;color:#fff}
-.level{background:linear-gradient(135deg,#ffd700,#ff8c00);color:#1a1a2e;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700}
-.avatar-wrap{display:flex;justify-content:center;align-items:center;height:90px;perspective:400px}
-.avatar{width:80px;height:80px;position:relative;transform-style:preserve-3d;cursor:pointer;animation:float3d 3s ease-in-out infinite,glow 2.5s ease-in-out infinite}
-.avatar:hover{transform:rotateY(10deg) scale(1.08)}
-.avatar.happy{animation:happy3d 0.6s ease}
-.stats{display:flex;gap:8px;margin:10px 0}
-.stat{flex:1;display:flex;align-items:center;gap:4px;font-size:12px;color:rgba(255,255,255,0.8)}
-.stat-icon{font-size:14px}
-.stat-bar{flex:1;height:8px;background:rgba(0,0,0,0.3);border-radius:4px;overflow:hidden}
-.bar{height:100%;border-radius:4px;transition:width 0.5s}
-.bar.hunger{background:linear-gradient(90deg,#ff6b6b,#ee5a5a)}
-.bar.happy{background:linear-gradient(90deg,#51cf66,#40c057)}
-.bar.energy{background:linear-gradient(90deg,#339af0,#228be6)}
-.status{text-align:center;padding:6px;background:rgba(0,0,0,0.2);border-radius:8px;margin-bottom:10px;font-size:12px;color:rgba(255,255,255,0.85)}
-.status.hungry{background:rgba(255,107,107,0.2);color:#ff8787}
-.status.tired{background:rgba(255,206,82,0.2);color:#ffe066}
-.status.sad{background:rgba(180,130,255,0.2);color:#cc99ff}
-.status.happy{background:rgba(129,199,132,0.2);color:#8ce99a}
-.actions{display:flex;gap:6px}
-.btn{flex:1;border:none;border-radius:10px;padding:8px 4px;font-size:18px;cursor:pointer;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:2px}
-.btn span{font-size:9px;color:rgba(255,255,255,0.8)}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+h1{color:#ffd700;text-align:center;margin-bottom:15px}
+.pets{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.card{background:rgba(255,255,255,0.1);padding:15px;border-radius:15px}
+.card-top{display:flex;justify-content:space-between;margin-bottom:10px}
+.name{color:#fff;font-weight:bold}
+.level{background:#ffd700;color:#1a1a2e;padding:3px 8px;border-radius:10px;font-size:12px}
+.stats{display:flex;gap:5px;margin:10px 0}
+.stat{flex:1;text-align:center;color:rgba(255,255,255,0.8);font-size:12px}
+.actions{display:flex;gap:5px;margin-top:10px}
+.btn{flex:1;padding:8px;background:rgba(255,255,255,0.2);border:none;border-radius:8px;color:#fff;cursor:pointer}
 .btn.feed{background:linear-gradient(135deg,#f093fb,#f5576c)}
 .btn.play{background:linear-gradient(135deg,#4fd1c5,#38b2ac)}
 .btn.sleep{background:linear-gradient(135deg,#667eea,#764ba2)}
-/* 3D Animals */
-.rat-face{position:absolute;width:55px;height:45px;background:linear-gradient(145deg,#b8b8b8,#909090);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
-.rat-ear{position:absolute;width:20px;height:20px;background:#d4a4a4;border-radius:50%;top:5px}
-.rat-ear.left{left:8px}
-.rat-ear.right{right:8px}
-.rat-eye{position:absolute;width:8px;height:10px;background:#1a1a2e;border-radius:50%;top:17px}
-.rat-eye.left{left:14px}
-.rat-eye.right{right:14px}
-.rat-eye::after{content:"";position:absolute;width:3px;height:3px;background:#fff;border-radius:50%;top:1px;left:1px}
-.rat-nose{position:absolute;width:7px;height:6px;background:#ff9999;border-radius:50%;top:30px;left:50%;transform:translateX(-50%)}
-.ox-face{position:absolute;width:58px;height:50px;background:linear-gradient(145deg,#8b7355,#6b5344);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
-.ox-horn{position:absolute;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:18px solid #d4a574;top:3px}
-.ox-horn.left{left:11px;transform:rotate(-15deg)}
-.ox-horn.right{right:11px;transform:rotate(15deg)}
-.ox-eye{position:absolute;width:10px;height:8px;background:#1a1a2e;border-radius:50%;top:18px}
-.ox-eye.left{left:14px}
-.ox-eye.right{right:14px}
-.tiger-face{position:absolute;width:60px;height:52px;background:linear-gradient(145deg,#ff8c00,#e67300);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
-.tiger-stripe{position:absolute;width:5px;height:15px;background:#2d2d2d;border-radius:3px}
-.tiger-stripe.s1{top:9px;left:12px;transform:rotate(-10deg)}
-.tiger-stripe.s2{top:7px;left:22px}
-.tiger-stripe.s3{top:9px;right:12px;transform:rotate(10deg)}
-.tiger-stripe.s4{top:7px;right:22px}
-.tiger-eye{position:absolute;width:12px;height:14px;background:#ffcc00;border-radius:50%;top:17px}
-.tiger-eye.left{left:12px}
-.tiger-eye.right{right:12px}
-.tiger-eye::after{content:"";position:absolute;width:4px;height:10px;background:#1a1a2e;border-radius:2px;top:2px;left:50%;transform:translateX(-50%)}
-.rabbit-face{position:absolute;width:52px;height:48px;background:linear-gradient(145deg,#f8f8f8,#e8e8e8);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
-.rabbit-ear{position:absolute;width:13px;height:33px;background:#f8f8f8;border-radius:50%;top:-22px;left:17px;transform:rotate(-10deg)}
-.rabbit-ear.right{left:auto;right:17px;transform:rotate(10deg)}
-.rabbit-ear::after{content:"";position:absolute;width:7px;height:27px;background:#ffb6c1;border-radius:50%;top:3px;left:50%;transform:translateX(-50%)}
-.rabbit-eye{position:absolute;width:10px;height:12px;background:#ff6b81;border-radius:50%;top:17px}
-.rabbit-eye.left{left:12px}
-.rabbit-eye.right{right:12px}
-.dragon-face{position:absolute;width:60px;height:54px;background:linear-gradient(145deg,#50c878,#3cb371);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
-.dragon-horn{position:absolute;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:15px solid #8b4513;top:1px}
-.dragon-horn.left{left:12px;transform:rotate(-20deg)}
-.dragon-horn.right{right:12px;transform:rotate(20deg)}
-.dragon-eye{position:absolute;width:11px;height:12px;background:#ffcc00;border-radius:50%;top:17px}
-.dragon-eye.left{left:14px}
-.dragon-eye.right{right:14px}
-.snake-body{position:absolute;width:42px;height:60px;background:linear-gradient(145deg,#9b59b6,#8e44ad);border-radius:30px;left:50%;top:50%;transform:translate(-50%,-50%)}
-.snake-eye{position:absolute;width:9px;height:10px;background:#ffcc00;border-radius:50%;top:9px}
-.snake-eye.left{left:10px}
-.snake-eye.right{right:10px}
-.horse-face{position:absolute;width:55px;height:58px;background:linear-gradient(145deg,#8b4513,#654321);border-radius:50%;left:50%;top:48%;transform:translate(-50%,-50%)}
-.horse-mane{position:absolute;width:18px;height:36px;background:#4a3728;border-radius:10px;top:-6px;left:50%;transform:translateX(-50%)}
-.horse-eye{position:absolute;width:10px;height:11px;background:#1a1a2e;border-radius:50%;top:17px}
-.horse-eye.left{left:11px}
-.horse-eye.right{right:11px}
-.goat-face{position:absolute;width:56px;height:50px;background:linear-gradient(145deg,#f5f5dc,#e8e8d0);border-radius:50%;left:50%;top:52%;transform:translate(-50%,-50%)}
-.goat-horn{position:absolute;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:21px solid #d4a574;top:0}
-.goat-horn.left{left:9px;transform:rotate(-25deg)}
-.goat-horn.right{right:9px;transform:rotate(25deg)}
-.goat-eye{position:absolute;width:9px;height:10px;background:#1a1a2e;border-radius:50%;top:18px}
-.goat-eye.left{left:14px}
-.goat-eye.right{right:14px}
-.monkey-face{position:absolute;width:55px;height:50px;background:linear-gradient(145deg,#d2691e,#8b4513);border-radius:50%;left:50%;top:52%;transform:translate(-50%,-50%)}
-.monkey-ear{position:absolute;width:18px;height:18px;background:#d2691e;border-radius:50%;top:11px}
-.monkey-ear.left{left:0}
-.monkey-ear.right{right:0}
-.monkey-eye{position:absolute;width:10px;height:11px;background:#1a1a2e;border-radius:50%;top:15px}
-.monkey-eye.left{left:14px}
-.monkey-eye.right{right:14px}
-.rooster-face{position:absolute;width:54px;height:48px;background:linear-gradient(145deg,#ff6347,#ee5a3a);border-radius:50%;left:50%;top:55%;transform:translate(-50%,-50%)}
-.rooster-comb{position:absolute;width:21px;height:15px;background:#dc143c;border-radius:50%;top:-3px;left:50%;transform:translateX(-50%)}
-.rooster-eye{position:absolute;width:10px;height:10px;background:#1a1a2e;border-radius:50%;top:13px}
-.rooster-eye.left{left:14px}
-.rooster-eye.right{right:14px}
-.dog-face{position:absolute;width:58px;height:52px;background:linear-gradient(145deg,#c4a67c,#a68b5b);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
-.dog-ear{position:absolute;width:19px;height:24px;background:#a68b5b;border-radius:50%;top:5px;left:1px;transform:rotate(-20deg)}
-.dog-ear.right{left:auto;right:1px;transform:rotate(20deg)}
-.dog-eye{position:absolute;width:11px;height:12px;background:#1a1a2e;border-radius:50%;top:17px}
-.dog-eye.left{left:14px}
-.dog-eye.right{right:14px}
-.pig-face{position:absolute;width:60px;height:53px;background:linear-gradient(145deg,#ffb6c1,#ff9aa2);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
-.pig-snout{position:absolute;width:27px;height:19px;background:#ff9aa2;border-radius:50%;top:30px;left:50%;transform:translateX(-50%)}
-/* Panels */
-.panel{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);display:none;align-items:center;justify-content:center;z-index:1000}
-.panel.active{display:flex;animation:fadeIn 0.3s}
-.modal{background:#2d2d4d;border-radius:24px;padding:24px;max-width:450px;width:90%;position:relative}
-.modal h2,.modal h3{text-align:center;color:#ffd700;margin-bottom:18px;font-size:1.3em}
-.modal h3{font-size:1.1em}
-.close{position:absolute;top:10px;right:10px;width:30px;height:30px;background:rgba(255,255,255,0.1);border:none;border-radius:50%;color:#fff;font-size:16px;cursor:pointer}
-.close:hover{background:rgba(255,255,255,0.2)}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.item{background:rgba(255,255,255,0.08);border-radius:14px;padding:14px 6px;text-align:center;cursor:pointer;transition:all 0.3s;border:2px solid transparent}
-.item:hover{border-color:#ffd700;transform:translateY(-4px);background:rgba(255,215,0,0.15)}
-.ic{font-size:38px;display:block;margin-bottom:6px}
-.iname{font-size:12px;font-weight:600;color:#fff;margin-top:4px}
-.ieff{font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px}
-.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background:#ffd700;color:#1a1a2e;padding:12px 24px;border-radius:20px;font-size:14px;font-weight:700;opacity:0;z-index:3000;transition:opacity 0.3s;pointer-events:none}
-.toast.show{opacity:1;animation:slideUp 0.4s ease}
-.empty{text-align:center;padding:50px 15px}
-.empty .ic{font-size:70px;margin-bottom:15px}
-.empty h2{color:#ffd700;margin-bottom:10px}
-.empty p{color:rgba(255,255,255,0.7);margin-bottom:18px}
-@media(max-width:500px){.pets{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}.grid{grid-template-columns:repeat(3,1fr)}.auth-box{padding:30px;width:90%}}
+.panel{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;z-index:1000}
+.panel.active{display:flex}
+.modal{background:#2d2d4d;padding:25px;border-radius:15px;width:90%;max-width:400px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.item{background:rgba(255,255,255,0.1);padding:15px;border-radius:10px;text-align:center;cursor:pointer}
+.item:hover{background:rgba(255,215,0,0.3)}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#ffd700;color:#1a1a2e;padding:12px 24px;border-radius:20px;font-weight:bold;opacity:0;transition:opacity 0.3s}
+.toast.show{opacity:1}
 </style>
 </head>
 <body>
-<div class="container">
-<h1>🐾 宠物乐园 - 12生肖</h1>
-<div class="main-app" id="mainApp">
-<div class="header">
-<div class="header-left">
-<div class="user-info">
-<span class="user-name" id="userName">用户名</span>
-</div>
-<button class="logout-btn" id="logoutBtn">退出</button>
-</div>
-<div style="display:flex;gap:10px;align-items:center">
-<div class="stats-bar">宠物: <span id="count">0</span>只</div>
-<button class="new-btn" id="adoptBtn">领养宠物</button>
-</div>
-</div>
-<div id="petsContainer"></div>
-</div>
-</div>
-
-<div class="auth-screen" id="authScreen">
+<div id="authScreen" class="auth-screen">
 <div class="auth-box">
-<h1>🐾 宠物乐园</h1>
-<p>12生肖宠物养成游戏</p>
+<h2 style="color:#ffd700;margin-bottom:10px">宠物乐园</h2>
+<p style="color:rgba(255,255,255,0.7);margin-bottom:20px">12生肖宠物养成</p>
 <div class="auth-tabs">
-<button class="auth-tab active" id="tabLogin">登录</button>
-<button class="auth-tab" id="tabRegister">注册</button>
+<button class="auth-tab active" onclick="switchTab('login')">登录</button>
+<button class="auth-tab" onclick="switchTab('register')">注册</button>
 </div>
-<form class="auth-form active" id="loginForm">
-<input type="text" id="loginUsername" placeholder="输入用户名" required>
-<input type="password" id="loginPassword" placeholder="输入密码" required>
+<form id="loginForm" class="auth-form active">
+<input type="text" id="loginUser" placeholder="用户名" required>
+<input type="password" id="loginPass" placeholder="密码" required>
 <button type="submit">登录</button>
-<div class="auth-error" id="loginError"></div>
 </form>
-<form class="auth-form" id="registerForm">
-<input type="text" id="regUsername" placeholder="输入用户名（3-12位）" required>
-<input type="password" id="regPassword" placeholder="输入密码（6位以上）" required>
-<input type="password" id="regPassword2" placeholder="确认密码" required>
+<form id="registerForm" class="auth-form">
+<input type="text" id="regUser" placeholder="用户名(3-12位)" required>
+<input type="password" id="regPass" placeholder="密码(6位以上)" required>
+<input type="password" id="regPass2" placeholder="确认密码" required>
 <button type="submit">注册</button>
-<div class="auth-error" id="regError"></div>
 </form>
-<div class="auth-hint">注册后可领养专属生肖宠物</div>
 </div>
 </div>
 
-<div class="panel" id="adoptPanel">
+<div id="mainApp" class="main-app">
+<h1>🐾 宠物乐园 - 12生肖</h1>
+<div class="header">
+<div style="color:#fff">欢迎, <span id="userName">用户</span> <button onclick="logout()" style="background:rgba(255,100,100,0.3);border:none;color:#ff8888;padding:5px 10px;border-radius:5px;cursor:pointer">退出</button></div>
+<div>宠物: <span id="count">0</span>只 <button onclick="showAdopt()" style="background:linear-gradient(135deg,#ffd700,#ff8c00);border:none;padding:8px 16px;border-radius:15px;cursor:pointer">领养</button></div>
+</div>
+<div id="petsContainer" class="pets"></div>
+</div>
+
+<div id="adoptPanel" class="panel">
 <div class="modal">
-<button class="close" id="closeAdopt">X</button>
-<h2>选择你的生肖</h2>
+<h3 style="color:#ffd700;margin-bottom:15px">选择生肖</h3>
 <div class="grid">
-<div class="item" data-type="rat"><span class="ic">🐀</span><div class="iname">鼠</div></div>
-<div class="item" data-type="ox"><span class="ic">🐂</span><div class="iname">牛</div></div>
-<div class="item" data-type="tiger"><span class="ic">🐅</span><div class="iname">虎</div></div>
-<div class="item" data-type="rabbit"><span class="ic">🐇</span><div class="iname">兔</div></div>
-<div class="item" data-type="dragon"><span class="ic">🐉</span><div class="iname">龙</div></div>
-<div class="item" data-type="snake"><span class="ic">🐍</span><div class="iname">蛇</div></div>
-<div class="item" data-type="horse"><span class="ic">🐎</span><div class="iname">马</div></div>
-<div class="item" data-type="goat"><span class="ic">🐐</span><div class="iname">羊</div></div>
-<div class="item" data-type="monkey"><span class="ic">🐒</span><div class="iname">猴</div></div>
-<div class="item" data-type="rooster"><span class="ic">🐓</span><div class="iname">鸡</div></div>
-<div class="item" data-type="dog"><span class="ic">🐕</span><div class="iname">狗</div></div>
-<div class="item" data-type="pig"><span class="ic">🐖</span><div class="iname">猪</div></div>
+<div class="item" onclick="hatch('rat')"><div style="font-size:30px">🐀</div><div style="color:#fff;font-size:12px">鼠</div></div>
+<div class="item" onclick="hatch('ox')"><div style="font-size:30px">🐂</div><div style="color:#fff;font-size:12px">牛</div></div>
+<div class="item" onclick="hatch('tiger')"><div style="font-size:30px">🐅</div><div style="color:#fff;font-size:12px">虎</div></div>
+<div class="item" onclick="hatch('rabbit')"><div style="font-size:30px">🐇</div><div style="color:#fff;font-size:12px">兔</div></div>
+<div class="item" onclick="hatch('dragon')"><div style="font-size:30px">🐉</div><div style="color:#fff;font-size:12px">龙</div></div>
+<div class="item" onclick="hatch('snake')"><div style="font-size:30px">🐍</div><div style="color:#fff;font-size:12px">蛇</div></div>
+<div class="item" onclick="hatch('horse')"><div style="font-size:30px">🐎</div><div style="color:#fff;font-size:12px">马</div></div>
+<div class="item" onclick="hatch('goat')"><div style="font-size:30px">🐐</div><div style="color:#fff;font-size:12px">羊</div></div>
+<div class="item" onclick="hatch('monkey')"><div style="font-size:30px">🐒</div><div style="color:#fff;font-size:12px">猴</div></div>
+<div class="item" onclick="hatch('rooster')"><div style="font-size:30px">🐓</div><div style="color:#fff;font-size:12px">鸡</div></div>
+<div class="item" onclick="hatch('dog')"><div style="font-size:30px">🐕</div><div style="color:#fff;font-size:12px">狗</div></div>
+<div class="item" onclick="hatch('pig')"><div style="font-size:30px">🐖</div><div style="color:#fff;font-size:12px">猪</div></div>
 </div>
+<button onclick="hideAdopt()" style="margin-top:15px;background:none;border:1px solid #fff;color:#fff;padding:8px 20px;border-radius:8px;cursor:pointer">关闭</button>
 </div>
 </div>
 
-<div class="panel" id="feedPanel">
+<div id="feedPanel" class="panel">
 <div class="modal">
-<button class="close" id="closeFeed">X</button>
-<h3>选择食物</h3>
+<h3 style="color:#ffd700;margin-bottom:15px">选择食物</h3>
 <div class="grid">
-<div class="item" data-food="apple"><span class="ic">🍎</span><div class="iname">苹果</div><div class="ieff">+15饱食</div></div>
-<div class="item" data-food="carrot"><span class="ic">🥕</span><div class="iname">胡萝卜</div><div class="ieff">+12饱食</div></div>
-<div class="item" data-food="fish"><span class="ic">🐟</span><div class="iname">小鱼干</div><div class="ieff">+20饱食</div></div>
-<div class="item" data-food="cake"><span class="ic">🍰</span><div class="iname">小蛋糕</div><div class="ieff">+25饱食</div></div>
+<div class="item" onclick="feed('apple')"><div style="font-size:30px">🍎</div><div style="color:#fff;font-size:12px">苹果 +15</div></div>
+<div class="item" onclick="feed('carrot')"><div style="font-size:30px">🥕</div><div style="color:#fff;font-size:12px">胡萝卜 +12</div></div>
+<div class="item" onclick="feed('fish')"><div style="font-size:30px">🐟</div><div style="color:#fff;font-size:12px">小鱼干 +20</div></div>
+<div class="item" onclick="feed('cake')"><div style="font-size:30px">🍰</div><div style="color:#fff;font-size:12px">蛋糕 +25</div></div>
 </div>
+<button onclick="hideFeed()" style="margin-top:15px;background:none;border:1px solid #fff;color:#fff;padding:8px 20px;border-radius:8px;cursor:pointer">关闭</button>
 </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div id="toast" class="toast"></div>
 
 <script>
 var currentUser=null;
 var pets=[];
-var currentFeedId=null;
+var feedId=null;
 var users={};
 var N={rat:"小老鼠",ox:"小牛牛",tiger:"小老虎",rabbit:"小兔兔",dragon:"小龙龙",snake:"小蛇蛇",horse:"小马马",goat:"小羊羊",monkey:"小猴猴",rooster:"小鸡鸡",dog:"小狗狗",pig:"小猪猪"};
-var M={hungry:["肚子饿了...","想吃东西~","好饿啊"],tired:["好困...","想睡觉","打哈欠"],sad:["不开心...","陪我玩","有点无聊"],happy:["好开心！","喜欢你！","真快乐~"]};
 var E={apple:15,carrot:12,fish:20,cake:25};
 
 function init(){
-  var s=localStorage.getItem("petUsers2");
+  var s=localStorage.getItem("petUsersV6");
   if(s){try{users=JSON.parse(s)}catch(e){users={}}}
-  var u=localStorage.getItem("petCurrentUser2");
+  var u=localStorage.getItem("petCurrentUserV6");
   if(u){
-    try{currentUser=JSON.parse(u);loadUserData()}catch(e){}
+    try{currentUser=JSON.parse(u);loadData()}catch(e){}
   }
-  bindEvents();
-  updateUI()
+  document.getElementById("loginForm").onsubmit=doLogin;
+  document.getElementById("registerForm").onsubmit=doRegister;
+  updateUI();
 }
 
-function saveUsers(){localStorage.setItem("petUsers2",JSON.stringify(users))}
-function saveCurrentUser(){localStorage.setItem("petCurrentUser2",currentUser?JSON.stringify(currentUser):null)}
-
-function loadUserData(){
+function saveUsers(){localStorage.setItem("petUsersV6",JSON.stringify(users))}
+function saveCurrent(){localStorage.setItem("petCurrentUserV6",currentUser?JSON.stringify(currentUser):null)}
+function loadData(){
   if(!currentUser)return;
-  var key="petData2_"+currentUser.username;
-  var s=localStorage.getItem(key);
-  if(s){try{pets=JSON.parse(s)}catch(e){pets=[]}}else{pets=[]}
+  var k="petDataV6_"+currentUser.username;
+  var s=localStorage.getItem(k);
+  if(s){try{pets=JSON.parse(s)}catch(e){pets=[]}}
 }
-
-function saveUserData(){
+function saveData(){
   if(!currentUser)return;
-  var key="petData2_"+currentUser.username;
-  localStorage.setItem(key,JSON.stringify(pets))
+  var k="petDataV6_"+currentUser.username;
+  localStorage.setItem(k,JSON.stringify(pets));
 }
 
 function updateUI(){
-  var auth=document.getElementById("authScreen");
-  var main=document.getElementById("mainApp");
   if(currentUser){
-    auth.style.display="none";
-    main.classList.add("show");
+    document.getElementById("authScreen").style.display="none";
+    document.getElementById("mainApp").classList.add("show");
     document.getElementById("userName").textContent=currentUser.username;
-    render()
+    render();
   }else{
-    auth.style.display="flex";
-    main.classList.remove("show")
+    document.getElementById("authScreen").style.display="flex";
+    document.getElementById("mainApp").classList.remove("show");
   }
 }
 
@@ -311,153 +160,95 @@ function toast(msg){
   var t=document.getElementById("toast");
   t.textContent=msg;
   t.classList.add("show");
-  setTimeout(function(){t.classList.remove("show")},2500)
+  setTimeout(function(){t.classList.remove("show")},2500);
 }
 
-function showError(el,msg){
-  el.textContent=msg;
-  el.classList.add("show");
-  setTimeout(function(){el.classList.remove("show")},3000)
-}
-
-function hashPassword(p){
+function hash(p){
   var h=0;
   for(var i=0;i<p.length;i++){h=((h<<5)-h)+p.charCodeAt(i);h=h&h}
-  return "x"+Math.abs(h).toString(36)
+  return "x"+Math.abs(h).toString(36);
 }
 
-function switchTab(tab){
-  var tabs=document.querySelectorAll(".auth-tab");
-  var loginForm=document.getElementById("loginForm");
-  var registerForm=document.getElementById("registerForm");
-  var tabLogin=document.getElementById("tabLogin");
-  var tabRegister=document.getElementById("tabRegister");
-  if(tab==="login"){
-    tabLogin.classList.add("active");
-    tabRegister.classList.remove("active");
-    loginForm.classList.add("active");
-    registerForm.classList.remove("active")
-  }else{
-    tabLogin.classList.remove("active");
-    tabRegister.classList.add("active");
-    loginForm.classList.remove("active");
-    registerForm.classList.add("active")
-  }
+function switchTab(t){
+  document.getElementById("loginForm").classList.toggle("active",t==="login");
+  document.getElementById("registerForm").classList.toggle("active",t==="register");
+  document.querySelectorAll(".auth-tab")[0].classList.toggle("active",t==="login");
+  document.querySelectorAll(".auth-tab")[1].classList.toggle("active",t==="register");
 }
 
-function bindEvents(){
-  document.getElementById("tabLogin").onclick=function(){switchTab("login")};
-  document.getElementById("tabRegister").onclick=function(){switchTab("register")};
-  
-  document.getElementById("loginForm").onsubmit=function(e){
-    e.preventDefault();
-    var u=document.getElementById("loginUsername").value.trim();
-    var p=document.getElementById("loginPassword").value;
-    if(!u||!p){showError(document.getElementById("loginError"),"请填写完整");return}
-    if(!users[u]||users[u].password!==hashPassword(p)){
-      showError(document.getElementById("loginError"),"用户名或密码错误");
-      return
-    }
-    currentUser={username:u};
-    saveCurrentUser();
-    loadUserData();
-    updateUI();
-    toast("欢迎回来，"+u+"！")
-  };
-  
-  document.getElementById("registerForm").onsubmit=function(e){
-    e.preventDefault();
-    var u=document.getElementById("regUsername").value.trim();
-    var p=document.getElementById("regPassword").value;
-    var p2=document.getElementById("regPassword2").value;
-    if(u.length<3||u.length>12){showError(document.getElementById("regError"),"用户名需要3-12位");return}
-    if(p.length<6){showError(document.getElementById("regError"),"密码需要6位以上");return}
-    if(p!==p2){showError(document.getElementById("regError"),"两次密码不一致");return}
-    if(users[u]){showError(document.getElementById("regError"),"用户名已存在");return}
-    users[u]={password:hashPassword(p),created:Date.now()};
-    saveUsers();
-    currentUser={username:u};
-    pets=[];
-    saveCurrentUser();
-    saveUserData();
-    updateUI();
-    toast("注册成功，欢迎 "+u+"！");
-    document.getElementById("regUsername").value="";
-    document.getElementById("regPassword").value="";
-    document.getElementById("regPassword2").value=""
-  };
-  
-  document.getElementById("logoutBtn").onclick=function(){
-    saveUserData();
-    currentUser=null;
-    pets=[];
-    saveCurrentUser();
-    updateUI();
-    toast("已退出登录")
-  };
-  
-  document.getElementById("adoptBtn").onclick=showAdopt;
-  document.getElementById("closeAdopt").onclick=hideAdopt;
-  document.getElementById("closeFeed").onclick=hideFeed;
-  document.getElementById("adoptPanel").onclick=function(e){if(e.target===this)hideAdopt()};
-  document.getElementById("feedPanel").onclick=function(e){if(e.target===this)hideFeed()};
-  
-  var adoptItems=document.querySelectorAll("#adoptPanel .item");
-  for(var i=0;i<adoptItems.length;i++){
-    adoptItems[i].onclick=(function(el){
-      return function(){hatch(el.getAttribute("data-type"))}
-    })(adoptItems[i])
-  }
-  
-  var feedItems=document.querySelectorAll("#feedPanel .item");
-  for(var i=0;i<feedItems.length;i++){
-    feedItems[i].onclick=(function(el){
-      return function(){feed(el.getAttribute("data-food"))}
-    })(feedItems[i])
-  }
+function doLogin(e){
+  e.preventDefault();
+  var u=document.getElementById("loginUser").value.trim();
+  var p=document.getElementById("loginPass").value;
+  if(!u||!p){toast("请填写完整");return}
+  if(!users[u]||users[u].password!==hash(p)){toast("用户名或密码错误");return}
+  currentUser={username:u};
+  saveCurrent();
+  loadData();
+  updateUI();
+  toast("欢迎回来，"+u+"！");
+}
+
+function doRegister(e){
+  e.preventDefault();
+  var u=document.getElementById("regUser").value.trim();
+  var p=document.getElementById("regPass").value;
+  var p2=document.getElementById("regPass2").value;
+  if(u.length<3||u.length>12){toast("用户名3-12位");return}
+  if(p.length<6){toast("密码6位以上");return}
+  if(p!==p2){toast("两次密码不一致");return}
+  if(users[u]){toast("用户名已存在");return}
+  users[u]={password:hash(p)};
+  saveUsers();
+  currentUser={username:u};
+  pets=[];
+  saveCurrent();
+  saveData();
+  updateUI();
+  toast("注册成功，欢迎 "+u+"！");
+}
+
+function logout(){
+  saveData();
+  currentUser=null;
+  pets=[];
+  saveCurrent();
+  updateUI();
+  toast("已退出");
 }
 
 function showAdopt(){document.getElementById("adoptPanel").classList.add("active")}
 function hideAdopt(){document.getElementById("adoptPanel").classList.remove("active")}
-function showFeed(id){currentFeedId=id;document.getElementById("feedPanel").classList.add("active")}
-function hideFeed(){document.getElementById("feedPanel").classList.remove("active");currentFeedId=null}
+function showFeed(id){feedId=id;document.getElementById("feedPanel").classList.add("active")}
+function hideFeed(){document.getElementById("feedPanel").classList.remove("active");feedId=null;}
 
 function hatch(type){
   hideAdopt();
-  var pet={
-    id:Date.now().toString(36)+Math.random().toString(36).substr(2,5),
-    type:type,
-    name:N[type],
-    level:1,
-    exp:0,
-    hunger:80,
-    happy:80,
-    energy:100,
-    sleeping:false
-  };
+  var pet={id:Date.now().toString(36)+Math.random().toString(36).substr(2,5),type:type,name:N[type],level:1,exp:0,hunger:80,happy:80,energy:100,sleeping:false};
   pets.push(pet);
-  saveUserData();
+  saveData();
   render();
-  toast("恭喜获得 "+N[type]+"！")
+  toast("恭喜获得 "+N[type]+"！");
 }
 
 function getPet(id){
-  for(var i=0;i<pets.length;i++){if(pets[i].id)return pets[i];}
-  return null
+  for(var i=0;i<pets.length;i++){if(pets[i].id===id)return pets[i]}
+  return null;
 }
+
 function feed(food){
-  if(!currentFeedId)return;
-  var p=getPet(currentFeedId);
+  if(!feedId)return;
+  var p=getPet(feedId);
   if(!p){hideFeed();return}
   p.hunger=Math.min(100,p.hunger+(E[food]||10));
   p.happy=Math.min(100,p.happy+3);
   p.exp+=10;
-  checkLv(p);
-  saveUserData();
+  saveData();
   render();
   hideFeed();
-  toast(p.name+" 吃了食物！")
+  toast(p.name+" 吃了食物！");
 }
+
 function play(id){
   var p=getPet(id);
   if(!p)return;
@@ -467,83 +258,48 @@ function play(id){
   p.happy=Math.min(100,p.happy+15);
   p.hunger=Math.max(0,p.hunger-5);
   p.exp+=15;
-  checkLv(p);
-  saveUserData();
+  saveData();
   render();
-  var av=document.getElementById("av"+id);
-  if(av){av.classList.add("happy");setTimeout(function(){av.classList.remove("happy")},600)}
-  toast(p.name+" 玩得很开心！")
+  toast(p.name+" 玩得很开心！");
 }
+
 function sleep(id){
   var p=getPet(id);
   if(!p)return;
   p.sleeping=!p.sleeping;
-  if(p.sleeping){p.energy=100;toast(p.name+" 开始睡觉... Zzz")}
-  else{toast(p.name+" 睡醒啦！")}
-  saveUserData();
-  render()
+  if(p.sleeping){p.energy=100;toast(p.name+" 开始睡觉...")}else{toast(p.name+" 睡醒啦！")}
+  saveData();
+  render();
 }
-function checkLv(p){
-  var need=p.level*100;
-  while(p.exp>=need){p.exp-=need;p.level++;toast(p.name+" 升级了！Lv."+p.level+"！")}
-}
+
 function getStatus(p){
-  if(p.sleeping)return{text:"💤 睡觉中...",cls:""};
-  if(p.hunger<30)return{text:"😫 "+M.hungry[Math.floor(Math.random()*3)],cls:"hungry"};
-  if(p.energy<30)return{text:"😴 "+M.tired[Math.floor(Math.random()*3)],cls:"tired"};
-  if(p.happy<30)return{text:"😢 "+M.sad[Math.floor(Math.random()*3)],cls:"sad"};
-  return{text:"😊 "+M.happy[Math.floor(Math.random()*3)],cls:"happy"}
+  if(p.sleeping)return"💤 睡觉中...";
+  if(p.hunger<30)return"😫 肚子饿了";
+  if(p.energy<30)return"😴 好困";
+  if(p.happy<30)return"😢 不开心";
+  return"😊 开心";
 }
-function getAvatar(t){
-  var f={
-    rat:'<div class="rat-face"></div><div class="rat-ear left"></div><div class="rat-ear right"></div><div class="rat-eye left"></div><div class="rat-eye right"></div><div class="rat-nose"></div>',
-    ox:'<div class="ox-face"></div><div class="ox-horn left"></div><div class="ox-horn right"></div><div class="ox-eye left"></div><div class="ox-eye right"></div>',
-    tiger:'<div class="tiger-face"></div><div class="tiger-stripe s1"></div><div class="tiger-stripe s2"></div><div class="tiger-stripe s3"></div><div class="tiger-stripe s4"></div><div class="tiger-eye left"></div><div class="tiger-eye right"></div>',
-    rabbit:'<div class="rabbit-face"></div><div class="rabbit-ear"></div><div class="rabbit-ear right"></div><div class="rabbit-eye left"></div><div class="rabbit-eye right"></div>',
-    dragon:'<div class="dragon-face"></div><div class="dragon-horn left"></div><div class="dragon-horn right"></div><div class="dragon-eye left"></div><div class="dragon-eye right"></div>',
-    snake:'<div class="snake-body"></div><div class="snake-eye left"></div><div class="snake-eye right"></div>',
-    horse:'<div class="horse-face"></div><div class="horse-mane"></div><div class="horse-eye left"></div><div class="horse-eye right"></div>',
-    goat:'<div class="goat-face"></div><div class="goat-horn left"></div><div class="goat-horn right"></div><div class="goat-eye left"></div><div class="goat-eye right"></div>',
-    monkey:'<div class="monkey-face"></div><div class="monkey-ear left"></div><div class="monkey-ear right"></div><div class="monkey-eye left"></div><div class="monkey-eye right"></div>',
-    rooster:'<div class="rooster-face"></div><div class="rooster-comb"></div><div class="rooster-eye left"></div><div class="rooster-eye right"></div>',
-    dog:'<div class="dog-face"></div><div class="dog-ear"></div><div class="dog-ear right"></div><div class="dog-eye left"></div><div class="dog-eye right"></div>',
-    pig:'<div class="pig-face"></div><div class="pig-snout"></div>'
-  };
-  return f[t]||""
-}
+
 function render(){
   document.getElementById("count").textContent=pets.length;
   var c=document.getElementById("petsContainer");
-  if(pets.length===0){
-    c.innerHTML='<div class="empty"><div class="ic">🐾</div><h2>还没有宠物~</h2><p>快来领养一只生肖守护神吧！</p><button class="new-btn" onclick="showAdopt()">领养宠物</button></div>';
-    return
-  }
+  if(pets.length===0){c.innerHTML='<div style="text-align:center;color:#fff;padding:40px"><div style="font-size:60px">🐾</div><div>还没有宠物~</div><button onclick="showAdopt()" style="background:linear-gradient(135deg,#ffd700,#ff8c00);border:none;padding:12px 24px;border-radius:20px;margin-top:15px;cursor:pointer">领养宠物</button></div>';return}
   var html="";
   for(var i=0;i<pets.length;i++){
     var p=pets[i];
-    var s=getStatus(p);
-    html+='<div class="card">';
-    html+='<div class="card-top"><div class="name">'+p.name+'</div><div class="level">Lv.'+p.level+'</div></div>';
-    html+='<div class="avatar-wrap"><div class="avatar" id="av'+p.id+'">'+getAvatar(p.type)+'</div></div>';
-    html+='<div class="stats">';
-    html+='<div class="stat"><span class="stat-icon">🍖</span><div class="stat-bar"><div class="bar hunger" style="width:'+p.hunger+'%"></div></div></div>';
-    html+='<div class="stat"><span class="stat-icon">😊</span><div class="stat-bar"><div class="bar happy" style="width:'+p.happy+'%"></div></div></div>';
-    html+='<div class="stat"><span class="stat-icon">⚡</span><div class="stat-bar"><div class="bar energy" style="width:'+p.energy+'%"></div></div></div>';
-    html+='</div>';
-    html+='<div class="status '+s.cls+'">'+s.text+'</div>';
+    html+='<div class="card"><div class="card-top"><div class="name">'+p.name+'</div><div class="level">Lv.'+p.level+'</div></div>';
+    html+='<div class="stats"><div class="stat">🍖'+p.hunger+'</div><div class="stat">😊'+p.happy+'</div><div class="stat">⚡'+p.energy+'</div></div>';
+    html+='<div style="text-align:center;color:rgba(255,255,255,0.8);margin:10px 0">'+getStatus(p)+'</div>';
     html+='<div class="actions">';
-    html+='<button class="btn feed" onclick="showFeed(\''+p.id+'\')">🍖<span>喂食</span></button>';
-    html+='<button class="btn play" onclick="play(\''+p.id+'\')">🎮<span>玩耍</span></button>';
-    html+='<button class="btn sleep" onclick="sleep(\''+p.id+'\')">'+(p.sleeping?"☀️":"😴")+'<span>'+(p.sleeping?"唤醒":"睡觉")+'</span></button>';
-    html+='</div></div>'
+    html+='<button class="btn feed" onclick="showFeed(\''+p.id+'\')">🍖</button>';
+    html+='<button class="btn play" onclick="play(\''+p.id+'\')">🎮</button>';
+    html+='<button class="btn sleep" onclick="sleep(\''+p.id+'\')">'+(p.sleeping?"☀️":"😴")+'</button>';
+    html+='</div></div>';
   }
-  c.innerHTML=html
+  c.innerHTML=html;
 }
-window.showAdopt=showAdopt;
-window.showFeed=showFeed;
-window.play=play;
-window.sleep=sleep;
-init()
+
+init();
 </script>
 </body>
 </html>
