@@ -271,8 +271,9 @@ h1{color:#ffd700;text-align:center;font-size:2.2em;animation:bounce 2.5s infinit
 <div class=pets id=pets></div>
 </div>
 
-<div class=panel id=panel>
+<div class=panel id=panel onclick="if(event.target===this)hidePanel()">
 <div class=modal>
+<button class=close onclick=hidePanel()>X</button>
 <h2>选择你的生肖守护神</h2>
 <div class=grid>
 <div class=item onclick=hatch("rat")><span class=ic>🐀</span><div class=iname>鼠</div></div>
@@ -291,8 +292,9 @@ h1{color:#ffd700;text-align:center;font-size:2.2em;animation:bounce 2.5s infinit
 </div>
 </div>
 
-<div class=panel id=foodPanel>
+<div class=panel id=foodPanel onclick="if(event.target===this)hideFood()">
 <div class=modal>
+<button class=close onclick=hideFood()>X</button>
 <h3>喂食</h3>
 <div class=grid>
 <div class=item onclick=feed("apple")><span class=ic>🍎</span><div class=iname>苹果</div><div class=ieff>+15饱食</div></div>
