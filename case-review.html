@@ -1,7 +1,9 @@
-<!DOCTYPE html>
+const fs = require('fs');
+const html = `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>我的宠物乐园 - 12生肖</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -11,9 +13,38 @@ body{font-family:Nunito,sans-serif;background:linear-gradient(135deg,#1a1a2e,#16
 @keyframes glow{0%,100%{filter:drop-shadow(0 0 5px rgba(255,200,100,0.3))}50%{filter:drop-shadow(0 0 12px rgba(255,200,100,0.5))}}
 @keyframes happy3d{0%,100%{transform:scale(1)}30%{transform:scale(1.15)}60%{transform:scale(1.08)}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
-.container{max-width:1200px;margin:0 auto}
-h1{color:#ffd700;text-align:center;font-size:1.6em;animation:bounce 2s infinite;text-shadow:0 0 15px rgba(255,215,0,0.5);margin-bottom:12px}
+@keyframes slideUp{from{opacity:0;transform:translate(-50%,30px)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.container{max-width:1200px;margin:0 auto;position:relative}
+/* Auth Screen */
+.auth-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);display:flex;align-items:center;justify-content:center;z-index:2000}
+.auth-box{background:rgba(255,255,255,0.1);backdrop-filter:blur(20px);border-radius:28px;padding:40px;width:360px;text-align:center;border:1px solid rgba(255,255,255,0.15);animation:fadeIn 0.5s ease}
+.auth-box h1{color:#ffd700;font-size:1.8em;margin-bottom:8px;text-shadow:0 0 20px rgba(255,215,0,0.5)}
+.auth-box p{color:rgba(255,255,255,0.7);margin-bottom:25px;font-size:14px}
+.auth-tabs{display:flex;margin-bottom:25px;background:rgba(0,0,0,0.2);border-radius:12px;padding:4px}
+.auth-tab{flex:1;padding:10px;border:none;background:none;color:rgba(255,255,255,0.6);cursor:pointer;border-radius:10px;transition:all 0.3s;font-size:14px;font-weight:600}
+.auth-tab.active{background:linear-gradient(135deg,#ffd700,#ff8c00);color:#1a1a2e}
+.auth-form{display:none}
+.auth-form.active{display:block}
+.auth-form input{width:100%;padding:14px 16px;margin-bottom:12px;border:2px solid rgba(255,255,255,0.15);border-radius:12px;background:rgba(255,255,255,0.08);color:#fff;font-size:15px;transition:border-color 0.3s;outline:none;box-sizing:border-box}
+.auth-form input::placeholder{color:rgba(255,255,255,0.4)}
+.auth-form input:focus{border-color:#ffd700}
+.auth-form button{width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#ffd700,#ff8c00);color:#1a1a2e;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.3s;margin-top:8px}
+.auth-form button:hover{transform:scale(1.03);box-shadow:0 8px 25px rgba(255,215,0,0.4)}
+.auth-error{color:#ff6b6b;font-size:13px;margin-top:10px;display:none;animation:shake 0.4s ease}
+.auth-error.show{display:block}
+.auth-hint{color:rgba(255,255,255,0.5);font-size:12px;margin-top:15px}
+/* Main App */
+.main-app{display:none}
+.main-app.show{display:block}
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;gap:10px;flex-wrap:wrap}
+.header-left{display:flex;align-items:center;gap:12px}
+h1{color:#ffd700;font-size:1.5em;animation:bounce 2s infinite;text-shadow:0 0 15px rgba(255,215,0,0.5);margin-bottom:12px}
+.user-info{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.1);padding:8px 16px;border-radius:20px}
+.user-avatar{width:32px;height:32px;background:linear-gradient(135deg,#ffd700,#ff8c00);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px}
+.user-name{color:#fff;font-weight:600;font-size:14px}
+.logout-btn{background:rgba(255,255,255,0.1);border:none;color:#fff;padding:6px 12px;border-radius:10px;cursor:pointer;font-size:12px;transition:all 0.3s}
+.logout-btn:hover{background:rgba(255,100,100,0.3)}
 .stats-bar{background:rgba(255,255,255,0.1);padding:8px 18px;border-radius:20px;color:#fff;font-size:14px}
 .new-btn{background:linear-gradient(135deg,#ffd700,#ff8c00);color:#1a1a2e;border:none;padding:10px 20px;border-radius:20px;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.3s}
 .new-btn:hover{transform:scale(1.05)}
@@ -126,7 +157,7 @@ h1{color:#ffd700;text-align:center;font-size:1.6em;animation:bounce 2s infinite;
 /* Panels */
 .panel{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);display:none;align-items:center;justify-content:center;z-index:1000}
 .panel.active{display:flex;animation:fadeIn 0.3s}
-.modal{background:#2d2d4d;border-radius:24px;padding:24px;max-width:450px;width:90%;animation:fadeIn 0.4s;position:relative}
+.modal{background:#2d2d4d;border-radius:24px;padding:24px;max-width:450px;width:90%;position:relative}
 .modal h2,.modal h3{text-align:center;color:#ffd700;margin-bottom:18px;font-size:1.3em}
 .modal h3{font-size:1.1em}
 .close{position:absolute;top:10px;right:10px;width:30px;height:30px;background:rgba(255,255,255,0.1);border:none;border-radius:50%;color:#fff;font-size:16px;cursor:pointer}
@@ -137,23 +168,59 @@ h1{color:#ffd700;text-align:center;font-size:1.6em;animation:bounce 2s infinite;
 .ic{font-size:38px;display:block;margin-bottom:6px}
 .iname{font-size:12px;font-weight:600;color:#fff;margin-top:4px}
 .ieff{font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px}
-.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background:#ffd700;color:#1a1a2e;padding:12px 24px;border-radius:20px;font-size:14px;font-weight:700;opacity:0;z-index:2000;transition:opacity 0.3s}
-.toast.show{opacity:1}
+.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background:#ffd700;color:#1a1a2e;padding:12px 24px;border-radius:20px;font-size:14px;font-weight:700;opacity:0;z-index:3000;transition:opacity 0.3s;pointer-events:none}
+.toast.show{opacity:1;animation:slideUp 0.4s ease}
 .empty{text-align:center;padding:50px 15px}
 .empty .ic{font-size:70px;margin-bottom:15px}
 .empty h2{color:#ffd700;margin-bottom:10px}
 .empty p{color:rgba(255,255,255,0.7);margin-bottom:18px}
-@media(max-width:500px){.pets{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}.grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:500px){.pets{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}.grid{grid-template-columns:repeat(3,1fr)}.auth-box{padding:30px;width:90%}}
 </style>
 </head>
 <body>
 <div class="container">
 <h1>我的宠物乐园 - 12生肖</h1>
+<div class="main-app" id="mainApp">
 <div class="header">
+<div class="header-left">
+<div class="user-info">
+<div class="user-avatar">🐾</div>
+<div class="user-name" id="userName">用户名</div>
+</div>
+<button class="logout-btn" id="logoutBtn">退出登录</button>
+</div>
+<div class="header-right" style="display:flex;gap:10px;align-items:center">
 <div class="stats-bar">宠物: <span id="count">0</span>只</div>
 <button class="new-btn" id="adoptBtn">领养宠物</button>
 </div>
+</div>
 <div id="petsContainer"></div>
+</div>
+</div>
+
+<div class="auth-screen" id="authScreen">
+<div class="auth-box">
+<h1>🐾 宠物乐园</h1>
+<p>12生肖宠物养成游戏</p>
+<div class="auth-tabs">
+<button class="auth-tab active" data-tab="login">登录</button>
+<button class="auth-tab" data-tab="register">注册</button>
+</div>
+<form class="auth-form active" id="loginForm">
+<input type="text" id="loginUsername" placeholder="输入用户名" required>
+<input type="password" id="loginPassword" placeholder="输入密码" required>
+<button type="submit">登录</button>
+<div class="auth-error" id="loginError"></div>
+</form>
+<form class="auth-form" id="registerForm">
+<input type="text" id="regUsername" placeholder="输入用户名（3-12位）" required>
+<input type="password" id="regPassword" placeholder="输入密码（6位以上）" required>
+<input type="password" id="regPassword2" placeholder="确认密码" required>
+<button type="submit">注册</button>
+<div class="auth-error" id="regError"></div>
+</form>
+<div class="auth-hint">注册后可领养专属生肖宠物</div>
+</div>
 </div>
 
 <div class="panel" id="adoptPanel">
@@ -194,20 +261,55 @@ h1{color:#ffd700;text-align:center;font-size:1.6em;animation:bounce 2s infinite;
 
 <script>
 (function(){
+var currentUser=null;
 var pets=[];
-var currentId=null;
+var currentFeedId=null;
+var users={};
 var N={rat:"小老鼠",ox:"小牛牛",tiger:"小老虎",rabbit:"小兔兔",dragon:"小龙龙",snake:"小蛇蛇",horse:"小马马",goat:"小羊羊",monkey:"小猴猴",rooster:"小鸡鸡",dog:"小狗狗",pig:"小猪猪"};
 var M={hungry:["肚子饿了...","想吃东西~","好饿啊"],tired:["好困...","想睡觉","打哈欠"],sad:["不开心...","陪我玩","有点无聊"],happy:["好开心！","喜欢你！","真快乐~"]};
 var E={apple:15,carrot:12,fish:20,cake:25};
 
 function init(){
-  var s=localStorage.getItem("zodiac_v2");
-  if(s){try{pets=JSON.parse(s)}catch(e){pets=[]}}
-  bindEvents();
-  render()
+  var s=localStorage.getItem("petUsers");
+  if(s){try{users=JSON.parse(s)}catch(e){users={}}}
+  var u=localStorage.getItem("petCurrentUser");
+  if(u){
+    try{currentUser=JSON.parse(u);loadUserData()}catch(e){}
+  }
+  bindAuthEvents();
+  updateUI()
 }
 
-function save(){localStorage.setItem("zodiac_v2",JSON.stringify(pets))}
+function saveUsers(){localStorage.setItem("petUsers",JSON.stringify(users))}
+function saveCurrentUser(){localStorage.setItem("petCurrentUser",currentUser?JSON.stringify(currentUser):null)}
+
+function loadUserData(){
+  if(!currentUser)return;
+  var key="petData_"+currentUser.username;
+  var s=localStorage.getItem(key);
+  if(s){try{pets=JSON.parse(s)}catch(e){pets=[]}}else{pets=[]}
+}
+
+function saveUserData(){
+  if(!currentUser)return;
+  var key="petData_"+currentUser.username;
+  localStorage.setItem(key,JSON.stringify(pets))
+}
+
+function updateUI(){
+  var auth=document.getElementById("authScreen");
+  var main=document.getElementById("mainApp");
+  if(currentUser){
+    auth.style.display="none";
+    main.classList.add("show");
+    document.getElementById("userName").textContent=currentUser.username;
+    render()
+  }else{
+    auth.style.display="flex";
+    main.classList.remove("show")
+  }
+}
+
 function toast(msg){
   var t=document.getElementById("toast");
   t.textContent=msg;
@@ -215,7 +317,73 @@ function toast(msg){
   setTimeout(function(){t.classList.remove("show")},2500)
 }
 
-function bindEvents(){
+function showError(el,msg){
+  el.textContent=msg;
+  el.classList.add("show");
+  setTimeout(function(){el.classList.remove("show")},3000)
+}
+
+function hashPassword(p){
+  var h=0;
+  for(var i=0;i<p.length;i++){h=((h<<5)-h)+p.charCodeAt(i);h=h&h}
+  return "x"+Math.abs(h).toString(36)
+}
+
+function bindAuthEvents(){
+  var tabs=document.querySelectorAll(".auth-tab");
+  for(var i=0;i<tabs.length;i++){
+    tabs[i].onclick=function(){
+      tabs.forEach(function(t){t.classList.remove("active")});
+      this.classList.add("active");
+      var tab=this.getAttribute("data-tab");
+      document.getElementById("loginForm").classList.toggle("active",tab==="login");
+      document.getElementById("registerForm").classList.toggle("active",tab==="register")
+    }
+  }
+  document.getElementById("loginForm").onsubmit=function(e){
+    e.preventDefault();
+    var u=document.getElementById("loginUsername").value.trim();
+    var p=document.getElementById("loginPassword").value;
+    if(!u||!p){showError(document.getElementById("loginError"),"请填写完整");return}
+    if(!users[u]||users[u].password!==hashPassword(p)){
+      showError(document.getElementById("loginError"),"用户名或密码错误");
+      return
+    }
+    currentUser={username:u};
+    saveCurrentUser();
+    loadUserData();
+    updateUI();
+    toast("欢迎回来，"+u+"！")
+  };
+  document.getElementById("registerForm").onsubmit=function(e){
+    e.preventDefault();
+    var u=document.getElementById("regUsername").value.trim();
+    var p=document.getElementById("regPassword").value;
+    var p2=document.getElementById("regPassword2").value;
+    if(u.length<3||u.length>12){showError(document.getElementById("regError"),"用户名需要3-12位");return}
+    if(p.length<6){showError(document.getElementById("regError"),"密码需要6位以上");return}
+    if(p!==p2){showError(document.getElementById("regError"),"两次密码不一致");return}
+    if(users[u]){showError(document.getElementById("regError"),"用户名已存在");return}
+    users[u]={password:hashPassword(p),created:Date.now()};
+    saveUsers();
+    currentUser={username:u};
+    pets=[];
+    saveCurrentUser();
+    saveUserData();
+    updateUI();
+    toast("注册成功，欢迎 "+u+"！");
+    document.getElementById("regUsername").value="";
+    document.getElementById("regPassword").value="";
+    document.getElementById("regPassword2").value=""
+  };
+  document.getElementById("logoutBtn").onclick=function(){
+    saveUserData();
+    currentUser=null;
+    pets=[];
+    saveCurrentUser();
+    updateUI();
+    toast("已退出登录")
+  };
   document.getElementById("adoptBtn").onclick=showAdopt;
   document.getElementById("closeAdopt").onclick=hideAdopt;
   document.getElementById("closeFeed").onclick=hideFeed;
@@ -223,27 +391,23 @@ function bindEvents(){
   document.getElementById("feedPanel").onclick=function(e){if(e.target===this)hideFeed()};
   var ai=document.querySelectorAll("#adoptPanel .item");
   for(var i=0;i<ai.length;i++){
-    ai[i].onclick=(function(idx){
-      return function(){hatch(ai[idx].getAttribute("data-type"))}
-    })(i)
+    ai[i].onclick=(function(el){return function(){hatch(el.getAttribute("data-type"))}})(ai[i])
   }
   var fi=document.querySelectorAll("#feedPanel .item");
   for(var i=0;i<fi.length;i++){
-    fi[i].onclick=(function(idx){
-      return function(){feed(fi[idx].getAttribute("data-food"))}
-    })(i)
+    fi[i].onclick=(function(el){return function(){feed(el.getAttribute("data-food"))}})(fi[i])
   }
 }
 
 function showAdopt(){document.getElementById("adoptPanel").classList.add("active")}
 function hideAdopt(){document.getElementById("adoptPanel").classList.remove("active")}
-function showFeed(id){currentId=id;document.getElementById("feedPanel").classList.add("active")}
-function hideFeed(){document.getElementById("feedPanel").classList.remove("active");currentId=null}
+function showFeed(id){currentFeedId=id;document.getElementById("feedPanel").classList.add("active")}
+function hideFeed(){document.getElementById("feedPanel").classList.remove("active");currentFeedId=null}
 
 function hatch(type){
   hideAdopt();
   var pet={
-    id:Date.now().toString(36)+Math.random().toString(36).substr(2),
+    id:Date.now().toString(36)+Math.random().toString(36).substr(2,5),
     type:type,
     name:N[type],
     level:1,
@@ -254,30 +418,26 @@ function hatch(type){
     sleeping:false
   };
   pets.push(pet);
-  save();
+  saveUserData();
   render();
   toast("恭喜获得 "+N[type]+"！")
 }
 
 function getPet(id){
-  for(var i=0;i<pets.length;i++){if(pets[i].id===id)return pets[i]}
-  return null
-}
-
+  for(var i=0;i<pets.length;i++){if(pets[i].id)return pets[i];return null}
 function feed(food){
-  if(!currentId)return;
-  var p=getPet(currentId);
+  if(!currentFeedId)return;
+  var p=getPet(currentFeedId);
   if(!p){hideFeed();return}
   p.hunger=Math.min(100,p.hunger+(E[food]||10));
   p.happy=Math.min(100,p.happy+3);
   p.exp+=10;
   checkLv(p);
-  save();
+  saveUserData();
   render();
   hideFeed();
   toast(p.name+" 吃了食物！")
 }
-
 function play(id){
   var p=getPet(id);
   if(!p)return;
@@ -288,28 +448,25 @@ function play(id){
   p.hunger=Math.max(0,p.hunger-5);
   p.exp+=15;
   checkLv(p);
-  save();
+  saveUserData();
   render();
   var av=document.getElementById("av"+id);
   if(av){av.classList.add("happy");setTimeout(function(){av.classList.remove("happy")},600)}
   toast(p.name+" 玩得很开心！")
 }
-
 function sleep(id){
   var p=getPet(id);
   if(!p)return;
   p.sleeping=!p.sleeping;
   if(p.sleeping){p.energy=100;toast(p.name+" 开始睡觉... Zzz")}
   else{toast(p.name+" 睡醒啦！")}
-  save();
+  saveUserData();
   render()
 }
-
 function checkLv(p){
   var need=p.level*100;
   while(p.exp>=need){p.exp-=need;p.level++;toast(p.name+" 升级了！Lv."+p.level+"！")}
 }
-
 function getStatus(p){
   if(p.sleeping)return{text:"💤 睡觉中...",cls:""};
   if(p.hunger<30)return{text:"😫 "+M.hungry[Math.floor(Math.random()*3)],cls:"hungry"};
@@ -317,7 +474,6 @@ function getStatus(p){
   if(p.happy<30)return{text:"😢 "+M.sad[Math.floor(Math.random()*3)],cls:"sad"};
   return{text:"😊 "+M.happy[Math.floor(Math.random()*3)],cls:"happy"}
 }
-
 function getAvatar(t){
   var f={
     rat:'<div class="rat-face"></div><div class="rat-ear left"></div><div class="rat-ear right"></div><div class="rat-eye left"></div><div class="rat-eye right"></div><div class="rat-nose"></div>',
@@ -335,13 +491,11 @@ function getAvatar(t){
   };
   return f[t]||""
 }
-
 function render(){
   document.getElementById("count").textContent=pets.length;
   var c=document.getElementById("petsContainer");
   if(pets.length===0){
-    c.innerHTML='<div class="empty"><div class="ic">🐾</div><h2>还没有生肖宠物~</h2><p>快来领养一只吧！</p><button class="new-btn" id="emptyBtn">领养宠物</button></div>';
-    document.getElementById("emptyBtn").onclick=showAdopt;
+    c.innerHTML='<div class="empty"><div class="ic">🐾</div><h2>还没有宠物~</h2><p>快来领养一只生肖守护神吧！</p><button class="new-btn" onclick="showAdopt()">领养宠物</button></div>';
     return
   }
   var html="";
@@ -376,7 +530,7 @@ function render(){
     })(btns[j])
   }
 }
-
+window.showAdopt=showAdopt;
 init()
 })()
 </script>
