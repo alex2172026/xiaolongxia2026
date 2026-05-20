@@ -1,223 +1,345 @@
-<!DOCTYPE html>
+const fs = require('fs');
+const html = `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>我的宠物乐园</title>
+<title>我的宠物乐园 - 12生肖</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Nunito,sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding:20px}
+body{font-family:Nunito,sans-serif;background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);min-height:100vh;padding:20px}
 @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-@keyframes float{0%,100%{transform:translate(-50%,-50%)}50%{transform:translate(-50%,calc(-50% - 5px))}}
-@keyframes look{0%,30%,100%{transform:translate(-50%,-50%)}35%,45%{transform:translate(-40%,-50%)}75%,85%{transform:translate(-60%,-50%)}}
-@keyframes antL{0%,100%{transform:rotate(-20deg)}50%{transform:rotate(-35deg)}}
-@keyframes antR{0%,100%{transform:rotate(20deg)}50%{transform:rotate(35deg)}}
-@keyframes tail{0%,100%{transform:translateX(-50%) rotate(-10deg)}50%{transform:translateX(-50%) rotate(10deg)}}
-@keyframes blink{0%,90%,100%{transform:scaleY(1)}95%{transform:scaleY(0.1)}}
-@keyframes tailSway{0%,100%{transform:rotate(-20deg)}50%{transform:rotate(20deg)}}
-@keyframes tongue{0%,70%,100%{height:15px}80%,90%{height:22px}}
-@keyframes earWiggle{0%,100%{transform:rotate(-15deg)}50%{transform:rotate(-10deg)}}
-@keyframes wing{0%,100%{transform:translateX(-50%) rotate(0deg)}50%{transform:translateX(-50%) rotate(-15deg)}}
-@keyframes happy{0%,100%{transform:translateY(0)}25%{transform:translateY(-15px) scale(1.1)}50%{transform:translateY(-8px)}75%{transform:translateY(-12px)}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
-@keyframes toastIn{from{transform:translate(-50%,20px);opacity:0}to{transform:translate(-50%,0);opacity:1}}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
-.container{max-width:900px;margin:0 auto}
-h1{color:#fff;text-align:center;font-size:2em;animation:bounce 2s infinite}
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:10px}
-.stats-bar{background:rgba(255,255,255,0.2);padding:10px 20px;border-radius:20px;color:#fff;font-weight:600}
-.new-egg-btn{background:linear-gradient(#f093fb,#f5576c);color:#fff;border:none;padding:12px 24px;border-radius:25px;font-size:16px;font-weight:600;cursor:pointer;transition:all 0.3s}
-.new-egg-btn:hover{transform:scale(1.05);box-shadow:0 5px 20px rgba(240,147,251,0.5)}
-.pets{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
-.card{background:#fff;border-radius:20px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,0.15);animation:slideUp 0.4s ease;transition:transform 0.3s}
-.card:hover{transform:translateY(-5px)}
-.card-header{display:flex;justify-content:space-between;margin-bottom:10px}
-.name{font-size:20px;font-weight:700;color:#2d3748}
-.level{background:linear-gradient(#ffd700,#ffb347);color:#fff;padding:5px 12px;border-radius:15px;font-size:12px}
-.avatar{width:100px;height:100px;margin:15px auto;position:relative;cursor:pointer;transition:transform 0.3s}
-.avatar:hover{transform:scale(1.1)}
-.avatar:active{transform:scale(0.95)}
-.avatar.happy{animation:happy 0.6s ease}
-.pc-body{position:absolute;width:60px;height:70px;background:linear-gradient(#e74c3c,#c0392b);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);animation:float 3s infinite}
-.pc-eye{position:absolute;width:12px;height:14px;background:#fff;border-radius:50%;top:10px}
-.pc-eye.left{left:15px}
-.pc-eye.right{right:15px}
-.pc-eye::after{content:"";position:absolute;width:8px;height:8px;background:#1a1a2e;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);animation:look 4s infinite}
-.pc-ant{position:absolute;width:3px;height:25px;background:#e74c3c;border-radius:50%;top:-15px}
-.pc-ant.left{left:30px;animation:antL 2s infinite}
-.pc-ant.right{right:30px;animation:antR 2s infinite}
-.pc-claw{position:absolute;width:25px;height:35px;background:#e74c3c;border-radius:50%;top:35px}
-.pc-claw.left{left:0;transform:rotate(25deg)}
-.pc-claw.right{right:0;transform:rotate(-25deg)}
-.pc-tail{position:absolute;width:30px;height:20px;background:#c0392b;border-radius:0 0 50% 50%;bottom:0;left:50%;transform:translateX(-50%);animation:tail 0.8s infinite}
-.pca-body{position:absolute;width:70px;height:50px;background:linear-gradient(#f5a623,#e8941c);border-radius:50%;left:50%;top:55%;transform:translate(-50%,-50%);animation:float 2.5s infinite}
-.pca-head{position:absolute;width:65px;height:55px;background:#f5a623;border-radius:50%;left:50%;top:15px;transform:translateX(-50%)}
-.pca-ear{position:absolute;width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-bottom:20px solid #e8941c;top:0}
-.pca-ear.left{left:12px;transform:rotate(-15deg)}
-.pca-ear.right{right:12px;transform:rotate(15deg)}
-.pca-eye{position:absolute;width:14px;height:16px;background:#2ecc71;border-radius:50%;top:25px;animation:blink 4s infinite}
-.pca-eye.left{left:15px}
-.pca-eye.right{right:15px}
-.pca-eye::after{content:"";position:absolute;width:3px;height:10px;background:#1a1a2e;border-radius:2px;top:3px;left:5px}
-.pca-nose{position:absolute;width:8px;height:6px;background:#ff6b81;border-radius:50%;top:42px;left:50%;transform:translateX(-50%)}
-.pca-tail{position:absolute;width:12px;height:40px;background:#e8941c;border-radius:10px;right:5px;top:40px;transform-origin:bottom;animation:tailSway 2s infinite}
-.pd-body{position:absolute;width:65px;height:45px;background:linear-gradient(#8b4513,#654321);border-radius:50%;left:50%;top:55%;transform:translate(-50%,-50%);animation:float 2s infinite}
-.pd-head{position:absolute;width:60px;height:55px;background:#8b4513;border-radius:50%;left:50%;top:12px;transform:translateX(-50%)}
-.pd-eye{position:absolute;width:14px;height:14px;background:#1a1a2e;border-radius:50%;top:24px}
-.pd-eye.left{left:12px}
-.pd-eye.right{right:12px}
-.pd-eye::after{content:"";position:absolute;width:5px;height:5px;background:#fff;border-radius:50%;top:2px;left:2px}
-.pd-nose{position:absolute;width:14px;height:10px;background:#1a1a2e;border-radius:50%;top:36px;left:50%;transform:translateX(-50%)}
-.pd-tongue{position:absolute;width:10px;height:15px;background:#ff6b6b;border-radius:0 0 50% 50%;top:46px;left:50%;transform:translateX(-50%);animation:tongue 3s infinite}
-.pd-tail{position:absolute;width:10px;height:30px;background:#8b4513;border-radius:10px;right:8px;top:30px;transform-origin:bottom;animation:tail 0.4s infinite}
-.pr-body{position:absolute;width:60px;height:55px;background:#fff;border-radius:50%;left:50%;top:55%;transform:translate(-50%,-50%);animation:float 2.8s infinite}
-.pr-head{position:absolute;width:50px;height:45px;background:#fff;border-radius:50%;left:50%;top:18px;transform:translateX(-50%)}
-.pr-ear{position:absolute;width:14px;height:45px;background:#fff;border-radius:50%;top:-20px;animation:earWiggle 2s infinite}
-.pr-ear.left{left:22px;transform:rotate(-15deg)}
-.pr-ear.right{right:22px;transform:rotate(15deg)}
-.pr-ear::after{content:"";position:absolute;width:8px;height:35px;background:pink;border-radius:50%;top:4px;left:3px}
-.pr-eye{position:absolute;width:10px;height:10px;background:#e74c3c;border-radius:50%;top:25px}
-.pr-eye.left{left:15px}
-.pr-eye.right{right:15px}
-.pr-tail{position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;bottom:20px;left:50%;transform:translateX(-50%);animation:pulse 0.5s infinite}
-.pb-body{position:absolute;width:45px;height:50px;background:linear-gradient(#3498db,#2980b9);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);animation:float 2.2s infinite}
-.pb-head{position:absolute;width:40px;height:40px;background:#3498db;border-radius:50%;left:50%;top:8px;transform:translateX(-50%)}
-.pb-eye{position:absolute;width:10px;height:10px;background:#fff;border-radius:50%;top:15px}
-.pb-eye.left{left:10px}
-.pb-eye.right{right:10px}
-.pb-eye::after{content:"";position:absolute;width:6px;height:6px;background:#1a1a2e;border-radius:50%;top:2px;left:2px}
-.pb-beak{position:absolute;width:0;height:0;border-top:6px solid transparent;border-bottom:8px solid transparent;border-left:14px solid #f39c12;top:24px;left:50%;transform:translateX(-50%);z-index:1}
-.pb-wing{position:absolute;width:25px;height:30px;background:#2980b9;border-radius:50%;top:30px;left:50%;transform:translateX(-50%);transform-origin:top;animation:wing 0.5s infinite}
-.pp-body{position:absolute;width:65px;height:50px;background:#fff;border-radius:50%;left:50%;top:55%;transform:translate(-50%,-50%);animation:float 3s infinite}
-.pp-head{position:absolute;width:70px;height:60px;background:#fff;border-radius:50%;left:50%;top:10px;transform:translateX(-50%)}
-.pp-ear{position:absolute;width:25px;height:25px;background:#1a1a2e;border-radius:50%;top:0}
-.pp-ear.left{left:5px}
-.pp-ear.right{right:5px}
-.pp-patch{position:absolute;width:20px;height:16px;background:#1a1a2e;border-radius:50%;top:22px}
-.pp-patch.left{left:10px;transform:rotate(-10deg)}
-.pp-patch.right{right:10px;transform:rotate(10deg)}
-.pp-eye{position:absolute;width:10px;height:10px;background:#fff;border-radius:50%;top:24px}
-.pp-eye.left{left:15px}
-.pp-eye.right{right:15px}
-.pp-eye::after{content:"";position:absolute;width:5px;height:5px;background:#1a1a2e;border-radius:50%;top:2px;left:2px}
-.ppe-body{position:absolute;width:60px;height:70px;background:#1a1a2e;border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);animation:float 2.6s infinite}
-.ppe-belly{position:absolute;width:40px;height:50px;background:#fff;border-radius:50%;left:50%;top:30px;transform:translateX(-50%)}
-.ppe-head{position:absolute;width:50px;height:40px;background:#1a1a2e;border-radius:50%;left:50%;top:5px;transform:translateX(-50%)}
-.ppe-eye{position:absolute;width:10px;height:10px;background:#fff;border-radius:50%;top:15px}
-.ppe-eye.left{left:12px}
-.ppe-eye.right{right:12px}
-.ppe-eye::after{content:"";position:absolute;width:6px;height:6px;background:#1a1a2e;border-radius:50%;top:2px;left:2px}
-.ppe-beak{position:absolute;width:0;height:0;border-top:8px solid #f39c12;border-left:8px solid transparent;border-right:8px solid transparent;top:28px;left:50%;transform:translateX(-50%)}
-.ppe-wing{position:absolute;width:12px;height:30px;background:#1a1a2e;border-radius:50%;top:30px;animation:wing 1s infinite}
-.ppe-wing.left{left:0;transform:rotate(15deg)}
-.ppe-wing.right{right:0;transform:rotate(-15deg)}
-.ppe-foot{position:absolute;width:16px;height:8px;background:#f39c12;border-radius:50%;bottom:5px}
-.ppe-foot.left{left:20px}
-.ppe-foot.right{right:20px}
-.stats{margin:15px 0}
-.stat{display:flex;align-items:center;margin-bottom:6px}
-.stat-icon{width:20px}
-.stat-bar{flex:1;height:10px;background:#edf2f7;border-radius:5px;margin:0 8px;overflow:hidden}
-.bar{height:100%;border-radius:5px;transition:width 0.5s}
-.bar.hunger{background:linear-gradient(#f56565,#e53e3e)}
-.bar.happy{background:linear-gradient(#48bb78,#38a169)}
-.bar.energy{background:linear-gradient(#4299e1,#3182ce)}
-.stat-value{width:24px;text-align:right;font-size:12px;color:#4a5568}
-.status{text-align:center;padding:8px;background:#f7fafc;border-radius:10px;margin-bottom:15px;font-size:13px;animation:pulse 2s infinite}
-.status.hungry{background:#fed7d7;color:#c53030}
-.status.tired{background:#feebc8;color:#c05621}
-.status.sad{background:#e9d8fd;color:#6b46c1}
-.status.happy{background:#c6f6d5;color:#276749}
-.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.action{background:none;border:none;border-radius:12px;padding:10px;font-size:24px;cursor:pointer;transition:all 0.3s}
-.action:hover{transform:translateY(-3px) scale(1.05)}
-.action span{display:block;font-size:10px;margin-top:2px}
-.action.feed{background:linear-gradient(#fbb6ce,#f687b3)}
-.action.play{background:linear-gradient(#90cdf4,#4299e1)}
-.action.sleep{background:linear-gradient(#c3dafe,#a3bffa)}
-.panel{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(5px)}
+@keyframes float3d{0%,100%{transform:translateY(0) rotateX(-5deg) rotateY(5deg)}50%{transform:translateY(-10px) rotateX(-5deg) rotateY(5deg)}}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 8px rgba(255,200,100,0.3))}50%{filter:drop-shadow(0 0 20px rgba(255,200,100,0.6))}}
+@keyframes happy3d{0%{transform:translateY(0) rotateX(-5deg) rotateY(5deg) scale(1)}30%{transform:translateY(-18px) rotateX(-5deg) rotateY(5deg) scale(1.12)}60%{transform:translateY(-8px) rotateX(-5deg) rotateY(5deg) scale(1.06)}100%{transform:translateY(0) rotateX(-5deg) rotateY(5deg) scale(1)}}
+@keyframes walk{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideDown{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes breathe{0%,100%{transform:translateY(0) rotateX(-5deg) rotateY(5deg) scale(1)}50%{transform:translateY(-3px) rotateX(-5deg) rotateY(5deg) scale(1.04)}}
+.container{max-width:1100px;margin:0 auto}
+h1{color:#ffd700;text-align:center;font-size:2.2em;animation:bounce 2.5s infinite;text-shadow:0 0 20px rgba(255,215,0,0.5)}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;gap:15px;flex-wrap:wrap}
+.stats-bar{background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);padding:12px 25px;border-radius:25px;color:#fff;font-weight:600;border:1px solid rgba(255,255,255,0.15)}
+.new-btn{background:linear-gradient(135deg,#ffd700,#ff8c00);color:#1a1a2e;border:none;padding:14px 28px;border-radius:30px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.3s;box-shadow:0 5px 20px rgba(255,215,0,0.4)}
+.new-btn:hover{transform:scale(1.08);box-shadow:0 8px 30px rgba(255,215,0,0.6)}
+.pets{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:25px}
+.card{background:linear-gradient(145deg,rgba(255,255,255,0.1),rgba(255,255,255,0.05));backdrop-filter:blur(15px);border-radius:25px;padding:22px;border:1px solid rgba(255,255,255,0.12);animation:fadeIn 0.5s ease;transition:all 0.4s;position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,rgba(255,215,0,0.05),transparent);pointer-events:none}
+.card:hover{transform:translateY(-8px);box-shadow:0 20px 50px rgba(0,0,0,0.4);border-color:rgba(255,215,0,0.3)}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:15px;position:relative;z-index:1}
+.name{font-size:22px;font-weight:700;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,0.3)}
+.name span{font-size:13px;opacity:0.6;margin-left:8px;cursor:pointer}
+.level{background:linear-gradient(135deg,#ffd700,#ff8c00);color:#1a1a2e;padding:6px 14px;border-radius:18px;font-size:13px;font-weight:700}
+.avatar-wrap{display:flex;justify-content:center;align-items:center;height:160px;perspective:500px;margin:10px 0}
+.avatar{width:130px;height:130px;position:relative;transform-style:preserve-3d;cursor:pointer;transition:transform 0.4s;animation:float3d 4s ease-in-out infinite,glow 3s ease-in-out infinite}
+.avatar:hover{transform:rotateY(15deg) rotateX(-5deg) scale(1.1)}
+.avatar:active{transform:rotateY(5deg) rotateX(-5deg) scale(0.95)}
+.avatar.happy{animation:happy3d 0.7s ease}
+.stats{margin:18px 0;position:relative;z-index:1}
+.stat{display:flex;align-items:center;margin-bottom:10px}
+.stat-icon{font-size:16px;width:28px}
+.stat-bar{flex:1;height:12px;background:rgba(0,0,0,0.3);border-radius:6px;margin:0 10px;overflow:hidden}
+.bar{height:100%;border-radius:6px;transition:width 0.6s}
+.bar.hunger{background:linear-gradient(90deg,#ff6b6b,#ee5a5a);box-shadow:0 0 10px rgba(255,107,107,0.5)}
+.bar.happy{background:linear-gradient(90deg,#51cf66,#40c057);box-shadow:0 0 10px rgba(81,207,102,0.5)}
+.bar.energy{background:linear-gradient(90deg,#339af0,#228be6);box-shadow:0 0 10px rgba(51,154,240,0.5)}
+.stat-val{width:32px;text-align:right;font-size:13px;color:rgba(255,255,255,0.8)}
+.status{text-align:center;padding:10px;background:rgba(0,0,0,0.25);border-radius:12px;margin-bottom:15px;font-size:14px;color:rgba(255,255,255,0.85);position:relative;z-index:1}
+.status.hungry{background:rgba(255,107,107,0.2);color:#ff8787}
+.status.tired{background:rgba(255,206,82,0.2);color:#ffe066}
+.status.sad{background:rgba(180,130,255,0.2);color:#cc99ff}
+.status.happy{background:rgba(129,199,132,0.2);color:#8ce99a}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;position:relative;z-index:1}
+.btn{background:none;border:none;border-radius:14px;padding:12px 8px;font-size:28px;cursor:pointer;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:4px}
+.btn span{font-size:11px;color:rgba(255,255,255,0.8)}
+.btn:hover{transform:translateY(-4px) scale(1.08)}
+.btn.feed{background:linear-gradient(135deg,rgba(255,107,107,0.4),rgba(238,90,90,0.4));backdrop-filter:blur(5px)}
+.btn.play{background:linear-gradient(135deg,rgba(129,199,132,0.4),rgba(64,192,87,0.4));backdrop-filter:blur(5px)}
+.btn.sleep{background:linear-gradient(135deg,rgba(129,199,240,0.4),rgba(34,139,230,0.4));backdrop-filter:blur(5px)}
+/* 3D Rat */
+.rat-face{position:absolute;width:90px;height:75px;background:linear-gradient(145deg,#b8b8b8,#909090);border-radius:50% 50% 45% 45%;left:50%;top:55%;transform:translate(-50%,-50%);box-shadow:inset -8px -8px 20px rgba(0,0,0,0.3),inset 5px 5px 15px rgba(255,255,255,0.2)}
+.rat-ear{position:absolute;width:35px;height:35px;background:linear-gradient(145deg,#d4a4a4,#c49090);border-radius:50%;top:8px;box-shadow:inset -3px -3px 8px rgba(0,0,0,0.2)}
+.rat-ear.left{left:12px}
+.rat-ear.right{right:12px}
+.rat-eye{position:absolute;width:14px;height:16px;background:#1a1a2e;border-radius:50%;top:28px}
+.rat-eye.left{left:22px}
+.rat-eye.right{right:22px}
+.rat-eye::after{content:"";position:absolute;width:5px;height:5px;background:#fff;border-radius:50%;top:2px;left:2px}
+.rat-nose{position:absolute;width:12px;height:10px;background:#ff9999;border-radius:50%;top:48px;left:50%;transform:translateX(-50%)}
+.rat-whisker{position:absolute;width:25px;height:2px;background:#888;top:50px;border-radius:2px}
+.rat-whisker.l1{left:2px;transform:rotate(-10deg)}
+.rat-whisker.l2{left:0;top:54px;transform:rotate(5deg)}
+.rat-whisker.r1{right:2px;transform:rotate(10deg)}
+.rat-whisker.r2{right:0;top:54px;transform:rotate(-5deg)}
+.rat-tail{position:absolute;width:50px;height:8px;background:linear-gradient(90deg,#a0a0a0,#c0c0c0);border-radius:10px;bottom:5px;left:50%;transform:translateX(-50%) rotate(-20deg);transform-origin:left center;animation:walk 1.5s ease-in-out infinite}
+/* 3D Ox */
+.ox-face{position:absolute;width:95px;height:85px;background:linear-gradient(145deg,#8b7355,#6b5344);border-radius:45% 45% 50% 50%;left:50%;top:50%;transform:translate(-50%,-50%);box-shadow:inset -10px -10px 25px rgba(0,0,0,0.35),inset 6px 6px 18px rgba(255,255,255,0.15)}
+.ox-horn{position:absolute;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:30px solid #d4a574;top:5px}
+.ox-horn.left{left:18px;transform:rotate(-15deg)}
+.ox-horn.right{right:18px;transform:rotate(15deg)}
+.ox-eye{position:absolute;width:16px;height:14px;background:#1a1a2e;border-radius:50%;top:30px}
+.ox-eye.left{left:22px}
+.ox-eye.right{right:22px}
+.ox-eye::after{content:"";position:absolute;width:5px;height:5px;background:#fff;border-radius:50%;top:2px;left:2px}
+.ox-nose{position:absolute;width:35px;height:22px;background:linear-gradient(145deg,#4a3728,#3a2718);border-radius:50%;top:50px;left:50%;transform:translateX(-50%)}
+.ox-nostril{position:absolute;width:8px;height:10px;background:#1a1a2e;border-radius:50%;top:5px}
+.ox-nostril.left{left:5px}
+.ox-nostril.right{right:5px}
+.ox-ear{position:absolute;width:28px;height:20px;background:#8b7355;border-radius:50% 50% 30% 30%;top:20px}
+.ox-ear.left{left:0;transform:rotate(-30deg)}
+.ox-ear.right{right:0;transform:rotate(30deg)}
+/* 3D Tiger */
+.tiger-face{position:absolute;width:100px;height:88px;background:linear-gradient(145deg,#ff8c00,#e67300);border-radius:50% 50% 45% 45%;left:50%;top:50%;transform:translate(-50%,-50%);box-shadow:inset -10px -10px 25px rgba(0,0,0,0.3),inset 6px 6px 18px rgba(255,200,100,0.2)}
+.tiger-stripe{position:absolute;width:8px;height:25px;background:#2d2d2d;border-radius:4px}
+.tiger-stripe.s1{top:15px;left:20px;transform:rotate(-10deg)}
+.tiger-stripe.s2{top:12px;left:35px;transform:rotate(5deg)}
+.tiger-stripe.s3{top:15px;right:20px;transform:rotate(10deg)}
+.tiger-stripe.s4{top:12px;right:35px;transform:rotate(-5deg)}
+.tiger-ear{position:absolute;width:32px;height:32px;background:linear-gradient(145deg,#ff8c00,#e67300);border-radius:50%;top:0;box-shadow:inset -3px -3px 8px rgba(0,0,0,0.3)}
+.tiger-ear.left{left:8px}
+.tiger-ear.right{right:8px}
+.tiger-ear::after{content:"";position:absolute;width:18px;height:18px;background:#ffb6c1;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%)}
+.tiger-eye{position:absolute;width:20px;height:22px;background:#ffcc00;border-radius:50%;top:28px;box-shadow:inset 3px 3px 8px rgba(0,0,0,0.2),0 0 10px rgba(255,204,0,0.4)}
+.tiger-eye.left{left:20px}
+.tiger-eye.right{right:20px}
+.tiger-eye::after{content:"";position:absolute;width:6px;height:16px;background:#1a1a2e;border-radius:3px;top:3px;left:50%;transform:translateX(-50%)}
+.tiger-nose{position:absolute;width:18px;height:14px;background:#ff6b6b;border-radius:50% 50% 40% 40%;top:50px;left:50%;transform:translateX(-50%)}
+.tiger-mouth{position:absolute;width:30px;height:12px;border-bottom:3px solid #2d2d2d;border-left:3px solid transparent;border-right:3px solid transparent;border-radius:0 0 50% 50%;top:62px;left:50%;transform:translateX(-50%)}
+.tiger-whisker{position:absolute;width:20px;height:2px;background:#fff;top:52px;border-radius:2px}
+.tiger-whisker.l1{left:5px;transform:rotate(-5deg)}
+.tiger-whisker.r1{right:5px;transform:rotate(5deg)}
+/* 3D Rabbit */
+.rabbit-face{position:absolute;width:85px;height:80px;background:linear-gradient(145deg,#f8f8f8,#e8e8e8);border-radius:50% 50% 45% 45%;left:50%;top:55%;transform:translate(-50%,-50%);box-shadow:inset -8px -8px 20px rgba(0,0,0,0.15),inset 5px 5px 15px rgba(255,255,255,0.5)}
+.rabbit-ear{position:absolute;width:22px;height:55px;background:linear-gradient(145deg,#f8f8f8,#e8e8e8);border-radius:50%;top:-35px;animation:walk 2s ease-in-out infinite}
+.rabbit-ear.left{left:28px;transform:rotate(-10deg)}
+.rabbit-ear.right{right:28px;transform:rotate(10deg)}
+.rabbit-ear::after{content:"";position:absolute;width:12px;height:45px;background:linear-gradient(145deg,#ffb6c1,#ff9aa2);border-radius:50%;top:5px;left:50%;transform:translateX(-50%)}
+.rabbit-eye{position:absolute;width:16px;height:18px;background:#ff6b81;border-radius:50%;top:28px}
+.rabbit-eye.left{left:20px}
+.rabbit-eye.right{right:20px}
+.rabbit-eye::after{content:"";position:absolute;width:6px;height:6px;background:#fff;border-radius:50%;top:3px;left:3px}
+.rabbit-nose{position:absolute;width:10px;height:8px;background:#ff9999;border-radius:50%;top:48px;left:50%;transform:translateX(-50%)}
+.rabbit-mouth{position:absolute;width:16px;height:10px;border-top:2px solid #ccc;border-radius:0 0 50% 50%;top:56px;left:50%;transform:translateX(-50%)}
+.rabbit-blush{position:absolute;width:18px;height:10px;background:rgba(255,182,193,0.5);border-radius:50%;top:42px}
+.rabbit-blush.left{left:10px}
+.rabbit-blush.right{right:10px}
+.rabbit-tail{position:absolute;width:22px;height:22px;background:linear-gradient(145deg,#fff,#f0f0f0);border-radius:50%;bottom:10px;left:50%;transform:translateX(-50%)}
+/* 3D Dragon */
+.dragon-face{position:absolute;width:100px;height:90px;background:linear-gradient(145deg,#50c878,#3cb371);border-radius:50% 50% 45% 45%;left:50%;top:50%;transform:translate(-50%,-50%);box-shadow:inset -10px -10px 25px rgba(0,0,0,0.3),inset 6px 6px 18px rgba(100,255,150,0.2)}
+.dragon-horn{position:absolute;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:25px solid #8b4513;top:2px}
+.dragon-horn.left{left:20px;transform:rotate(-20deg)}
+.dragon-horn.right{right:20px;transform:rotate(20deg)}
+.dragon-eye{position:absolute;width:18px;height:20px;background:#ffcc00;border-radius:50%;top:28px;box-shadow:inset 3px 3px 8px rgba(0,0,0,0.2),0 0 12px rgba(255,204,0,0.5)}
+.dragon-eye.left{left:22px}
+.dragon-eye.right{right:22px}
+.dragon-eye::after{content:"";position:absolute;width:5px;height:14px;background:#1a1a2e;border-radius:3px;top:3px;left:50%;transform:translateX(-50%)}
+.dragon-nostril{position:absolute;width:8px;height:8px;background:#2d5a3d;border-radius:50%;top:48px}
+.dragon-nostril.left{left:38px}
+.dragon-nostril.right{right:38px}
+.dragon-mouth{position:absolute;width:40px;height:15px;background:#2d5a3d;border-radius:0 0 50% 50%;top:58px;left:50%;transform:translateX(-50%)}
+.dragon-tooth{position:absolute;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:8px solid #fff;top:0}
+.dragon-tooth.l{left:8px}
+.dragon-tooth.r{right:8px}
+.dragon-whisker{position:absolute;width:30px;height:3px;background:linear-gradient(90deg,#90ee90,transparent);top:52px;border-radius:3px}
+.dragon-whisker.l{left:-5px;transform:rotate(-10deg)}
+.dragon-whisker.r{right:-5px;transform:rotate(10deg)}
+/* 3D Snake */
+.snake-body{position:absolute;width:70px;height:100px;background:linear-gradient(145deg,#9b59b6,#8e44ad);border-radius:50px 50px 40px 40px;left:50%;top:50%;transform:translate(-50%,-50%);box-shadow:inset -10px -10px 25px rgba(0,0,0,0.3),inset 6px 6px 18px rgba(200,150,255,0.2);animation:breathe 3s ease-in-out infinite}
+.snake-eye{position:absolute;width:14px;height:16px;background:#ffcc00;border-radius:50%;top:15px;box-shadow:inset 2px 2px 5px rgba(0,0,0,0.2),0 0 10px rgba(255,204,0,0.5)}
+.snake-eye.left{left:16px}
+.snake-eye.right{right:16px}
+.snake-eye::after{content:"";position:absolute;width:4px;height:12px;background:#1a1a2e;border-radius:2px;top:2px;left:50%;transform:translateX(-50%)}
+.snake-tongue{position:absolute;width:20px;height:15px;background:linear-gradient(90deg,#ff6b6b,#ff4757);clip-path:polygon(50% 100%,0% 0%,100% 0%);bottom:8px;left:50%;transform:translateX(-50%)}
+.snake-scale{position:absolute;width:15px;height:15px;background:rgba(255,255,255,0.15);border-radius:50%;left:50%;transform:translateX(-50%)}
+.snake-scale.s1{top:35px}
+.snake-scale.s2{top:52px}
+.snake-scale.s3{top:69px}
+/* 3D Horse */
+.horse-face{position:absolute;width:90px;height:95px;background:linear-gradient(145deg,#8b4513,#654321);border-radius:45% 45% 50% 50%;left:50%;top:48%;transform:translate(-50%,-50%);box-shadow:inset -10px -10px 25px rgba(0,0,0,0.35),inset 6px 6px 18px rgba(255,200,150,0.15)}
+.horse-mane{position:absolute;width:30px;height:60px;background:linear-gradient(180deg,#4a3728,#2d1f14);border-radius:15px;top:-10px;left:50%;transform:translateX(-50%)}
+.horse-ear{position:absolute;width:18px;height:30px;background:#8b4513;border-radius:50% 50% 40% 40%;top:-15px}
+.horse-ear.left{left:22px;transform:rotate(-15deg)}
+.horse-ear.right{right:22px;transform:rotate(15deg)}
+.horse-eye{position:absolute;width:16px;height:18px;background:#1a1a2e;border-radius:50%;top:28px}
+.horse-eye.left{left:18px}
+.horse-eye.right{right:18px}
+.horse-eye::after{content:"";position:absolute;width:5px;height:5px;background:#fff;border-radius:50%;top:3px;left:3px}
+.horse-nose{position:absolute;width:30px;height:20px;background:linear-gradient(145deg,#5a3d2b,#4a2d1b);border-radius:50% 50% 40% 40%;top:55px;left:50%;transform:translateX(-50%)}
+.horse-nostril{position:absolute;width:7px;height:9px;background:#2d1f14;border-radius:50%;top:4px}
+.horse-nostril.left{left:5px}
+.horse-nostril.right{right:5px}
+/* 3D Goat */
+.goat-face{position:absolute;width:92px;height:82px;background:linear-gradient(145deg,#f5f5dc,#e8e8d0);border-radius:50% 50% 45% 45%;left:50%;top:52%;transform:translate(-50%,-50%);box-shadow:inset -8px -8px 20px rgba(0,0,0,0.15),inset 5px 5px 15px rgba(255,255,255,0.3)}
+.goat-horn{position:absolute;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:35px solid #d4a574;top:0}
+.goat-horn.left{left:15px;transform:rotate(-25deg)}
+.goat-horn.right{right:15px;transform:rotate(25deg)}
+.goat-ear{position:absolute;width:25px;height:18px;background:#e8e8d0;border-radius:50%;top:20px}
+.goat-ear.left{left:2px;transform:rotate(-30deg)}
+.goat-ear.right{right:2px;transform:rotate(30deg)}
+.goat-eye{position:absolute;width:14px;height:16px;background:#1a1a2e;border-radius:50%;top:30px}
+.goat-eye.left{left:22px}
+.goat-eye.right{right:22px}
+.goat-eye::after{content:"";position:absolute;width:5px;height:5px;background:#fff;border-radius:50%;top:2px;left:2px}
+.goat-beard{position:absolute;width:12px;height:30px;background:linear-gradient(180deg,#d4d4aa,#c4c49a);border-radius:0 0 50% 50%;bottom:5px;left:50%;transform:translateX(-50%)}
+.goat-nose{position:absolute;width:18px;height:12px;background:#ffb6c1;border-radius:50%;top:48px;left:50%;transform:translateX(-50%)}
+/* 3D Monkey */
+.monkey-face{position:absolute;width:90px;height:82px;background:linear-gradient(145deg,#d2691e,#8b4513);border-radius:50% 50% 45% 45%;left:50%;top:52%;transform:translate(-50%,-50%);box-shadow:inset -8px -8px 20px rgba(0,0,0,0.3),inset 5px 5px 15px rgba(255,200,150,0.2)}
+.monkey-ear{position:absolute;width:30px;height:30px;background:linear-gradient(145deg,#d2691e,#c4a484);border-radius:50%;top:18px}
+.monkey-ear.left{left:0}
+.monkey-ear.right{right:0}
+.monkey-eye{position:absolute;width:16px;height:18px;background:#1a1a2e;border-radius:50%;top:25px}
+.monkey-eye.left{left:22px}
+.monkey-eye.right{right:22px}
+.monkey-eye::after{content:"";position:absolute;width:5px;height:5px;background:#fff;border-radius:50%;top:3px;left:3px}
+.monkey-nose{position:absolute;width:22px;height:15px;background:#c4a484;border-radius:40%;top:44px;left:50%;transform:translateX(-50%)}
+.monkey-mouth{position:absolute;width:30px;height:15px;background:#8b4513;border-radius:0 0 50% 50%;top:58px;left:50%;transform:translateX(-50%)}
+.monkey-teeth{position:absolute;width:8px;height:8px;background:#fff;border-radius:2px;top:0}
+.monkey-teeth.l{left:5px}
+.monkey-teeth.r{right:5px}
+/* 3D Rooster */
+.rooster-face{position:absolute;width:88px;height:80px;background:linear-gradient(145deg,#ff6347,#ee5a3a);border-radius:50% 50% 45% 45%;left:50%;top:55%;transform:translate(-50%,-50%);box-shadow:inset -8px -8px 20px rgba(0,0,0,0.25),inset 5px 5px 15px rgba(255,200,150,0.2)}
+.rooster-comb{position:absolute;width:35px;height:25px;background:linear-gradient(145deg,#dc143c,#b22222);border-radius:50% 50% 30% 30%;top:-5px;left:50%;transform:translateX(-50%)}
+.rooster-comb::before,.rooster-comb::after{content:"";position:absolute;width:18px;height:20px;background:inherit;border-radius:50%;top:8px}
+.rooster-comb::before{left:2px}
+.rooster-comb::after{right:2px}
+.rooster-eye{position:absolute;width:16px;height:16px;background:#1a1a2e;border-radius:50%;top:22px}
+.rooster-eye.left{left:22px}
+.rooster-eye.right{right:22px}
+.rooster-eye::after{content:"";position:absolute;width:5px;height:5px;background:#fff;border-radius:50%;top:2px;left:2px}
+.rooster-beak{position:absolute;width:0;height:0;border-top:12px solid #ffa500;border-left:10px solid transparent;border-right:10px solid transparent;top:40px;left:50%;transform:translateX(-50%)}
+.rooster-wattle{position:absolute;width:14px;height:20px;background:linear-gradient(145deg,#dc143c,#b22222);border-radius:50%;top:58px;left:50%;transform:translateX(-50%)}
+.rooster-ear{position:absolute;width:20px;height:15px;background:#ff6347;border-radius:50%;top:28px}
+.rooster-ear.left{left:5px}
+.rooster-ear.right{right:5px}
+/* 3D Dog */
+.dog-face{position:absolute;width:95px;height:85px;background:linear-gradient(145deg,#c4a67c,#a68b5b);border-radius:50% 50% 45% 45%;left:50%;top:50%;transform:translate(-50%,-50%);box-shadow:inset -10px -10px 25px rgba(0,0,0,0.3),inset 6px 6px 18px rgba(255,220,180,0.2)}
+.dog-ear{position:absolute;width:32px;height:40px;background:linear-gradient(145deg,#a68b5b,#8b7355);border-radius:50% 50% 40% 40%;top:8px}
+.dog-ear.left{left:2px;transform:rotate(-20deg)}
+.dog-ear.right{right:2px;transform:rotate(20deg)}
+.dog-eye{position:absolute;width:18px;height:20px;background:#1a1a2e;border-radius:50%;top:28px;box-shadow:inset 3px 3px 8px rgba(255,255,255,0.2)}
+.dog-eye.left{left:22px}
+.dog-eye.right{right:22px}
+.dog-eye::after{content:"";position:absolute;width:6px;height:6px;background:#fff;border-radius:50%;top:3px;left:3px}
+.dog-nose{position:absolute;width:20px;height:16px;background:#1a1a2e;border-radius:50% 50% 40% 40%;top:50px;left:50%;transform:translateX(-50%)}
+.dog-tongue{position:absolute;width:14px;height:20px;background:linear-gradient(180deg,#ff6b6b,#ff4757);border-radius:0 0 50% 50%;top:65px;left:50%;transform:translateX(-50%)}
+.dog-tail{position:absolute;width:15px;height:45px;background:linear-gradient(180deg,#c4a67c,#a68b5b);border-radius:10px;right:0;top:35px;transform-origin:bottom center;animation:walk 0.5s ease-in-out infinite}
+/* 3D Pig */
+.pig-face{position:absolute;width:100px;height:88px;background:linear-gradient(145deg,#ffb6c1,#ff9aa2);border-radius:50% 50% 48% 48%;left:50%;top:50%;transform:translate(-50%,-50%);box-shadow:inset -10px -10px 25px rgba(0,0,0,0.2),inset 6px 6px 18px rgba(255,200,210(0.3)}.pig-ear{position:absolute;width:32px;height:35px;background:linear-gradient(145deg,#ffb6c1,#ff9aa2);border-radius:50%;top:5px}
+.pig-ear.left{left:8px;transform:rotate(-15deg)}
+.pig-ear.right{right:8px;transform:rotate(15deg)}
+.pig-eye{position:absolute;width:16px;height:18px;background:#1a1a2e;border-radius:50%;top:28px}
+.pig-eye.left{left:25px}
+.pig-eye.right{right:25px}
+.pig-eye::after{content:"";position:absolute;width:5px;height:5px;background:#fff;border-radius:50%;top:3px;left:3px}
+.pig-snout{position:absolute;width:45px;height:32px;background:linear-gradient(145deg,#ff9aa2,#ff8099);border-radius:50%;top:48px;left:50%;transform:translateX(-50%);box-shadow:inset -5px -5px 12px rgba(0,0,0,0.15)}
+.pig-nostril{position:absolute;width:10px;height:12px;background:#cc7080;border-radius:50%;top:8px}
+.pig-nostril.left{left:8px}
+.pig-nostril.right{right:8px}
+.pig-blush{position:absolute;width:20px;height:12px;background:rgba(255,150,180,0.4);border-radius:50%;top:40px}
+.pig-blush.left{left:10px}
+.pig-blush.right{right:10px}
+.panel{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);display:none;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(8px)}
 .panel.show{display:flex;animation:fadeIn 0.3s}
-.modal{background:#fff;border-radius:25px;padding:25px;max-width:400px;width:90%;animation:slideUp 0.4s;position:relative}
-.modal h2,.modal h3{text-align:center;color:#2d3748;margin-bottom:20px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.item{background:#f7fafc;border-radius:15px;padding:15px;text-align:center;cursor:pointer;transition:all 0.3s}
-.item:hover{border:2px solid #667eea;transform:translateY(-5px)}
-.item:hover .icon{transform:scale(1.2)}
-.item .icon{font-size:40px;display:block;margin-bottom:5px;transition:transform 0.3s}
-.item .name{font-size:13px;font-weight:600;color:#2d3748}
-.item .effect{font-size:10px;color:#718096}
-.close{position:absolute;top:10px;right:10px;width:30px;height:30px;background:#f7fafc;border:none;border-radius:50%;font-size:16px;cursor:pointer}
-.close:hover{background:#e2e8f0}
-.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:linear-gradient(#667eea,#764ba2);color:#fff;padding:12px 25px;border-radius:20px;font-size:14px;opacity:0;transition:all 0.3s;z-index:2000}
-.toast.show{opacity:1;animation:toastIn 0.5s}
-.empty{text-align:center;padding:60px 20px}
-.empty .icon{font-size:80px;margin-bottom:15px;animation:pulse 2s infinite}
-.empty h2{color:#fff;margin-bottom:10px}
-.empty p{color:rgba(255,255,255,0.8);margin-bottom:20px}
+.modal{background:linear-gradient(145deg,rgba(40,40,60,0.98),rgba(30,30,50,0.98));backdrop-filter:blur(20px);border-radius:28px;padding:28px;max-width:500px;width:90%;max-height:85vh;overflow-y:auto;animation:slideDown 0.4s;position:relative;border:1px solid rgba(255,255,255,0.1)}
+.modal h2{text-align:center;color:#ffd700;margin-bottom:22px;font-size:1.6em;text-shadow:0 0 15px rgba(255,215,0,0.5)}
+.modal h3{text-align:center;color:#ffd700;margin-bottom:18px;font-size:1.3em}
+.close{position:absolute;top:12px;right:12px;width:34px;height:34px;background:rgba(255,255,255,0.1);border:none;border-radius:50%;color:#fff;font-size:18px;cursor:pointer;transition:all 0.3s}
+.close:hover{background:rgba(255,255,255,0.2);transform:rotate(90deg)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.item{background:rgba(255,255,255,0.08);border-radius:18px;padding:18px 8px;text-align:center;cursor:pointer;transition:all 0.3s;border:2px solid transparent}
+.item:hover{border-color:#ffd700;transform:translateY(-8px) scale(1.05);background:rgba(255,215,0,0.15);box-shadow:0 15px 35px rgba(0,0,0,0.4)}
+.item:hover .ic{transform:scale(1.25) rotateY(20deg)}
+.ic{font-size:45px;display:block;margin-bottom:8px;transition:transform 0.4s;filter:drop-shadow(0 5px 10px rgba(0,0,0,0.3))}
+.iname{font-size:13px;font-weight:600;color:#fff;margin-top:5px}
+.ieff{font-size:10px;color:rgba(255,255,255,0.6);margin-top:2px}
+.toast{position:fixed;bottom:35px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#ffd700,#ff8c00);color:#1a1a2e;padding:14px 30px;border-radius:25px;font-size:15px;font-weight:700;opacity:0;z-index:2000;box-shadow:0 8px 25px rgba(255,215,0,0.5);transition:opacity 0.3s}
+.toast.show{opacity:1;animation:slideDown 0.5s}
+.empty{text-align:center;padding:70px 20px}
+.empty .ic{font-size:100px;margin-bottom:20px;animation:pulse 2s infinite}
+.empty h2{color:#ffd700;margin-bottom:12px;font-size:1.8em}
+.empty p{color:rgba(255,255,255,0.7);margin-bottom:25px}
+@media(max-width:600px){.grid{grid-template-columns:repeat(3,1fr)}.h1{font-size:1.6em}}
 </style>
 </head>
 <body>
-<div class="container">
-<h1>我的宠物乐园</h1>
-<div class="header">
-<div class="stats-bar">宠物: <span id="count">0</span>只</div>
-<button class="new-egg-btn" onclick="showPanel()">领养宠物</button>
+<div class=container>
+<h1>我的宠物乐园 - 12生肖</h1>
+<div class=header>
+<div class=stats-bar>宠物: <span id=count>0</span>只</div>
+<button class=new-btn onclick=showPanel()>领养生肖宠物</button>
 </div>
-<div class="pets" id="pets"></div>
-</div>
-
-<div class="panel" id="panel">
-<div class="modal">
-<h2>选择宠物</h2>
-<div class="grid">
-<div class="item" onclick="hatch('crayfish')"><span class="icon">🦞</span><span class="name">小龙虾</span></div>
-<div class="item" onclick="hatch('cat')"><span class="icon">🐱</span><span class="name">小猫咪</span></div>
-<div class="item" onclick="hatch('dog')"><span class="icon">🐶</span><span class="name">小狗狗</span></div>
-<div class="item" onclick="hatch('rabbit')"><span class="icon">🐰</span><span class="name">小兔子</span></div>
-<div class="item" onclick="hatch('bird')"><span class="icon">🐦</span><span class="name">小鸟</span></div>
-<div class="item" onclick="hatch('panda')"><span class="icon">🐼</span><span class="name">小熊猫</span></div>
-<div class="item" onclick="hatch('penguin')"><span class="icon">🐧</span><span class="name">小企鹅</span></div>
-</div>
-</div>
+<div class=pets id=pets></div>
 </div>
 
-<div class="panel" id="foodPanel">
-<div class="modal">
+<div class=panel id=panel>
+<div class=modal>
+<h2>选择你的生肖守护神</h2>
+<div class=grid>
+<div class=item onclick=hatch("rat")><span class=ic>🐀</span><div class=iname>鼠</div></div>
+<div class=item onclick=hatch("ox")><span class=ic>🐂</span><div class=iname>牛</div></div>
+<div class=item onclick=hatch("tiger")><span class=ic>🐅</span><div class=iname>虎</div></div>
+<div class=item onclick=hatch("rabbit")><span class=ic>🐇</span><div class=iname>兔</div></div>
+<div class=item onclick=hatch("dragon")><span class=ic>🐉</span><div class=iname>龙</div></div>
+<div class=item onclick=hatch("snake")><span class=ic>🐍</span><div class=iname>蛇</div></div>
+<div class=item onclick=hatch("horse")><span class=ic>🐎</span><div class=iname>马</div></div>
+<div class=item onclick=hatch("goat")><span class=ic>🐐</span><div class=iname>羊</div></div>
+<div class=item onclick=hatch("monkey")><span class=ic>🐒</span><div class=iname>猴</div></div>
+<div class=item onclick=hatch("rooster")><span class=ic>🐓</span><div class=iname>鸡</div></div>
+<div class=item onclick=hatch("dog")><span class=ic>🐕</span><div class=iname>狗</div></div>
+<div class=item onclick=hatch("pig")><span class=ic>🐖</span><div class=iname>猪</div></div>
+</div>
+</div>
+</div>
+
+<div class=panel id=foodPanel>
+<div class=modal>
 <h3>喂食</h3>
-<div class="grid">
-<div class="item" onclick="feed('apple')"><span class="icon">🍎</span><span class="name">苹果</span><span class="effect">+15饱食</span></div>
-<div class="item" onclick="feed('carrot')"><span class="icon">🥕</span><span class="name">胡萝卜</span><span class="effect">+12饱食</span></div>
-<div class="item" onclick="feed('fish')"><span class="icon">🐟</span><span class="name">小鱼干</span><span class="effect">+20饱食</span></div>
-<div class="item" onclick="feed('cake')"><span class="icon">🍰</span><span class="name">小蛋糕</span><span class="effect">+25饱食</span></div>
+<div class=grid>
+<div class=item onclick=feed("apple")><span class=ic>🍎</span><div class=iname>苹果</div><div class=ieff>+15饱食</div></div>
+<div class=item onclick=feed("carrot")><span class=ic>🥕</span><div class=iname>胡萝卜</div><div class=ieff>+12饱食</div></div>
+<div class=item onclick=feed("fish")><span class=ic>🐟</span><div class=iname>小鱼干</div><div class=ieff>+20饱食</div></div>
+<div class=item onclick=feed("cake")><span class=ic>🍰</span><div class=iname>小蛋糕</div><div class=ieff>+25饱食</div></div>
 </div>
 </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class=toast id=toast></div>
 
 <script>
-let pets=[];
-let curId=null;
-const N={crayfish:"小龙虾",cat:"小猫咪",dog:"小狗狗",rabbit:"小兔子",bird:"小鸟",panda:"小熊猫",penguin:"小企鹅"};
-const M={hungry:["肚子饿了...","想吃东西~","好饿啊"],tired:["好困...","想睡觉","打哈欠"],sad:["不开心...","陪我玩","有点无聊"],happy:["好开心！","喜欢你！","真快乐~"]};
-function load(){const s=localStorage.getItem("pets9");if(s)pets=JSON.parse(s);render()}
-function save(){localStorage.setItem("pets9",JSON.stringify(pets))}
+var pets=[];
+var curId=null;
+var N={rat:"小老鼠",ox:"小牛牛",tiger:"小老虎",rabbit:"小兔兔",dragon:"小龙龙",snake:"小蛇蛇",horse:"小马马",goat:"小羊羊",monkey:"小猴猴",rooster:"小鸡鸡",dog:"小狗狗",pig:"小猪猪"};
+var M={hungry:["肚子饿了...","想吃东西~","好饿啊"],tired:["好困...","想睡觉","打哈欠"],sad:["不开心...","陪我玩","有点无聊"],happy:["好开心！","喜欢你！","真快乐~"]};
+
+function load(){var s=localStorage.getItem("zodiac12");if(s)pets=JSON.parse(s);render()}
+function save(){localStorage.setItem("zodiac12",JSON.stringify(pets))}
 function gid(id){return document.getElementById(id)}
 function showPanel(){gid("panel").classList.add("show")}
 function hidePanel(){gid("panel").classList.remove("show")}
 function showFood(id){curId=id;gid("foodPanel").classList.add("show")}
 function hideFood(){gid("foodPanel").classList.remove("show");curId=null}
-function hatch(type){hidePanel();const p={id:Date.now().toString(36)+Math.random().toString(36).substr(2),type,name:N[type],level:1,exp:0,hunger:80,happy:80,energy:100,sleeping:false};pets.push(p);save();render();toast("恭喜获得 "+N[type]+"！")}
-function feed(food){hideFood();if(!curId)return;const p=pets.find(x=>x.id===curId);if(!p)return;const e={apple:15,carrot:12,fish:20,cake:25};p.hunger=Math.min(100,p.hunger+(e[food]||10));p.happy=Math.min(100,p.happy+3);p.exp+=10;checkLv(p);save();render();toast(p.name+" 吃了食物！")}
-function play(id){const p=pets.find(x=>x.id===id);if(!p)return;if(p.sleeping){toast(p.name+" 在睡觉...");return}if(p.energy<20){toast(p.name+" 太累了！");return}p.energy=Math.max(0,p.energy-10);p.happy=Math.min(100,p.happy+15);p.hunger=Math.max(0,p.hunger-5);p.exp+=15;checkLv(p);save();render();const av=gid("av"+id);if(av){av.classList.add("happy");setTimeout(()=>av.classList.remove("happy"),600)}toast(p.name+" 玩得很开心！")
-}
-function sleep(id){const p=pets.find(x=>x.id===id);if(!p)return;p.sleeping=!p.sleeping;if(p.sleeping){p.energy=100;toast(p.name+" 开始睡觉... Zzz")}else{toast(p.name+" 睡醒啦！")}save();render()}
-function edit(id){const p=pets.find(x=>x.id===id);if(!p)return;const inp=gid("inp"+id);if(inp.style.display==="none"){inp.style.display="block";inp.value=p.name;inp.focus()}else{if(inp.value.trim())p.name=inp.value.trim();save()}inp.style.display="none";render()}
-function checkLv(p){const need=p.level*100;while(p.exp>=need){p.exp-=need;p.level++;toast(p.name+" 升级了！Lv."+p.level+"！")}}
+
+function hatch(type){hidePanel();var p={id:Date.now().toString(36)+Math.random().toString(36).substr(2),type:type,name:N[type],level:1,exp:0,hunger:80,happy:80,energy:100,sleeping:false};pets.push(p);save();render();toast("恭喜获得 "+N[type]+"！")}
+
+function feed(food){hideFood();if(!curId)return;var p=pets.find(function(x){return x.id===curId});if(!p)return;var e={apple:15,carrot:12,fish:20,cake:25};p.hunger=Math.min(100,p.hunger+(e[food]||10));p.happy=Math.min(100,p.happy+3);p.exp+=10;checkLv(p);save();render();toast(p.name+" 吃了食物！")}
+
+function play(id){var p=pets.find(function(x){return x.id===id});if(!p)return;if(p.sleeping){toast(p.name+" 在睡觉...");return}if(p.energy<20){toast(p.name+" 太累了！");return}p.energy=Math.max(0,p.energy-10);p.happy=Math.min(100,p.happy+15);p.hunger=Math.max(0,p.hunger-5);p.exp+=15;checkLv(p);save();render();var av=gid("av"+id);if(av){av.classList.add("happy");setTimeout(function(){av.classList.remove("happy")},700)}toast(p.name+" 玩得很开心！")}
+
+function sleep(id){var p=pets.find(function(x){return x.id===id});if(!p)return;p.sleeping=!p.sleeping;if(p.sleeping){p.energy=100;toast(p.name+" 开始睡觉... Zzz")}else{toast(p.name+" 睡醒啦！")}save();render()}
+
+function edit(id){var p=pets.find(function(x){return x.id===id});if(!p)return;var inp=gid("inp"+id);if(inp.style.display==="none"){inp.style.display="block";inp.value=p.name;inp.focus()}else{if(inp.value.trim())p.name=inp.value.trim();save()}inp.style.display="none";render()}
+
+function checkLv(p){var need=p.level*100;while(p.exp>=need){p.exp-=need;p.level++;toast(p.name+" 升级了！Lv."+p.level+"！")}}
+
 function getSt(p){if(p.sleeping)return{text:"💤 睡觉中...",cls:""};if(p.hunger<30)return{text:"😫 "+M.hungry[Math.floor(Math.random()*3)],cls:"hungry"};if(p.energy<30)return{text:"😴 "+M.tired[Math.floor(Math.random()*3)],cls:"tired"};if(p.happy<30)return{text:"😢 "+M.sad[Math.floor(Math.random()*3)],cls:"sad"};return{text:"😊 "+M.happy[Math.floor(Math.random()*3)],cls:"happy"}}
-function ava(t){switch(t){case"crayfish":return'<div class="pc-body"></div><div class="pc-eye left"></div><div class="pc-eye right"></div><div class="pc-ant left"></div><div class="pc-ant right"></div><div class="pc-claw left"></div><div class="pc-claw right"></div><div class="pc-tail"></div>';case"cat":return'<div class="pca-body"></div><div class="pca-head"></div><div class="pca-ear left"></div><div class="pca-ear right"></div><div class="pca-eye left"></div><div class="pca-eye right"></div><div class="pca-nose"></div><div class="pca-tail"></div>';case"dog":return'<div class="pd-body"></div><div class="pd-head"></div><div class="pd-eye left"></div><div class="pd-eye right"></div><div class="pd-nose"></div><div class="pd-tongue"></div><div class="pd-tail"></div>';case"rabbit":return'<div class="pr-body"></div><div class="pr-head"></div><div class="pr-ear left"></div><div class="pr-ear right"></div><div class="pr-eye left"></div><div class="pr-eye right"></div><div class="pr-tail"></div>';case"bird":return'<div class="pb-body"></div><div class="pb-head"></div><div class="pb-eye left"></div><div class="pb-eye right"></div><div class="pb-beak"></div><div class="pb-wing"></div>';case"panda":return'<div class="pp-body"></div><div class="pp-head"></div><div class="pp-ear left"></div><div class="pp-ear right"></div><div class="pp-patch left"></div><div class="pp-patch right"></div><div class="pp-eye left"></div><div class="pp-eye right"></div>';case"penguin":return'<div class="ppe-body"></div><div class="ppe-belly"></div><div class="ppe-head"></div><div class="ppe-eye left"></div><div class="ppe-eye right"></div><div class="ppe-beak"></div><div class="ppe-wing left"></div><div class="ppe-wing right"></div><div class="ppe-foot left"></div><div class="ppe-foot right"></div>';default:return""}}
-function render(){gid("count").textContent=pets.length;const c=gid("pets");if(pets.length===0){c.innerHTML="<div class=empty><div class=icon>🥚</div><h2>还没有宠物~</h2><p>快来领养一只吧！</p><button class=new-egg-btn onclick=showPanel()>领养宠物</button></div>";return}c.innerHTML=pets.map(function(p){var s=getSt(p);var h='<div class=card><div class=card-header><div class=name>'+p.name+'<span onclick=edit("'+p.id+'") style="cursor:pointer;font-size:12px;opacity:0.5;margin-left:5px">✏️</span></div><div class=level>Lv.'+p.level+'</div></div><div class=avatar id=av'+p.id+' onclick=play("'+p.id+'")>'+ava(p.type)+'</div><div class=stats><div class=stat><span class=stat-icon>🍖</span><div class=stat-bar><div class=bar hunger style=width:'+p.hunger+'%></div></div><span class=stat-value>'+p.hunger+'</span></div><div class=stat><span class=stat-icon>😊</span><div class=stat-bar><div class=bar happy style=width:'+p.happy+'%></div></div><span class=stat-value>'+p.happy+'</span></div><div class=stat><span class=stat-icon>⚡</span><div class=stat-bar><div class=bar energy style=width:'+p.energy+'%></div></div><span class=stat-value>'+p.energy+'</span></div></div><div class=status '+s.cls+'>'+s.text+'</div><div class=actions><button class="action feed" onclick=showFood("'+p.id+'")>🍖<span>喂食</span></button><button class="action play" onclick=play("'+p.id+'")>🎮<span>玩耍</span></button><button class="action sleep" onclick=sleep("'+p.id+'")>'+(p.sleeping?"☀️":"😴")+'<span>'+(p.sleeping?"唤醒":"睡觉")+'</span></button></div></div>';return h}).join("")}
-function toast(msg){const t=gid("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2500)}load()
+
+function ava(t){switch(t){case"rat":return'<div class="rat-face"></div><div class="rat-ear left"></div><div class="rat-ear right"></div><div class="rat-eye left"></div><div class="rat-eye right"></div><div class="rat-nose"></div><div class="rat-whisker l1"></div><div class="rat-whisker l2"></div><div class="rat-whisker r1"></div><div class="rat-whisker r2"></div><div class="rat-tail"></div>';case"ox":return'<div class="ox-face"></div><div class="ox-horn left"></div><div class="ox-horn right"></div><div class="ox-eye left"></div><div class="ox-eye right"></div><div class="ox-ear left"></div><div class="ox-ear right"></div><div class="ox-nose"><div class="ox-nostril left"></div><div class="ox-nostril right"></div></div>';case"tiger":return'<div class="tiger-face"></div><div class="tiger-stripe s1"></div><div class="tiger-stripe s2"></div><div class="tiger-stripe s3"></div><div class="tiger-stripe s4"></div><div class="tiger-ear left"></div><div class="tiger-ear right"></div><div class="tiger-eye left"></div><div class="tiger-eye right"></div><div class="tiger-nose"></div><div class="tiger-mouth"></div><div class="tiger-whisker l1"></div><div class="tiger-whisker r1"></div>';case"rabbit":return'<div class="rabbit-face"></div><div class="rabbit-ear left"></div><div class="rabbit-ear right"></div><div class="rabbit-eye left"></div><div class="rabbit-eye right"></div><div class="rabbit-blush left"></div><div class="rabbit-blush right"></div><div class="rabbit-nose"></div><div class="rabbit-mouth"></div><div class="rabbit-tail"></div>';case"dragon":return'<div class="dragon-face"></div><div class="dragon-horn left"></div><div class="dragon-horn right"></div><div class="dragon-eye left"></div><div class="dragon-eye right"></div><div class="dragon-nostril left"></div><div class="dragon-nostril right"></div><div class="dragon-mouth"><div class="dragon-tooth l"></div><div class="dragon-tooth r"></div></div><div class="dragon-whisker l"></div><div class="dragon-whisker r"></div>';case"snake":return'<div class="snake-body"></div><div class="snake-eye left"></div><div class="snake-eye right"></div><div class="snake-scale s1"></div><div class="snake-scale s2"></div><div class="snake-scale s3"></div><div class="snake-tongue"></div>';case"horse":return'<div class="horse-face"></div><div class="horse-mane"></div><div class="horse-ear left"></div><div class="horse-ear right"></div><div class="horse-eye left"></div><div class="horse-eye right"></div><div class="horse-nose"><div class="horse-nostril left"></div><div class="horse-nostril right"></div></div>';case"goat":return'<div class="goat-face"></div><div class="goat-horn left"></div><div class="goat-horn right"></div><div class="goat-ear left"></div><div class="goat-ear right"></div><div class="goat-eye left"></div><div class="goat-eye right"></div><div class="goat-nose"></div><div class="goat-beard"></div>';case"monkey":return'<div class="monkey-face"></div><div class="monkey-ear left"></div><div class="monkey-ear right"></div><div class="monkey-eye left"></div><div class="monkey-eye right"></div><div class="monkey-nose"></div><div class="monkey-mouth"><div class="monkey-teeth l"></div><div class="monkey-teeth r"></div></div>';case"rooster":return'<div class="rooster-face"></div><div class="rooster-comb"></div><div class="rooster-eye left"></div><div class="rooster-eye right"></div><div class="rooster-ear left"></div><div class="rooster-ear right"></div><div class="rooster-beak"></div><div class="rooster-wattle"></div>';case"dog":return'<div class="dog-face"></div><div class="dog-ear left"></div><div class="dog-ear right"></div><div class="dog-eye left"></div><div class="dog-eye right"></div><div class="dog-nose"></div><div class="dog-tongue"></div><div class="dog-tail"></div>';case"pig":return'<div class="pig-face"></div><div class="pig-ear left"></div><div class="pig-ear right"></div><div class="pig-eye left"></div><div class="pig-eye right"></div><div class="pig-snout"><div class="pig-nostril left"></div><div class="pig-nostril right"></div></div><div class="pig-blush left"></div><div class="pig-blush right"></div>';default:return""}}
+
+function render(){gid("count").textContent=pets.length;var c=gid("pets");if(pets.length===0){c.innerHTML='<div class=empty><div class=ic>🐾</div><h2>还没有生肖宠物~</h2><p>快来领养一只守护神吧！</p><button class=new-btn onclick=showPanel()>领养生肖宠物</button></div>';return}var html="";for(var i=0;i<pets.length;i++){var p=pets[i];var s=getSt(p);html+='<div class=card><div class=card-header><div class=name>'+p.name+'<span onclick="edit(\''+p.id+'\')">✏️</span></div><div class=level>Lv.'+p.level+'</div></div><div class=avatar-wrap><div class=avatar id=av'+p.id+' onclick="play(\''+p.id+'\')">'+ava(p.type)+'</div></div><input type=text id=inp'+p.id+' style="display:none;width:80%;padding:6px;border:1px solid #555;border-radius:8px;background:rgba(255,255,255,0.1);color:#fff" onblur="edit(\''+p.id+'\')"><div class=stats><div class=stat><span class=stat-icon>🍖</span><div class=stat-bar><div class="bar hunger" style="width:'+p.hunger+'%"></div></div><span class=stat-val>'+p.hunger+'</span></div><div class=stat><span class=stat-icon>😊</span><div class=stat-bar><div class="bar happy" style="width:'+p.happy+'%"></div></div><span class=stat-val>'+p.happy+'</span></div><div class=stat><span class=stat-icon>⚡</span><div class=stat-bar><div class="bar energy" style="width:'+p.energy+'%"></div></div><span class=stat-val>'+p.energy+'</span></div></div><div class="status '+s.cls+'">'+s.text+'</div><div class=actions><button class="btn feed" onclick="showFood(\''+p.id+'\')">🍖<span>喂食</span></button><button class="btn play" onclick="play(\''+p.id+'\')">🎮<span>玩耍</span></button><button class="btn sleep" onclick="sleep(\''+p.id+'\')">'+(p.sleeping?"☀️":"😴")+'<span>'+(p.sleeping?"唤醒":"睡觉")+'</span></button></div></div>'}c.innerHTML=html}
+
+function toast(msg){var t=gid("toast");t.textContent=msg;t.classList.add("show");setTimeout(function(){t.classList.remove("show")},2500)}
+
+load()
 </script>
 </body>
 </html>
