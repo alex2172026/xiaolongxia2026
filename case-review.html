@@ -1,2 +1,223 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><title>My Pet Paradise</title><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Nunito,sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding:20px}.container{max-width:900px;margin:0 auto}h1{text-align:center;color:#fff;font-size:2em;margin-bottom:10px}.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.stats-bar{display:flex;gap:15px;background:rgba(255,255,255,0.2);padding:10px 20px;border-radius:20px;color:#fff;font-weight:600}.new-egg-btn{background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;border:none;padding:12px 24px;border-radius:25px;font-size:16px;cursor:pointer}.pets-container{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}.pet-card{background:#fff;border-radius:25px;padding:20px;box-shadow:0 10px 40px rgba(0,0,0,0.15)}.pet-card-header{display:flex;justify-content:space-between;margin-bottom:10px}.pet-info{flex:1;margin-left:15px}.pet-name{font-size:20px;font-weight:700;color:#2d3748}.pet-level{background:linear-gradient(135deg,#ffd700,#ffb347);color:#fff;padding:5px 12px;border-radius:15px}.pet-avatar-container{display:flex;justify-content:center;height:150px;margin:15px 0}.pet-avatar{width:120px;height:120px;position:relative;cursor:pointer}@keyframes happy{0%,100%{transform:translateY(0)}25%{transform:translateY(-10px)}}.pet-avatar.happy{animation:happy 0.6s ease}.pc-body{position:absolute;width:70px;height:80px;background:linear-gradient(145deg,#e74c3c,#c0392b);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}.pc-eye{position:absolute;width:16px;height:18px;background:#fff;border-radius:50%;top:12px}.pc-eye.left{left:20px}.pc-eye.right{right:20px}.pc-ant{position:absolute;width:4px;height:35px;background:#e74c3c;border-radius:50%;top:-20px}.pc-ant.left{left:35px;transform:rotate(-20deg)}.pc-ant.right{right:35px;transform:rotate(20deg)}.pc-claw{position:absolute;width:30px;height:40px;background:#e74c3c;border-radius:50%;top:45px}.pc-claw.left{left:0;transform:rotate(25deg)}.pc-claw.right{right:0;transform:rotate(-25deg)}.pc-tail{position:absolute;width:40px;height:25px;background:#c0392b;border-radius:0 0 50% 50%;bottom:0;left:50%;transform:translateX(-50%)}.pca-body{position:absolute;width:80px;height:60px;background:linear-gradient(145deg,#f5a623,#e8941c);border-radius:50%;left:50%;top:55%;transform:translate(-50%,-50%)}.pca-head{position:absolute;width:70px;height:60px;background:#f5a623;border-radius:50%;left:50%;top:15px;transform:translateX(-50%)}.pca-ear{position:absolute;width:0;height:0;border-left:15px solid transparent;border-right:15px solid transparent;border-bottom:25px solid #e8941c;top:0}.pca-ear.left{left:15px;transform:rotate(-15deg)}.pca-ear.right{right:15px;transform:rotate(15deg)}.pca-eye{position:absolute;width:18px;height:20px;background:#2ecc71;border-radius:50%;top:30px}.pca-eye.left{left:18px}.pca-eye.right{right:18px}.pca-nose{position:absolute;width:10px;height:8px;background:#ff6b81;border-radius:50%;top:50px;left:50%;transform:translateX(-50%)}.pca-tail{position:absolute;width:15px;height:50px;background:#e8941c;border-radius:10px;right:5px;top:50px}.pd-body{position:absolute;width:75px;height:55px;background:linear-gradient(145deg,#8b4513,#654321);border-radius:50%;left:50%;top:55%;transform:translate(-50%,-50%)}.pd-head{position:absolute;width:70px;height:60px;background:#8b4513;border-radius:50%;left:50%;top:12px;transform:translateX(-50%)}.pd-eye{position:absolute;width:18px;height:18px;background:#1a1a2e;border-radius:50%;top:28px}.pd-eye.left{left:15px}.pd-eye.right{right:15px}.pd-nose{position:absolute;width:18px;height:14px;background:#1a1a2e;border-radius:50%;top:42px;left:50%;transform:translateX(-50%)}.pd-tongue{position:absolute;width:12px;height:18px;background:#ff6b6b;border-radius:0 0 50% 50%;top:55px;left:50%;transform:translateX(-50%)}.pr-body{position:absolute;width:70px;height:65px;background:linear-gradient(145deg,#fff,#f0f0f0);border-radius:50%;left:50%;top:55%;transform:translate(-50%,-50%)}.pr-head{position:absolute;width:60px;height:55px;background:#fff;border-radius:50%;left:50%;top:18px;transform:translateX(-50%)}.pr-ear{position:absolute;width:18px;height:55px;background:#fff;border-radius:50%;top:-25px}.pr-ear.left{left:25px;transform:rotate(-15deg)}.pr-ear.right{right:25px;transform:rotate(15deg)}.pr-eye{position:absolute;width:14px;height:14px;background:#e74c3c;border-radius:50%;top:30px}.pr-eye.left{left:18px}.pr-eye.right{right:18px}.pr-tail{position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;bottom:25px;left:50%;transform:translateX(-50%)}.pb-body{position:absolute;width:55px;height:60px;background:linear-gradient(145deg,#3498db,#2980b9);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}.pb-head{position:absolute;width:50px;height:50px;background:#3498db;border-radius:50%;left:50%;top:8px;transform:translateX(-50%)}.pb-eye{position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:18px}.pb-eye.left{left:12px}.pb-eye.right{right:12px}.pb-beak{position:absolute;width:0;height:0;border-top:8px solid transparent;border-bottom:10px solid transparent;border-left:18px solid #f39c12;top:28px;left:50%;transform:translateX(-50%)}.pb-wing{position:absolute;width:30px;height:40px;background:#2980b9;border-radius:50%;top:35px;left:50%;transform:translateX(-50%)}.pp-body{position:absolute;width:75px;height:60px;background:linear-gradient(145deg,#fff,#f5f5f5);border-radius:50%;left:50%;top:55%;transform:translate(-50%,-50%)}.pp-head{position:absolute;width:80px;height:70px;background:#fff;border-radius:50%;left:50%;top:10px;transform:translateX(-50%)}.pp-ear{position:absolute;width:30px;height:30px;background:#1a1a2e;border-radius:50%;top:0}.pp-ear.left{left:5px}.pp-ear.right{right:5px}.pp-patch{position:absolute;width:25px;height:20px;background:#1a1a2e;border-radius:50%;top:25px}.pp-patch.left{left:12px}.pp-patch.right{right:12px}.pp-eye{position:absolute;width:12px;height:12px;background:#fff;border-radius:50%;top:28px}.pp-eye.left{left:18px}.pp-eye.right{right:18px}.ppe-body{position:absolute;width:70px;height:80px;background:linear-gradient(145deg,#1a1a2e,#0f0f1a);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}.ppe-belly{position:absolute;width:50px;height:60px;background:#fff;border-radius:50%;left:50%;top:35px;transform:translateX(-50%)}.ppe-head{position:absolute;width:60px;height:50px;background:#1a1a2e;border-radius:50%;left:50%;top:5px;transform:translateX(-50%)}.ppe-eye{position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:18px}.ppe-eye.left{left:15px}.ppe-eye.right{right:15px}.ppe-beak{position:absolute;width:0;height:0;border-top:10px solid #f39c12;border-left:10px solid transparent;border-right:10px solid transparent;top:32px;left:50%;transform:translateX(-50%)}.ppe-wing{position:absolute;width:15px;height:40px;background:#1a1a2e;border-radius:50%;top:35px}.ppe-wing.left{left:0}.ppe-wing.right{right:0}.ppe-foot{position:absolute;width:20px;height:10px;background:#f39c12;border-radius:50%;bottom:5px}.ppe-foot.left{left:25px}.ppe-foot.right{right:25px}.pet-stats{margin-bottom:15px}.stat-row{display:flex;align-items:center;margin-bottom:8px}.stat-icon{width:24px}.stat-bar-container{flex:1;height:12px;background:#edf2f7;border-radius:6px;overflow:hidden;margin:0 10px}.stat-bar{height:100%;border-radius:6px;transition:width 0.5s}.stat-bar.hunger{background:linear-gradient(90deg,#f56565,#e53e3e)}.stat-bar.happy{background:linear-gradient(90deg,#48bb78,#38a169)}.stat-bar.energy{background:linear-gradient(90deg,#4299e1,#3182ce)}.stat-value{width:30px;font-size:12px;font-weight:600;color:#4a5568;text-align:right}.pet-status{text-align:center;padding:8px;background:#f7fafc;border-radius:10px;margin-bottom:15px;font-size:13px}.pet-status.hungry{background:#fed7d7;color:#c53030}.pet-status.tired{background:#feebc8;color:#c05621}.pet-status.sad{background:#e9d8fd;color:#6b46c1}.pet-status.happy{background:#c6f6d5;color:#276749}.pet-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.action-btn{padding:10px;border:none;border-radius:12px;font-size:24px;cursor:pointer;display:flex;flex-direction:column;align-items:center}.action-btn span{font-size:10px;margin-top:2px}.action-btn.feed{background:linear-gradient(135deg,#fbb6ce,#f687b3)}.action-btn.play{background:linear-gradient(135deg,#90cdf4,#4299e1)}.action-btn.sleep{background:linear-gradient(135deg,#c3dafe,#a3bffa}.hatch-panel,.food-panel{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:1000}.hatch-panel.show,.food-panel.show{display:flex}.hatch-modal{background:#fff;border-radius:30px;padding:30px;max-width:500px;width:90%}.hatch-modal h2,.food-modal h3{text-align:center;color:#2d3748;margin-bottom:25px}.food-modal{background:#fff;border-radius:25px;padding:25px;max-width:350px;width:90%}.egg-types{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.egg-type{background:#f7fafc;border:3px solid transparent;border-radius:20px;padding:20px;text-align:center;cursor:pointer}.egg-type:hover{border-color:#667eea;transform:translateY(-5px)}.egg-type .icon{font-size:50px;display:block;margin-bottom:10px}.egg-type .name{font-weight:700;color:#2d3748;font-size:14px}.egg-type .desc{font-size:11px;color:#718096;margin-top:5px}.food-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.food-item{background:#f7fafc;border-radius:15px;padding:15px;text-align:center;cursor:pointer}.food-item:hover{transform:scale(1.05)}.food-item .icon{font-size:35px;display:block;margin-bottom:5px}.food-item .name{font-size:13px;font-weight:600;color:#2d3748}.close-btn{position:absolute;top:15px;right:15px;width:35px;height:35px;background:#f7fafc;border:none;border-radius:50%;font-size:20px;cursor:pointer}.message-toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.8);color:#fff;padding:12px 25px;border-radius:25px;font-size:14px;opacity:0;transition:opacity 0.3s;z-index:2000}.message-toast.show{opacity:1}</style></head><body><div class=container><h1>My Pet Paradise</h1><div class=header><div class=stats-bar>My Pets: <span id=petCount>0</span></div><button class=new-egg-btn onclick=showHatchPanel()>Adopt New Pet</button></div><div class=pets-container id=petsContainer></div></div><div class=hatch-panel id=hatchPanel><button class=close-btn onclick=hideHatchPanel()>X</button><div class=hatch-modal><h2>Choose Your Pet</h2><div class=egg-types><div class=egg-type onclick=hatchPet("crayfish")><span class=icon>&#x1F99E;</span><span class=name>Crayfish</span><span class=desc>Active</span></div><div class=egg-type onclick=hatchPet("cat")><span class=icon>&#x1F431;</span><span class=name>Cat</span><span class=desc>Elegant</span></div><div class=egg-type onclick=hatchPet("dog")><span class=icon>&#x1F436;</span><span class=name>Dog</span><span class=desc>Loyal</span></div><div class=egg-type onclick=hatchPet("rabbit")><span class=icon>&#x1F430;</span><span class=name>Rabbit</span><span class=desc>Cute</span></div><div class=egg-type onclick=hatchPet("bird")><span class=icon>&#x1F426;</span><span class=name>Bird</span><span class=desc>Melodious</span></div><div class=egg-type onclick=hatchPet("panda")><span class=icon>&#x1F43C;</span><span class=name>Panda</span><span class=desc>Adorable</span></div><div class=egg-type onclick=hatchPet("penguin")><span class=icon>&#x1F427;</span><span class=name>Penguin</span><span class=desc>Cute</span></div></div></div></div><div class=food-panel id=foodPanel><div class=food-modal><h3>Choose Food</h3><div class=food-grid><div class=food-item onclick=feedPet("apple")><span class=icon>&#x1F34E;</span><span class=name>Apple</span></div><div class=food-item onclick=feedPet("carrot")><span class=icon>&#x1F955;</span><span class=name>Carrot</span></div><div class=food-item onclick=feedPet("fish")><span class=icon>&#x1F41F;</span><span class=name>Fish</span></div><div class=food-item onclick=feedPet("cake")><span class=icon>&#x1F370;</span><span class=name>Cake</span></div></div></div></div><div class=message-toast id=messageToast></div><script>let pets=[];let currentPetId=null;const PET_NAMES={crayfish:"Crayfish",cat:"Cat",dog:"Dog",rabbit:"Rabbit",bird:"Bird",panda:"Panda",penguin:"Penguin"};const MSGS={hungry:["Hungry...","Want food~","So hungry"],tired:["Sleepy...","Want sleep","Yawn"],sad:["Sad...","Play with me~","Bored"],happy:["Happy!","Love you!","So fun~"]};function loadGame(){const s=localStorage.getItem("myPetGame8");if(s)pets=JSON.parse(s);renderPets()}function saveGame(){localStorage.setItem("myPetGame8",JSON.stringify(pets))}function genId(){return Date.now()+Math.random().toString(36).substr(2,9)}function showHatchPanel(){document.getElementById("hatchPanel").classList.add("show")}function hideHatchPanel(){document.getElementById("hatchPanel").classList.remove("show")}function showFoodPanel(id){currentPetId=id;document.getElementById("foodPanel").classList.add("show")}function hideFoodPanel(){document.getElementById("foodPanel").classList.remove("show");currentPetId=null}function hatchPet(type){hideHatchPanel();const pet={id:genId(),type:type,name:PET_NAMES[type],level:1,exp:0,hunger:80,happy:80,energy:100,isSleeping:false};pets.push(pet);saveGame();renderPets();showMessage("Got "+PET_NAMES[type]+"!")}function feedPet(food){hideFoodPanel();if(!currentPetId)return;const pet=pets.find(p=>p.id===currentPetId);if(!pet)return;const ef={apple:15,carrot:12,fish:20,cake:25};pet.hunger=Math.min(100,pet.hunger+(ef[food]||10));pet.happy=Math.min(100,pet.happy+3);pet.exp+=10;checkLevelUp(pet);saveGame();renderPets();showMessage(pet.name+" ate! +"+ef[food]+" Fullness")}function playWithPet(id){const pet=pets.find(p=>p.id===id);if(!pet)return;if(pet.isSleeping){showMessage(pet.name+" is sleeping...");return}if(pet.energy<20){showMessage(pet.name+" is too tired!");return}pet.energy=Math.max(0,pet.energy-10);pet.happy=Math.min(100,pet.happy+15);pet.hunger=Math.max(0,pet.hunger-5);pet.exp+=15;checkLevelUp(pet);saveGame();renderPets();const av=document.querySelector('[data-pet-id="'+id+'"] .pet-avatar');if(av){av.classList.add("happy");setTimeout(()=>av.classList.remove("happy"),600)}showMessage(pet.name+" had fun! +15 Happiness")}function toggleSleep(id){const pet=pets.find(p=>p.id===id);if(!pet)return;pet.isSleeping=!pet.isSleeping;if(pet.isSleeping){pet.energy=100;showMessage(pet.name+" is sleeping... Zzz")}else{showMessage(pet.name+" woke up!")}saveGame();renderPets()}function editPetName(id){const pet=pets.find(p=>p.id===id);if(!pet)return;const inp=document.querySelector('[data-pet-id="'+id+'"] .name-input');const nm=document.querySelector('[data-pet-id="'+id+'"] .pet-name');if(inp.style.display==="none"){inp.style.display="block";inp.value=pet.name;inp.focus();nm.style.display="none"}else{if(inp.value.trim()){pet.name=inp.value.trim();saveGame()}inp.style.display="none";nm.style.display="flex";renderPets()}}function checkLevelUp(pet){const expNeeded=pet.level*100;while(pet.exp>=expNeeded){pet.exp-=expNeeded;pet.level++;showMessage(pet.name+" leveled up! Now Lv."+pet.level+"!")}}function getPetStatus(pet){if(pet.isSleeping)return{text:"Sleeping... Zzz",cls:""};if(pet.hunger<30)return{text:MSGS.hungry[Math.floor(Math.random()*3)],cls:"hungry"};if(pet.energy<30)return{text:MSGS.tired[Math.floor(Math.random()*3)],cls:"tired"};if(pet.happy<30)return{text:MSGS.sad[Math.floor(Math.random()*3)],cls:"sad"};return{text:MSGS.happy[Math.floor(Math.random()*3)],cls:"happy"}}function renderPetAvatar(type){switch(type){case"crayfish":return"<div class=pc-body></div><div class=pc-eye left></div><div class=pc-eye right></div><div class=pc-ant left></div><div class=pc-ant right></div><div class=pc-claw left></div><div class=pc-claw right></div><div class=pc-tail></div>";case"cat":return"<div class=pca-body></div><div class=pca-head></div><div class=pca-ear left></div><div class=pca-ear right></div><div class=pca-eye left></div><div class=pca-eye right></div><div class=pca-nose></div><div class=pca-tail></div>";case"dog":return"<div class=pd-body></div><div class=pd-head></div><div class=pd-eye left></div><div class=pd-eye right></div><div class=pd-nose></div><div class=pd-tongue></div>";case"rabbit":return"<div class=pr-body></div><div class=pr-head></div><div class=pr-ear left></div><div class=pr-ear right></div><div class=pr-eye left></div><div class=pr-eye right></div><div class=pr-tail></div>";case"bird":return"<div class=pb-body></div><div class=pb-head></div><div class=pb-eye left></div><div class=pb-eye right></div><div class=pb-beak></div><div class=pb-wing></div>";case"panda":return"<div class=pp-body></div><div class=pp-head></div><div class=pp-ear left></div><div class=pp-ear right></div><div class=pp-patch left></div><div class=pp-patch right></div><div class=pp-eye left></div><div class=pp-eye right></div>";case"penguin":return"<div class=ppe-body></div><div class=ppe-belly></div><div class=ppe-head></div><div class=ppe-eye left></div><div class=ppe-eye right></div><div class=ppe-beak></div><div class=ppe-wing left></div><div class=ppe-wing right></div><div class=ppe-foot left></div><div class=ppe-foot right></div>";default:return""}}function renderPets(){document.getElementById("petCount").textContent=pets.length;const c=document.getElementById("petsContainer");if(pets.length===0){c.innerHTML="<div style=background:linear-gradient(135deg,#667eea,#764ba2);padding:60px 20px;border-radius:25px;text-align:center><h2 style=color:#fff>No pets yet!</h2><p style=color:rgba(255,255,255,0.8);margin:15px 0>Adopt your first pet!</p><button class=new-egg-btn onclick=showHatchPanel()>Adopt Now</button></div>";return}c.innerHTML=pets.map(pet=>{const st=getPetStatus(pet);return"<div class=pet-card><div class=pet-card-header><div class=pet-info><div class=pet-name>"+pet.name+"<span class=edit-icon onclick=editPetName('"+pet.id+"')>Edit</span></div><div class=pet-type>"+PET_NAMES[pet.type]+"</div><div class=name-input-container><input type=text class=name-input maxlength=10 onkeypress=if(event.key==='Enter')editPetName('"+pet.id+"')></div></div><div class=pet-level>Level "+pet.level+"</div></div><div class=pet-avatar-container><div class=pet-avatar onclick=playWithPet('"+pet.id+"')>"+renderPetAvatar(pet.type)+"</div></div><div class=pet-stats><div class=stat-row><span class=stat-icon>Food</span><div class=stat-bar-container><div class=stat-bar hunger style=width:"+pet.hunger+"px></div></div><span class=stat-value>"+pet.hunger+"</span></div><div class=stat-row><span class=stat-icon>Happy</span><div class=stat-bar-container><div class=stat-bar happy style=width:"+pet.happy+"px></div></div><span class=stat-value>"+pet.happy+"</span></div><div class=stat-row><span class=stat-icon>Energy</span><div class=stat-bar-container><div class=stat-bar energy style=width:"+pet.energy+"px></div></div><span class=stat-value>"+pet.energy+"</span></div></div><div class=pet-status "+st.cls+">"+st.text+"</div><div class=pet-actions><button class=action-btn feed onclick=showFoodPanel('"+pet.id+"')>Feed<span>Feed</span></button><button class=action-btn play onclick=playWithPet('"+pet.id+"')>Play<span>Play</span></button><button class=action-btn sleep onclick=toggleSleep('"+pet.id+"')>"+(pet.isSleeping?"Wake":"Sleep")+"<span>"+(pet.isSleeping?"Wake":"Sleep")+"</span></button></div></div>"}).join("")}function showMessage(t){const e=document.getElementById("messageToast");e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),2500)}loadGame();</script></body></html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>我的宠物乐园</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Nunito,sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding:20px}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes float{0%,100%{transform:translate(-50%,-50%)}50%{transform:translate(-50%,calc(-50% - 5px))}}
+@keyframes look{0%,30%,100%{transform:translate(-50%,-50%)}35%,45%{transform:translate(-40%,-50%)}75%,85%{transform:translate(-60%,-50%)}}
+@keyframes antL{0%,100%{transform:rotate(-20deg)}50%{transform:rotate(-35deg)}}
+@keyframes antR{0%,100%{transform:rotate(20deg)}50%{transform:rotate(35deg)}}
+@keyframes tail{0%,100%{transform:translateX(-50%) rotate(-10deg)}50%{transform:translateX(-50%) rotate(10deg)}}
+@keyframes blink{0%,90%,100%{transform:scaleY(1)}95%{transform:scaleY(0.1)}}
+@keyframes tailSway{0%,100%{transform:rotate(-20deg)}50%{transform:rotate(20deg)}}
+@keyframes tongue{0%,70%,100%{height:15px}80%,90%{height:22px}}
+@keyframes earWiggle{0%,100%{transform:rotate(-15deg)}50%{transform:rotate(-10deg)}}
+@keyframes wing{0%,100%{transform:translateX(-50%) rotate(0deg)}50%{transform:translateX(-50%) rotate(-15deg)}}
+@keyframes happy{0%,100%{transform:translateY(0)}25%{transform:translateY(-15px) scale(1.1)}50%{transform:translateY(-8px)}75%{transform:translateY(-12px)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes toastIn{from{transform:translate(-50%,20px);opacity:0}to{transform:translate(-50%,0);opacity:1}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
+.container{max-width:900px;margin:0 auto}
+h1{color:#fff;text-align:center;font-size:2em;animation:bounce 2s infinite}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:10px}
+.stats-bar{background:rgba(255,255,255,0.2);padding:10px 20px;border-radius:20px;color:#fff;font-weight:600}
+.new-egg-btn{background:linear-gradient(#f093fb,#f5576c);color:#fff;border:none;padding:12px 24px;border-radius:25px;font-size:16px;font-weight:600;cursor:pointer;transition:all 0.3s}
+.new-egg-btn:hover{transform:scale(1.05);box-shadow:0 5px 20px rgba(240,147,251,0.5)}
+.pets{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.card{background:#fff;border-radius:20px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,0.15);animation:slideUp 0.4s ease;transition:transform 0.3s}
+.card:hover{transform:translateY(-5px)}
+.card-header{display:flex;justify-content:space-between;margin-bottom:10px}
+.name{font-size:20px;font-weight:700;color:#2d3748}
+.level{background:linear-gradient(#ffd700,#ffb347);color:#fff;padding:5px 12px;border-radius:15px;font-size:12px}
+.avatar{width:100px;height:100px;margin:15px auto;position:relative;cursor:pointer;transition:transform 0.3s}
+.avatar:hover{transform:scale(1.1)}
+.avatar:active{transform:scale(0.95)}
+.avatar.happy{animation:happy 0.6s ease}
+.pc-body{position:absolute;width:60px;height:70px;background:linear-gradient(#e74c3c,#c0392b);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);animation:float 3s infinite}
+.pc-eye{position:absolute;width:12px;height:14px;background:#fff;border-radius:50%;top:10px}
+.pc-eye.left{left:15px}
+.pc-eye.right{right:15px}
+.pc-eye::after{content:"";position:absolute;width:8px;height:8px;background:#1a1a2e;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);animation:look 4s infinite}
+.pc-ant{position:absolute;width:3px;height:25px;background:#e74c3c;border-radius:50%;top:-15px}
+.pc-ant.left{left:30px;animation:antL 2s infinite}
+.pc-ant.right{right:30px;animation:antR 2s infinite}
+.pc-claw{position:absolute;width:25px;height:35px;background:#e74c3c;border-radius:50%;top:35px}
+.pc-claw.left{left:0;transform:rotate(25deg)}
+.pc-claw.right{right:0;transform:rotate(-25deg)}
+.pc-tail{position:absolute;width:30px;height:20px;background:#c0392b;border-radius:0 0 50% 50%;bottom:0;left:50%;transform:translateX(-50%);animation:tail 0.8s infinite}
+.pca-body{position:absolute;width:70px;height:50px;background:linear-gradient(#f5a623,#e8941c);border-radius:50%;left:50%;top:55%;transform:translate(-50%,-50%);animation:float 2.5s infinite}
+.pca-head{position:absolute;width:65px;height:55px;background:#f5a623;border-radius:50%;left:50%;top:15px;transform:translateX(-50%)}
+.pca-ear{position:absolute;width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-bottom:20px solid #e8941c;top:0}
+.pca-ear.left{left:12px;transform:rotate(-15deg)}
+.pca-ear.right{right:12px;transform:rotate(15deg)}
+.pca-eye{position:absolute;width:14px;height:16px;background:#2ecc71;border-radius:50%;top:25px;animation:blink 4s infinite}
+.pca-eye.left{left:15px}
+.pca-eye.right{right:15px}
+.pca-eye::after{content:"";position:absolute;width:3px;height:10px;background:#1a1a2e;border-radius:2px;top:3px;left:5px}
+.pca-nose{position:absolute;width:8px;height:6px;background:#ff6b81;border-radius:50%;top:42px;left:50%;transform:translateX(-50%)}
+.pca-tail{position:absolute;width:12px;height:40px;background:#e8941c;border-radius:10px;right:5px;top:40px;transform-origin:bottom;animation:tailSway 2s infinite}
+.pd-body{position:absolute;width:65px;height:45px;background:linear-gradient(#8b4513,#654321);border-radius:50%;left:50%;top:55%;transform:translate(-50%,-50%);animation:float 2s infinite}
+.pd-head{position:absolute;width:60px;height:55px;background:#8b4513;border-radius:50%;left:50%;top:12px;transform:translateX(-50%)}
+.pd-eye{position:absolute;width:14px;height:14px;background:#1a1a2e;border-radius:50%;top:24px}
+.pd-eye.left{left:12px}
+.pd-eye.right{right:12px}
+.pd-eye::after{content:"";position:absolute;width:5px;height:5px;background:#fff;border-radius:50%;top:2px;left:2px}
+.pd-nose{position:absolute;width:14px;height:10px;background:#1a1a2e;border-radius:50%;top:36px;left:50%;transform:translateX(-50%)}
+.pd-tongue{position:absolute;width:10px;height:15px;background:#ff6b6b;border-radius:0 0 50% 50%;top:46px;left:50%;transform:translateX(-50%);animation:tongue 3s infinite}
+.pd-tail{position:absolute;width:10px;height:30px;background:#8b4513;border-radius:10px;right:8px;top:30px;transform-origin:bottom;animation:tail 0.4s infinite}
+.pr-body{position:absolute;width:60px;height:55px;background:#fff;border-radius:50%;left:50%;top:55%;transform:translate(-50%,-50%);animation:float 2.8s infinite}
+.pr-head{position:absolute;width:50px;height:45px;background:#fff;border-radius:50%;left:50%;top:18px;transform:translateX(-50%)}
+.pr-ear{position:absolute;width:14px;height:45px;background:#fff;border-radius:50%;top:-20px;animation:earWiggle 2s infinite}
+.pr-ear.left{left:22px;transform:rotate(-15deg)}
+.pr-ear.right{right:22px;transform:rotate(15deg)}
+.pr-ear::after{content:"";position:absolute;width:8px;height:35px;background:pink;border-radius:50%;top:4px;left:3px}
+.pr-eye{position:absolute;width:10px;height:10px;background:#e74c3c;border-radius:50%;top:25px}
+.pr-eye.left{left:15px}
+.pr-eye.right{right:15px}
+.pr-tail{position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;bottom:20px;left:50%;transform:translateX(-50%);animation:pulse 0.5s infinite}
+.pb-body{position:absolute;width:45px;height:50px;background:linear-gradient(#3498db,#2980b9);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);animation:float 2.2s infinite}
+.pb-head{position:absolute;width:40px;height:40px;background:#3498db;border-radius:50%;left:50%;top:8px;transform:translateX(-50%)}
+.pb-eye{position:absolute;width:10px;height:10px;background:#fff;border-radius:50%;top:15px}
+.pb-eye.left{left:10px}
+.pb-eye.right{right:10px}
+.pb-eye::after{content:"";position:absolute;width:6px;height:6px;background:#1a1a2e;border-radius:50%;top:2px;left:2px}
+.pb-beak{position:absolute;width:0;height:0;border-top:6px solid transparent;border-bottom:8px solid transparent;border-left:14px solid #f39c12;top:24px;left:50%;transform:translateX(-50%);z-index:1}
+.pb-wing{position:absolute;width:25px;height:30px;background:#2980b9;border-radius:50%;top:30px;left:50%;transform:translateX(-50%);transform-origin:top;animation:wing 0.5s infinite}
+.pp-body{position:absolute;width:65px;height:50px;background:#fff;border-radius:50%;left:50%;top:55%;transform:translate(-50%,-50%);animation:float 3s infinite}
+.pp-head{position:absolute;width:70px;height:60px;background:#fff;border-radius:50%;left:50%;top:10px;transform:translateX(-50%)}
+.pp-ear{position:absolute;width:25px;height:25px;background:#1a1a2e;border-radius:50%;top:0}
+.pp-ear.left{left:5px}
+.pp-ear.right{right:5px}
+.pp-patch{position:absolute;width:20px;height:16px;background:#1a1a2e;border-radius:50%;top:22px}
+.pp-patch.left{left:10px;transform:rotate(-10deg)}
+.pp-patch.right{right:10px;transform:rotate(10deg)}
+.pp-eye{position:absolute;width:10px;height:10px;background:#fff;border-radius:50%;top:24px}
+.pp-eye.left{left:15px}
+.pp-eye.right{right:15px}
+.pp-eye::after{content:"";position:absolute;width:5px;height:5px;background:#1a1a2e;border-radius:50%;top:2px;left:2px}
+.ppe-body{position:absolute;width:60px;height:70px;background:#1a1a2e;border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);animation:float 2.6s infinite}
+.ppe-belly{position:absolute;width:40px;height:50px;background:#fff;border-radius:50%;left:50%;top:30px;transform:translateX(-50%)}
+.ppe-head{position:absolute;width:50px;height:40px;background:#1a1a2e;border-radius:50%;left:50%;top:5px;transform:translateX(-50%)}
+.ppe-eye{position:absolute;width:10px;height:10px;background:#fff;border-radius:50%;top:15px}
+.ppe-eye.left{left:12px}
+.ppe-eye.right{right:12px}
+.ppe-eye::after{content:"";position:absolute;width:6px;height:6px;background:#1a1a2e;border-radius:50%;top:2px;left:2px}
+.ppe-beak{position:absolute;width:0;height:0;border-top:8px solid #f39c12;border-left:8px solid transparent;border-right:8px solid transparent;top:28px;left:50%;transform:translateX(-50%)}
+.ppe-wing{position:absolute;width:12px;height:30px;background:#1a1a2e;border-radius:50%;top:30px;animation:wing 1s infinite}
+.ppe-wing.left{left:0;transform:rotate(15deg)}
+.ppe-wing.right{right:0;transform:rotate(-15deg)}
+.ppe-foot{position:absolute;width:16px;height:8px;background:#f39c12;border-radius:50%;bottom:5px}
+.ppe-foot.left{left:20px}
+.ppe-foot.right{right:20px}
+.stats{margin:15px 0}
+.stat{display:flex;align-items:center;margin-bottom:6px}
+.stat-icon{width:20px}
+.stat-bar{flex:1;height:10px;background:#edf2f7;border-radius:5px;margin:0 8px;overflow:hidden}
+.bar{height:100%;border-radius:5px;transition:width 0.5s}
+.bar.hunger{background:linear-gradient(#f56565,#e53e3e)}
+.bar.happy{background:linear-gradient(#48bb78,#38a169)}
+.bar.energy{background:linear-gradient(#4299e1,#3182ce)}
+.stat-value{width:24px;text-align:right;font-size:12px;color:#4a5568}
+.status{text-align:center;padding:8px;background:#f7fafc;border-radius:10px;margin-bottom:15px;font-size:13px;animation:pulse 2s infinite}
+.status.hungry{background:#fed7d7;color:#c53030}
+.status.tired{background:#feebc8;color:#c05621}
+.status.sad{background:#e9d8fd;color:#6b46c1}
+.status.happy{background:#c6f6d5;color:#276749}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.action{background:none;border:none;border-radius:12px;padding:10px;font-size:24px;cursor:pointer;transition:all 0.3s}
+.action:hover{transform:translateY(-3px) scale(1.05)}
+.action span{display:block;font-size:10px;margin-top:2px}
+.action.feed{background:linear-gradient(#fbb6ce,#f687b3)}
+.action.play{background:linear-gradient(#90cdf4,#4299e1)}
+.action.sleep{background:linear-gradient(#c3dafe,#a3bffa)}
+.panel{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(5px)}
+.panel.show{display:flex;animation:fadeIn 0.3s}
+.modal{background:#fff;border-radius:25px;padding:25px;max-width:400px;width:90%;animation:slideUp 0.4s;position:relative}
+.modal h2,.modal h3{text-align:center;color:#2d3748;margin-bottom:20px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.item{background:#f7fafc;border-radius:15px;padding:15px;text-align:center;cursor:pointer;transition:all 0.3s}
+.item:hover{border:2px solid #667eea;transform:translateY(-5px)}
+.item:hover .icon{transform:scale(1.2)}
+.item .icon{font-size:40px;display:block;margin-bottom:5px;transition:transform 0.3s}
+.item .name{font-size:13px;font-weight:600;color:#2d3748}
+.item .effect{font-size:10px;color:#718096}
+.close{position:absolute;top:10px;right:10px;width:30px;height:30px;background:#f7fafc;border:none;border-radius:50%;font-size:16px;cursor:pointer}
+.close:hover{background:#e2e8f0}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:linear-gradient(#667eea,#764ba2);color:#fff;padding:12px 25px;border-radius:20px;font-size:14px;opacity:0;transition:all 0.3s;z-index:2000}
+.toast.show{opacity:1;animation:toastIn 0.5s}
+.empty{text-align:center;padding:60px 20px}
+.empty .icon{font-size:80px;margin-bottom:15px;animation:pulse 2s infinite}
+.empty h2{color:#fff;margin-bottom:10px}
+.empty p{color:rgba(255,255,255,0.8);margin-bottom:20px}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>我的宠物乐园</h1>
+<div class="header">
+<div class="stats-bar">宠物: <span id="count">0</span>只</div>
+<button class="new-egg-btn" onclick="showPanel()">领养宠物</button>
+</div>
+<div class="pets" id="pets"></div>
+</div>
+
+<div class="panel" id="panel">
+<div class="modal">
+<h2>选择宠物</h2>
+<div class="grid">
+<div class="item" onclick="hatch('crayfish')"><span class="icon">🦞</span><span class="name">小龙虾</span></div>
+<div class="item" onclick="hatch('cat')"><span class="icon">🐱</span><span class="name">小猫咪</span></div>
+<div class="item" onclick="hatch('dog')"><span class="icon">🐶</span><span class="name">小狗狗</span></div>
+<div class="item" onclick="hatch('rabbit')"><span class="icon">🐰</span><span class="name">小兔子</span></div>
+<div class="item" onclick="hatch('bird')"><span class="icon">🐦</span><span class="name">小鸟</span></div>
+<div class="item" onclick="hatch('panda')"><span class="icon">🐼</span><span class="name">小熊猫</span></div>
+<div class="item" onclick="hatch('penguin')"><span class="icon">🐧</span><span class="name">小企鹅</span></div>
+</div>
+</div>
+</div>
+
+<div class="panel" id="foodPanel">
+<div class="modal">
+<h3>喂食</h3>
+<div class="grid">
+<div class="item" onclick="feed('apple')"><span class="icon">🍎</span><span class="name">苹果</span><span class="effect">+15饱食</span></div>
+<div class="item" onclick="feed('carrot')"><span class="icon">🥕</span><span class="name">胡萝卜</span><span class="effect">+12饱食</span></div>
+<div class="item" onclick="feed('fish')"><span class="icon">🐟</span><span class="name">小鱼干</span><span class="effect">+20饱食</span></div>
+<div class="item" onclick="feed('cake')"><span class="icon">🍰</span><span class="name">小蛋糕</span><span class="effect">+25饱食</span></div>
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let pets=[];
+let curId=null;
+const N={crayfish:"小龙虾",cat:"小猫咪",dog:"小狗狗",rabbit:"小兔子",bird:"小鸟",panda:"小熊猫",penguin:"小企鹅"};
+const M={hungry:["肚子饿了...","想吃东西~","好饿啊"],tired:["好困...","想睡觉","打哈欠"],sad:["不开心...","陪我玩","有点无聊"],happy:["好开心！","喜欢你！","真快乐~"]};
+function load(){const s=localStorage.getItem("pets9");if(s)pets=JSON.parse(s);render()}
+function save(){localStorage.setItem("pets9",JSON.stringify(pets))}
+function gid(id){return document.getElementById(id)}
+function showPanel(){gid("panel").classList.add("show")}
+function hidePanel(){gid("panel").classList.remove("show")}
+function showFood(id){curId=id;gid("foodPanel").classList.add("show")}
+function hideFood(){gid("foodPanel").classList.remove("show");curId=null}
+function hatch(type){hidePanel();const p={id:Date.now().toString(36)+Math.random().toString(36).substr(2),type,name:N[type],level:1,exp:0,hunger:80,happy:80,energy:100,sleeping:false};pets.push(p);save();render();toast("恭喜获得 "+N[type]+"！")}
+function feed(food){hideFood();if(!curId)return;const p=pets.find(x=>x.id===curId);if(!p)return;const e={apple:15,carrot:12,fish:20,cake:25};p.hunger=Math.min(100,p.hunger+(e[food]||10));p.happy=Math.min(100,p.happy+3);p.exp+=10;checkLv(p);save();render();toast(p.name+" 吃了食物！")}
+function play(id){const p=pets.find(x=>x.id===id);if(!p)return;if(p.sleeping){toast(p.name+" 在睡觉...");return}if(p.energy<20){toast(p.name+" 太累了！");return}p.energy=Math.max(0,p.energy-10);p.happy=Math.min(100,p.happy+15);p.hunger=Math.max(0,p.hunger-5);p.exp+=15;checkLv(p);save();render();const av=gid("av"+id);if(av){av.classList.add("happy");setTimeout(()=>av.classList.remove("happy"),600)}toast(p.name+" 玩得很开心！")
+}
+function sleep(id){const p=pets.find(x=>x.id===id);if(!p)return;p.sleeping=!p.sleeping;if(p.sleeping){p.energy=100;toast(p.name+" 开始睡觉... Zzz")}else{toast(p.name+" 睡醒啦！")}save();render()}
+function edit(id){const p=pets.find(x=>x.id===id);if(!p)return;const inp=gid("inp"+id);if(inp.style.display==="none"){inp.style.display="block";inp.value=p.name;inp.focus()}else{if(inp.value.trim())p.name=inp.value.trim();save()}inp.style.display="none";render()}
+function checkLv(p){const need=p.level*100;while(p.exp>=need){p.exp-=need;p.level++;toast(p.name+" 升级了！Lv."+p.level+"！")}}
+function getSt(p){if(p.sleeping)return{text:"💤 睡觉中...",cls:""};if(p.hunger<30)return{text:"😫 "+M.hungry[Math.floor(Math.random()*3)],cls:"hungry"};if(p.energy<30)return{text:"😴 "+M.tired[Math.floor(Math.random()*3)],cls:"tired"};if(p.happy<30)return{text:"😢 "+M.sad[Math.floor(Math.random()*3)],cls:"sad"};return{text:"😊 "+M.happy[Math.floor(Math.random()*3)],cls:"happy"}}
+function ava(t){switch(t){case"crayfish":return'<div class="pc-body"></div><div class="pc-eye left"></div><div class="pc-eye right"></div><div class="pc-ant left"></div><div class="pc-ant right"></div><div class="pc-claw left"></div><div class="pc-claw right"></div><div class="pc-tail"></div>';case"cat":return'<div class="pca-body"></div><div class="pca-head"></div><div class="pca-ear left"></div><div class="pca-ear right"></div><div class="pca-eye left"></div><div class="pca-eye right"></div><div class="pca-nose"></div><div class="pca-tail"></div>';case"dog":return'<div class="pd-body"></div><div class="pd-head"></div><div class="pd-eye left"></div><div class="pd-eye right"></div><div class="pd-nose"></div><div class="pd-tongue"></div><div class="pd-tail"></div>';case"rabbit":return'<div class="pr-body"></div><div class="pr-head"></div><div class="pr-ear left"></div><div class="pr-ear right"></div><div class="pr-eye left"></div><div class="pr-eye right"></div><div class="pr-tail"></div>';case"bird":return'<div class="pb-body"></div><div class="pb-head"></div><div class="pb-eye left"></div><div class="pb-eye right"></div><div class="pb-beak"></div><div class="pb-wing"></div>';case"panda":return'<div class="pp-body"></div><div class="pp-head"></div><div class="pp-ear left"></div><div class="pp-ear right"></div><div class="pp-patch left"></div><div class="pp-patch right"></div><div class="pp-eye left"></div><div class="pp-eye right"></div>';case"penguin":return'<div class="ppe-body"></div><div class="ppe-belly"></div><div class="ppe-head"></div><div class="ppe-eye left"></div><div class="ppe-eye right"></div><div class="ppe-beak"></div><div class="ppe-wing left"></div><div class="ppe-wing right"></div><div class="ppe-foot left"></div><div class="ppe-foot right"></div>';default:return""}}
+function render(){gid("count").textContent=pets.length;const c=gid("pets");if(pets.length===0){c.innerHTML="<div class=empty><div class=icon>🥚</div><h2>还没有宠物~</h2><p>快来领养一只吧！</p><button class=new-egg-btn onclick=showPanel()>领养宠物</button></div>";return}c.innerHTML=pets.map(function(p){var s=getSt(p);var h='<div class=card><div class=card-header><div class=name>'+p.name+'<span onclick=edit("'+p.id+'") style="cursor:pointer;font-size:12px;opacity:0.5;margin-left:5px">✏️</span></div><div class=level>Lv.'+p.level+'</div></div><div class=avatar id=av'+p.id+' onclick=play("'+p.id+'")>'+ava(p.type)+'</div><div class=stats><div class=stat><span class=stat-icon>🍖</span><div class=stat-bar><div class=bar hunger style=width:'+p.hunger+'%></div></div><span class=stat-value>'+p.hunger+'</span></div><div class=stat><span class=stat-icon>😊</span><div class=stat-bar><div class=bar happy style=width:'+p.happy+'%></div></div><span class=stat-value>'+p.happy+'</span></div><div class=stat><span class=stat-icon>⚡</span><div class=stat-bar><div class=bar energy style=width:'+p.energy+'%></div></div><span class=stat-value>'+p.energy+'</span></div></div><div class=status '+s.cls+'>'+s.text+'</div><div class=actions><button class="action feed" onclick=showFood("'+p.id+'")>🍖<span>喂食</span></button><button class="action play" onclick=play("'+p.id+'")>🎮<span>玩耍</span></button><button class="action sleep" onclick=sleep("'+p.id+'")>'+(p.sleeping?"☀️":"😴")+'<span>'+(p.sleeping?"唤醒":"睡觉")+'</span></button></div></div>';return h}).join("")}
+function toast(msg){const t=gid("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2500)}load()
+</script>
+</body>
+</html>
