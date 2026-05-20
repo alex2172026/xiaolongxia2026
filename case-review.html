@@ -323,7 +323,7 @@ function hideFood(){gid("foodPanel").classList.remove("show");curId=null}
 
 function hatch(type){hidePanel();var p={id:Date.now().toString(36)+Math.random().toString(36).substr(2),type:type,name:N[type],level:1,exp:0,hunger:80,happy:80,energy:100,sleeping:false};pets.push(p);save();render();toast("恭喜获得 "+N[type]+"！")}
 
-function feed(food){hideFood();if(!curId)return;var p=pets.find(function(x){return x.id===curId});if(!p)return;var e={apple:15,carrot:12,fish:20,cake:25};p.hunger=Math.min(100,p.hunger+(e[food]||10));p.happy=Math.min(100,p.happy+3);p.exp+=10;checkLv(p);save();render();toast(p.name+" 吃了食物！")}
+function feed(food){if(!curId)return;var p=pets.find(function(x){return x.id===curId});if(!p){hideFood();return}var e={apple:15,carrot:12,fish:20,cake:25};p.hunger=Math.min(100,p.hunger+(e[food]||10));p.happy=Math.min(100,p.happy+3);p.exp+=10;checkLv(p);save();render();hideFood();toast(p.name+" 吃了食物！")}
 
 function play(id){var p=pets.find(function(x){return x.id===id});if(!p)return;if(p.sleeping){toast(p.name+" 在睡觉...");return}if(p.energy<20){toast(p.name+" 太累了！");return}p.energy=Math.max(0,p.energy-10);p.happy=Math.min(100,p.happy+15);p.hunger=Math.max(0,p.hunger-5);p.exp+=15;checkLv(p);save();render();var av=gid("av"+id);if(av){av.classList.add("happy");setTimeout(function(){av.classList.remove("happy")},700)}toast(p.name+" 玩得很开心！")}
 
