@@ -3,891 +3,855 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小龙虾养成记</title>
-    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+    <title>🦞 我的宠物乐园</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'ZCOOL KuaiLe', cursive;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: white;
+            font-size: 2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .new-egg-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .new-egg-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .stats-bar {
+            display: flex;
+            gap: 15px;
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 20px;
+            color: white;
+            font-weight: 600;
+        }
+        .pet-count {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .pets-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+        .pet-card {
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        .pet-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        .pet-header {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        .pet-avatar {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 45px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .pet-avatar:hover {
+            transform: scale(1.1);
+        }
+        .pet-avatar.shake {
+            animation: petShake 0.5s ease-in-out infinite;
+        }
+        @keyframes petShake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+        .pet-avatar.happy {
+            animation: petBounce 0.6s ease;
+        }
+        @keyframes petBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        .pet-info {
+            flex: 1;
+            margin-left: 15px;
+        }
+        .pet-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .pet-name .edit-icon {
+            font-size: 12px;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+        .pet-name .edit-icon:hover {
+            opacity: 1;
+        }
+        .pet-type {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 2px;
+        }
+        .pet-level {
+            background: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .name-input-container {
+            display: none;
+            margin-top: 10px;
+        }
+        .name-input-container input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .name-input-container input:focus {
+            border-color: #667eea;
+        }
+        .pet-stats {
+            margin-bottom: 15px;
+        }
+        .stat-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .stat-icon {
+            width: 24px;
+            font-size: 14px;
+        }
+        .stat-bar-container {
+            flex: 1;
+            height: 12px;
+            background: #edf2f7;
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 0 10px;
+        }
+        .stat-bar {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.5s ease;
+        }
+        .stat-bar.hunger { background: linear-gradient(90deg, #f56565, #e53e3e); }
+        .stat-bar.happy { background: linear-gradient(90deg, #48bb78, #38a169); }
+        .stat-bar.energy { background: linear-gradient(90deg, #4299e1, #3182ce); }
+        .stat-value {
+            width: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #4a5568;
+            text-align: right;
+        }
+        .pet-status {
+            text-align: center;
+            padding: 8px;
+            background: #f7fafc;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #4a5568;
+        }
+        .pet-status.hungry { background: #fed7d7; color: #c53030; }
+        .pet-status.tired { background: #feebc8; color: #c05621; }
+        .pet-status.sad { background: #e9d8fd; color: #6b46c1; }
+        .pet-status.happy { background: #c6f6d5; color: #276749; }
+        .pet-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        .action-btn {
+            padding: 10px 5px;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 20px;
-            overflow-x: hidden;
         }
-
-        .ocean-bg {
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+        .action-btn span {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        .action-btn.feed {
+            background: linear-gradient(135deg, #fbb6ce 0%, #f687b3 100%);
+            box-shadow: 0 4px 10px rgba(246,135,179,0.4);
+        }
+        .action-btn.play {
+            background: linear-gradient(135deg, #90cdf4 0%, #4299e1 100%);
+            box-shadow: 0 4px 10px rgba(66,153,225,0.4);
+        }
+        .action-btn.sleep {
+            background: linear-gradient(135deg, #c3dafe 0%, #a3bffa 100%);
+            box-shadow: 0 4px 10px rgba(163,191,250,0.4);
+        }
+        .hatch-panel {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .bubble {
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), rgba(100,200,255,0.1));
-            animation: floatUp linear infinite;
-        }
-
-        @keyframes floatUp {
-            0% {
-                transform: translateY(100vh) rotate(0deg);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.6;
-            }
-            90% {
-                opacity: 0.6;
-            }
-            100% {
-                transform: translateY(-100px) rotate(360deg);
-                opacity: 0;
-            }
-        }
-
-        .game-container {
-            position: relative;
-            z-index: 1;
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
-            padding: 30px;
-            max-width: 450px;
-            width: 100%;
-            border: 2px solid rgba(255,255,255,0.2);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-        }
-
-        h1 {
-            text-align: center;
-            color: #ff6b6b;
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            text-shadow: 3px 3px 0 #c0392b;
-        }
-
-        .pet-area {
-            position: relative;
-            height: 280px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .crayfish {
-            position: relative;
-            width: 120px;
-            height: 140px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .crayfish:hover {
-            transform: scale(1.1);
-        }
-
-        .crayfish.shake {
-            animation: shake 0.5s ease-in-out;
-        }
-
-        .crayfish.happy {
-            animation: jump 0.6s ease-in-out;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0) rotate(0deg); }
-            25% { transform: translateX(-10px) rotate(-5deg); }
-            75% { transform: translateX(10px) rotate(5deg); }
-        }
-
-        @keyframes jump {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-30px); }
-        }
-
-        .crayfish-body {
-            position: absolute;
-            width: 80px;
-            height: 90px;
-            background: linear-gradient(180deg, #e74c3c 0%, #c0392b 100%);
-            border-radius: 50% 50% 45% 45%;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.3);
-        }
-
-        .crayfish-body::before {
-            content: '';
-            position: absolute;
-            width: 60px;
-            height: 20px;
-            background: linear-gradient(180deg, #ff6b6b 0%, #e74c3c 100%);
-            border-radius: 50%;
-            top: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            box-shadow: inset 0 5px 10px rgba(255,255,255,0.3);
-        }
-
-        .eye {
-            position: absolute;
-            width: 18px;
-            height: 18px;
-            background: white;
-            border-radius: 50%;
-            top: 35px;
-            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.2);
-        }
-
-        .eye::after {
-            content: '';
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: #1a1a2e;
-            border-radius: 50%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation: blink 4s ease-in-out infinite;
-        }
-
-        .eye.left { left: 18px; }
-        .eye.right { right: 18px; }
-
-        @keyframes blink {
-            0%, 90%, 100% { transform: translate(-50%, -50%) scaleY(1); }
-            95% { transform: translate(-50%, -50%) scaleY(0.1); }
-        }
-
-        .pupil {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background: white;
-            border-radius: 50%;
-            top: 40px;
-            animation: lookAround 8s ease-in-out infinite;
-        }
-
-        .pupil.left { left: 24px; }
-        .pupil.right { right: 24px; }
-
-        @keyframes lookAround {
-            0%, 30% { transform: translateX(0); }
-            35%, 45% { transform: translateX(4px); }
-            50%, 70% { transform: translateX(0); }
-            75%, 85% { transform: translateX(-4px); }
-            90%, 100% { transform: translateX(0); }
-        }
-
-        .antenna {
-            position: absolute;
-            width: 4px;
-            height: 40px;
-            background: #c0392b;
-            top: 10px;
-            border-radius: 50%;
-            transform-origin: bottom center;
-        }
-
-        .antenna.left {
-            left: 25px;
-            transform: rotate(-20deg);
-            animation: antennaWave 2s ease-in-out infinite;
-        }
-
-        .antenna.right {
-            right: 25px;
-            transform: rotate(20deg);
-            animation: antennaWave 2s ease-in-out infinite 0.5s;
-        }
-
-        @keyframes antennaWave {
-            0%, 100% { transform: rotate(-20deg); }
-            50% { transform: rotate(-30deg); }
-        }
-
-        .antenna.left { animation-name: antennaWaveL; }
-        .antenna.right { animation-name: antennaWaveR; }
-
-        @keyframes antennaWaveL {
-            0%, 100% { transform: rotate(-20deg); }
-            50% { transform: rotate(-35deg); }
-        }
-
-        @keyframes antennaWaveR {
-            0%, 100% { transform: rotate(20deg); }
-            50% { transform: rotate(35deg); }
-        }
-
-        .claw {
-            position: absolute;
-            width: 35px;
-            height: 45px;
-            background: linear-gradient(180deg, #e74c3c 0%, #c0392b 100%);
-            border-radius: 50% 50% 40% 40%;
-            top: 60px;
-            box-shadow: inset -5px -5px 15px rgba(0,0,0,0.3);
-        }
-
-        .claw.left {
-            left: -15px;
-            transform: rotate(30deg);
-        }
-
-        .claw.right {
-            right: -15px;
-            transform: rotate(-30deg);
-        }
-
-        .claw::before {
-            content: '';
-            position: absolute;
-            width: 25px;
-            height: 30px;
-            background: #c0392b;
-            border-radius: 50%;
-            top: 5px;
-            left: 5px;
-        }
-
-        .legs {
-            position: absolute;
-            bottom: 10px;
-            width: 100%;
-            display: flex;
-            justify-content: space-around;
-            padding: 0 10px;
-        }
-
-        .leg {
-            width: 8px;
-            height: 30px;
-            background: #c0392b;
-            border-radius: 50%;
-            transform-origin: top center;
-            animation: legMove 1s ease-in-out infinite;
-        }
-
-        .leg:nth-child(1) { animation-delay: 0s; transform: rotate(-15deg); }
-        .leg:nth-child(2) { animation-delay: 0.1s; transform: rotate(-5deg); }
-        .leg:nth-child(3) { animation-delay: 0.2s; transform: rotate(5deg); }
-        .leg:nth-child(4) { animation-delay: 0.3s; transform: rotate(15deg); }
-
-        @keyframes legMove {
-            0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
-            50% { transform: translateY(-5px) rotate(var(--rot, 0deg)); }
-        }
-
-        .tail {
-            position: absolute;
-            width: 50px;
-            height: 35px;
-            background: linear-gradient(180deg, #c0392b 0%, #a93226 100%);
-            border-radius: 0 0 50% 50%;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            box-shadow: inset 0 -5px 15px rgba(0,0,0,0.3);
-        }
-
-        .tail::before,
-        .tail::after {
-            content: '';
-            position: absolute;
-            width: 30px;
-            height: 20px;
-            background: #a93226;
-            border-radius: 50%;
-            bottom: 5px;
-        }
-
-        .tail::before { left: -15px; }
-        .tail::after { right: -15px; }
-
-        .speech-bubble {
-            position: absolute;
-            top: -20px;
-            right: -10px;
-            background: white;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 16px;
-            color: #333;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-        }
-
-        .speech-bubble::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 20px;
-            border: 10px solid transparent;
-            border-top-color: white;
-            border-bottom: none;
-        }
-
-        .speech-bubble.show {
-            opacity: 1;
-            animation: bounce 0.5s ease;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .stat {
-            background: rgba(0,0,0,0.3);
-            padding: 15px 10px;
-            border-radius: 15px;
-            text-align: center;
-        }
-
-        .stat-label {
-            color: rgba(255,255,255,0.8);
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
-
-        .stat-bar {
-            height: 12px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .stat-fill {
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.5s ease;
-        }
-
-        .stat-fill.hunger { background: linear-gradient(90deg, #f39c12, #e67e22); }
-        .stat-fill.happy { background: linear-gradient(90deg, #9b59b6, #8e44ad); }
-        .stat-fill.clean { background: linear-gradient(90deg, #3498db, #2980b9); }
-
-        .stat-value {
-            color: white;
-            font-size: 18px;
-            margin-top: 5px;
-        }
-
-        .actions {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-
-        .btn {
-            padding: 15px 10px;
-            border: none;
-            border-radius: 15px;
-            font-family: inherit;
-            font-size: 30px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: rgba(255,255,255,0.9);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-label {
-            display: block;
-            font-size: 12px;
-            color: #666;
-            margin-top: 5px;
-        }
-
-        .food-panel {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
             display: none;
             align-items: center;
             justify-content: center;
-            z-index: 100;
+            z-index: 1000;
         }
-
-        .food-panel.show {
-            display: flex;
-        }
-
-        .food-content {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
+        .hatch-panel.show { display: flex; }
+        .hatch-modal {
+            background: white;
+            border-radius: 30px;
             padding: 30px;
-            border-radius: 20px;
-            max-width: 350px;
+            max-width: 500px;
             width: 90%;
-            border: 2px solid rgba(255,255,255,0.2);
+            max-height: 90vh;
+            overflow-y: auto;
         }
-
-        .food-content h2 {
-            color: #ff6b6b;
+        .hatch-modal h2 {
             text-align: center;
-            margin-bottom: 20px;
+            color: #2d3748;
+            margin-bottom: 25px;
         }
-
-        .food-grid {
+        .egg-types {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 15px;
         }
-
-        .food-item {
-            background: rgba(255,255,255,0.1);
-            padding: 20px;
-            border-radius: 15px;
+        .egg-type {
+            background: #f7fafc;
+            border: 3px solid transparent;
+            border-radius: 20px;
+            padding: 20px 10px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
+            transition: all 0.3s;
         }
-
-        .food-item:hover {
-            background: rgba(255,255,255,0.2);
-            border-color: rgba(255,255,255,0.3);
-            transform: scale(1.05);
+        .egg-type:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102,126,234,0.3);
         }
-
-        .food-icon {
-            font-size: 40px;
+        .egg-type .icon {
+            font-size: 50px;
             display: block;
             margin-bottom: 10px;
         }
-
-        .food-name {
-            color: white;
+        .egg-type .name {
+            font-weight: 700;
+            color: #2d3748;
             font-size: 14px;
         }
-
-        .food-effect {
-            color: rgba(255,255,255,0.6);
-            font-size: 12px;
+        .egg-type .desc {
+            font-size: 11px;
+            color: #718096;
             margin-top: 5px;
         }
-
         .close-btn {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
+            top: 15px; right: 15px;
+            width: 35px; height: 35px;
+            background: #f7fafc;
             border: none;
-            color: white;
-            font-size: 30px;
-            cursor: pointer;
-        }
-
-        .level-display {
-            text-align: center;
-            color: #ffd700;
+            border-radius: 50%;
             font-size: 20px;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 0 #b8860b;
+            cursor: pointer;
+            transition: background 0.2s;
         }
-
-        .day-display {
+        .close-btn:hover { background: #e2e8f0; }
+        .empty-pets {
             text-align: center;
-            color: rgba(255,255,255,0.7);
-            font-size: 14px;
+            padding: 60px 20px;
+            color: white;
+        }
+        .empty-pets .icon {
+            font-size: 100px;
             margin-bottom: 20px;
         }
-
-        .message-log {
+        .empty-pets h2 {
+            margin-bottom: 15px;
+        }
+        .empty-pets p {
+            opacity: 0.9;
+            margin-bottom: 25px;
+        }
+        .food-panel {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            max-width: 300px;
-            z-index: 50;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
         }
-
-        .message {
-            background: rgba(255,255,255,0.95);
-            padding: 15px 20px;
-            border-radius: 15px;
-            margin-bottom: 10px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-            animation: slideIn 0.3s ease;
+        .food-panel.show { display: flex; }
+        .food-modal {
+            background: white;
+            border-radius: 25px;
+            padding: 25px;
+            max-width: 350px;
+            width: 90%;
         }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideOut {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-        }
-
-        .title {
+        .food-modal h3 {
             text-align: center;
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .food-item {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .food-item:hover {
+            background: #edf2f7;
+            transform: scale(1.05);
+        }
+        .food-item .icon {
+            font-size: 35px;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .food-item .name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        .food-item .effect {
+            font-size: 11px;
+            color: #718096;
+        }
+        .message-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
             font-size: 14px;
-            color: #fff;
-            margin-top: 10px;
-            opacity: 0.6;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 2000;
+        }
+        .message-toast.show { opacity: 1; }
+        .pet-card.sleeping .pet-avatar {
+            opacity: 0.7;
+        }
+        .pet-card.sleeping .pet-avatar::after {
+            content: '💤';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="ocean-bg" id="oceanBg"></div>
-
-    <div class="game-container">
-        <h1>🦞 小龙虾养成记</h1>
+    <div class="container">
+        <h1>🏠 我的宠物乐园</h1>
         
-        <div class="level-display">等级: <span id="level">1</span></div>
-        <div class="day-display">第 <span id="day">1</span> 天</div>
-
-        <div class="pet-area">
-            <div class="crayfish" id="crayfish">
-                <div class="speech-bubble" id="speech"></div>
-                <div class="antenna left"></div>
-                <div class="antenna right"></div>
-                <div class="eye left"></div>
-                <div class="eye right"></div>
-                <div class="pupil left"></div>
-                <div class="pupil right"></div>
-                <div class="crayfish-body"></div>
-                <div class="claw left"></div>
-                <div class="claw right"></div>
-                <div class="legs">
-                    <div class="leg"></div>
-                    <div class="leg"></div>
-                    <div class="leg"></div>
-                    <div class="leg"></div>
-                </div>
-                <div class="tail"></div>
+        <div class="header">
+            <div class="stats-bar">
+                <div class="pet-count">🐾 我的宠物: <span id="petCount">0</span> 只</div>
             </div>
+            <button class="new-egg-btn" onclick="showHatchPanel()">🥚🥚 领养新宠物</button>
         </div>
 
-        <div class="stats">
-            <div class="stat">
-                <div class="stat-label">🍖 饱食度</div>
-                <div class="stat-bar">
-                    <div class="stat-fill hunger" id="hungerBar" style="width: 100%"></div>
-                </div>
-                <div class="stat-value" id="hungerValue">100</div>
+        <div class="pets-container" id="petsContainer">
+            <div class="empty-pets" id="emptyState">
+                <div class="icon">🥚</div>
+                <h2>还没有宠物哦~</h2>
+                <p>快去领养一只属于你的小宠物吧！</p>
+                <button class="new-egg-btn" onclick="showHatchPanel()">🥚🥚 领养新宠物</button>
             </div>
-            <div class="stat">
-                <div class="stat-label">😊 快乐度</div>
-                <div class="stat-bar">
-                    <div class="stat-fill happy" id="happyBar" style="width: 100%"></div>
-                </div>
-                <div class="stat-value" id="happyValue">100</div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">✨ 清洁度</div>
-                <div class="stat-bar">
-                    <div class="stat-fill clean" id="cleanBar" style="width: 100%"></div>
-                </div>
-                <div class="stat-value" id="cleanValue">100</div>
-            </div>
-        </div>
-
-        <div class="actions">
-            <button class="btn" id="feedBtn" onclick="showFoodPanel()">
-                🍕
-                <span class="btn-label">喂食</span>
-            </button>
-            <button class="btn" id="playBtn" onclick="play()">
-                🎮
-                <span class="btn-label">玩耍</span>
-            </button>
-            <button class="btn" id="cleanBtn" onclick="clean()">
-                🛁
-                <span class="btn-label">清洁</span>
-            </button>
         </div>
     </div>
 
+    <!-- 领养面板 -->
+    <div class="hatch-panel" id="hatchPanel">
+        <button class="close-btn" onclick="hideHatchPanel()">✕</button>
+        <div class="hatch-modal">
+            <h2>🎁 选择你想要领养的宠物</h2>
+            <div class="egg-types">
+                <div class="egg-type" onclick="hatchPet('crayfish')">
+                    <span class="icon">🦞</span>
+                    <span class="name">小龙虾</span>
+                    <span class="desc">活泼好动</span>
+                </div>
+                <div class="egg-type" onclick="hatchPet('cat')">
+                    <span class="icon">🐱</span>
+                    <span class="name">小猫咪</span>
+                    <span class="desc">高冷傲娇</span>
+                </div>
+                <div class="egg-type" onclick="hatchPet('dog')">
+                    <span class="icon">🐶</span>
+                    <span class="name">小狗狗</span>
+                    <span class="desc">忠诚友善</span>
+                </div>
+                <div class="egg-type" onclick="hatchPet('rabbit')">
+                    <span class="icon">🐰</span>
+                    <span class="name">小兔子</span>
+                    <span class="desc">温柔可爱</span>
+                </div>
+                <div class="egg-type" onclick="hatchPet('bird')">
+                    <span class="icon">🐦</span>
+                    <span class="name">小鸟</span>
+                    <span class="desc">歌声甜美</span>
+                </div>
+                <div class="egg-type" onclick="hatchPet('panda')">
+                    <span class="icon">🐼</span>
+                    <span class="name">小熊猫</span>
+                    <span class="desc">憨厚呆萌</span>
+                </div>
+                <div class="egg-type" onclick="hatchPet('penguin')">
+                    <span class="icon">🐧</span>
+                    <span class="name">小企鹅</span>
+                    <span class="desc">呆萌可爱</span>
+                </div>
+                <div class="egg-type" onclick="hatchPet('fox')">
+                    <span class="icon">🦊</span>
+                    <span class="name">小狐狸</span>
+                    <span class="desc">聪明伶俐</span>
+                </div>
+                <div class="egg-type" onclick="hatchPet('owl')">
+                    <span class="icon">🦉</span>
+                    <span class="name">小猫头鹰</span>
+                    <span class="desc">睿智沉稳</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 喂食面板 -->
     <div class="food-panel" id="foodPanel">
-        <button class="close-btn" onclick="hideFoodPanel()">✕</button>
-        <div class="food-content">
-            <h2>🍽️ 选择食物</h2>
+        <div class="food-modal">
+            <h3>🍽️ 选择食物</h3>
             <div class="food-grid">
-                <div class="food-item" onclick="feed('🍚', 25, '米饭')">
-                    <span class="food-icon">🍚</span>
-                    <span class="food-name">米饭</span>
-                    <div class="food-effect">+25 饱食度</div>
+                <div class="food-item" onclick="feedPet('apple')">
+                    <span class="icon">🍎</span>
+                    <span class="name">苹果</span>
+                    <span class="effect">+15 饱食度</span>
                 </div>
-                <div class="food-item" onclick="feed('🥬', 20, '生菜')">
-                    <span class="food-icon">🥬</span>
-                    <span class="food-name">生菜</span>
-                    <div class="food-effect">+20 饱食度</div>
+                <div class="food-item" onclick="feedPet('carrot')">
+                    <span class="icon">🥕</span>
+                    <span class="name">胡萝卜</span>
+                    <span class="effect">+12 饱食度</span>
                 </div>
-                <div class="food-item" onclick="feed('🦐', 30, '虾仁')">
-                    <span class="food-icon">🦐</span>
-                    <span class="food-name">虾仁</span>
-                    <div class="food-effect">+30 饱食度</div>
+                <div class="food-item" onclick="feedPet('fish')">
+                    <span class="icon">🐟</span>
+                    <span class="name">小鱼干</span>
+                    <span class="effect">+20 饱食度</span>
                 </div>
-                <div class="food-item" onclick="feed('🍗', 35, '鸡肉')">
-                    <span class="food-icon">🍗</span>
-                    <span class="food-name">鸡肉</span>
-                    <div class="food-effect">+35 饱食度</div>
+                <div class="food-item" onclick="feedPet('cake')">
+                    <span class="icon">🍰</span>
+                    <span class="name">小蛋糕</span>
+                    <span class="effect">+25 饱食度</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="message-log" id="messageLog"></div>
-    <div class="title">小龙虾宠物养成游戏</div>
+    <!-- 消息提示 -->
+    <div class="message-toast" id="messageToast"></div>
 
     <script>
-        // 游戏状态
-        let gameState = {
-            hunger: 100,
-            happy: 100,
-            clean: 100,
-            level: 1,
-            day: 1,
-            exp: 0,
-            lastUpdate: Date.now()
+        let pets = [];
+        let currentPetId = null;
+
+        const PET_ICONS = {
+            crayfish: '🦞', cat: '🐱', dog: '🐶', rabbit: '🐰',
+            bird: '🐦', panda: '🐼', penguin: '🐧', fox: '🦊', owl: '🦉'
+        };
+        const PET_NAMES = {
+            crayfish: '小龙虾', cat: '小猫咪', dog: '小狗狗', rabbit: '小兔子',
+            bird: '小鸟', panda: '小熊猫', penguin: '小企鹅', fox: '小狐狸', owl: '小猫头鹰'
+        };
+        const PET_MESSAGES = {
+            hungry: ['肚子饿了...', '想吃东西~', '好饿啊...'],
+            tired: ['好困...', '想睡觉了', '打了个哈欠'],
+            sad: ['不开心...', '陪我玩嘛~', '有点无聊'],
+            happy: ['好开心呀！', '最喜欢你了！', '今天真快乐~'],
+            full: ['吃饱啦~', '吃不下了', '好满足~'],
+            playing: ['太好玩了！', '再来一次！', '哈哈~']
         };
 
-        // 加载游戏状态
         function loadGame() {
-            const saved = localStorage.getItem('crayfishGame');
+            const saved = localStorage.getItem('myPetGame');
             if (saved) {
-                gameState = JSON.parse(saved);
-                // 计算离线时间
-                const now = Date.now();
-                const offlineTime = (now - gameState.lastUpdate) / 1000;
-                const offlineDays = Math.floor(offlineTime / 60); // 每分钟消耗1点属性
-                gameState.hunger = Math.max(0, gameState.hunger - offlineDays * 2);
-                gameState.happy = Math.max(0, gameState.happy - offlineDays);
-                gameState.clean = Math.max(0, gameState.clean - offlineDays);
+                pets = JSON.parse(saved);
             }
+            renderPets();
         }
 
-        // 保存游戏状态
         function saveGame() {
-            gameState.lastUpdate = Date.now();
-            localStorage.setItem('crayfishGame', JSON.stringify(gameState));
+            localStorage.setItem('myPetGame', JSON.stringify(pets));
         }
 
-        // 更新显示
-        function updateDisplay() {
-            document.getElementById('hungerBar').style.width = gameState.hunger + '%';
-            document.getElementById('hungerValue').textContent = gameState.hunger;
-            document.getElementById('happyBar').style.width = gameState.happy + '%';
-            document.getElementById('happyValue').textContent = gameState.happy;
-            document.getElementById('cleanBar').style.width = gameState.clean + '%';
-            document.getElementById('cleanValue').textContent = gameState.clean;
-            document.getElementById('level').textContent = gameState.level;
-            document.getElementById('day').textContent = gameState.day;
+        function generateId() {
+            return Date.now() + Math.random().toString(36).substr(2, 9);
         }
 
-        // 显示对话框
-        function showSpeech(text) {
-            const speech = document.getElementById('speech');
-            speech.textContent = text;
-            speech.classList.add('show');
-            setTimeout(() => {
-                speech.classList.remove('show');
-            }, 2000);
+        function showHatchPanel() {
+            document.getElementById('hatchPanel').classList.add('show');
         }
 
-        // 添加消息
-        function addMessage(text) {
-            const log = document.getElementById('messageLog');
-            const msg = document.createElement('div');
-            msg.className = 'message';
-            msg.textContent = text;
-            log.appendChild(msg);
-            setTimeout(() => {
-                msg.style.animation = 'slideOut 0.3s ease forwards';
-                setTimeout(() => msg.remove(), 300);
-            }, 4000);
+        function hideHatchPanel() {
+            document.getElementById('hatchPanel').classList.remove('show');
         }
 
-        // 添加经验
-        function addExp(amount) {
-            gameState.exp += amount;
-            if (gameState.exp >= gameState.level * 100) {
-                gameState.level++;
-                gameState.exp = 0;
-                showSpeech('🦞 升级啦！');
-                addMessage('✨ 小龙虾升级到 ' + gameState.level + ' 级！');
-            }
-        }
-
-        // 喂食面板
-        function showFoodPanel() {
+        function showFoodPanel(petId) {
+            currentPetId = petId;
             document.getElementById('foodPanel').classList.add('show');
         }
 
         function hideFoodPanel() {
             document.getElementById('foodPanel').classList.remove('show');
+            currentPetId = null;
         }
 
-        // 喂食
-        function feed(foodIcon, amount, foodName) {
-            gameState.hunger = Math.min(100, gameState.hunger + amount);
-            hideFoodPanel();
-            
-            const crayfish = document.getElementById('crayfish');
-            crayfish.classList.add('happy');
-            setTimeout(() => crayfish.classList.remove('happy'), 600);
-            
-            showSpeech(foodIcon + ' 好吃！');
-            addMessage('喂了 ' + foodName + '，饱食度 +' + amount);
-            addExp(10);
-            updateDisplay();
+        function hatchPet(type) {
+            hideHatchPanel();
+            const pet = {
+                id: generateId(),
+                type: type,
+                name: PET_NAMES[type],
+                level: 1,
+                exp: 0,
+                hunger: 80,
+                happy: 80,
+                energy: 100,
+                isSleeping: false,
+                createdAt: Date.now()
+            };
+            pets.push(pet);
             saveGame();
+            renderPets();
+            showMessage(`🎉 恭喜获得 ${PET_NAMES[type]}！`);
         }
 
-        // 玩耍
-        function play() {
-            if (gameState.hunger < 20) {
-                showSpeech('🍖 好饿啊...');
-                addMessage('小龙虾太饿了，无法玩耍');
+        function feedPet(food) {
+            hideFoodPanel();
+            if (!currentPetId) return;
+            
+            const pet = pets.find(p => p.id === currentPetId);
+            if (!pet) return;
+            
+            const foodEffects = { apple: 15, carrot: 12, fish: 20, cake: 25 };
+            pet.hunger = Math.min(100, pet.hunger + (foodEffects[food] || 10));
+            pet.happy = Math.min(100, pet.happy + 3);
+            pet.exp += 10;
+            
+            checkLevelUp(pet);
+            saveGame();
+            renderPets();
+            
+            const foods = { apple: '苹果', carrot: '胡萝卜', fish: '小鱼干', cake: '小蛋糕' };
+            showMessage(`${pet.name} 吃了 ${foods[food]}，+${foodEffects[food]} 饱食度`);
+        }
+
+        function playWithPet(petId) {
+            const pet = pets.find(p => p.id === petId);
+            if (!pet) return;
+            
+            if (pet.isSleeping) {
+                showMessage(`${pet.name} 正在睡觉...`);
                 return;
             }
             
-            gameState.hunger = Math.max(0, gameState.hunger - 10);
-            gameState.happy = Math.min(100, gameState.happy + 25);
+            if (pet.energy < 20) {
+                showMessage(`${pet.name} 太累了，想睡觉~`);
+                return;
+            }
             
-            const crayfish = document.getElementById('crayfish');
-            crayfish.classList.add('happy');
-            setTimeout(() => crayfish.classList.remove('happy'), 600);
+            pet.energy = Math.max(0, pet.energy - 10);
+            pet.happy = Math.min(100, pet.happy + 15);
+            pet.hunger = Math.max(0, pet.hunger - 5);
+            pet.exp += 15;
             
-            showSpeech('🎮 好开心！');
-            addMessage('和小龙虾玩耍，快乐度 +25');
-            addExp(15);
-            updateDisplay();
+            checkLevelUp(pet);
             saveGame();
+            renderPets();
+            
+            const avatar = document.querySelector(`[data-pet-id="${petId}"] .pet-avatar`);
+            if (avatar) {
+                avatar.classList.add('happy');
+                setTimeout(() => avatar.classList.remove('happy'), 600);
+            }
+            
+            showMessage(`${pet.name} 玩得很开心！+15 快乐度`);
         }
 
-        // 清洁
-        function clean() {
-            gameState.clean = 100;
+        function toggleSleep(petId) {
+            const pet = pets.find(p => p.id === petId);
+            if (!pet) return;
             
-            const crayfish = document.getElementById('crayfish');
-            crayfish.classList.add('happy');
-            setTimeout(() => crayfish.classList.remove('happy'), 600);
+            pet.isSleeping = !pet.isSleeping;
+            if (pet.isSleeping) {
+                pet.energy = 100;
+                showMessage(`${pet.name} 开始睡觉了... Zzz`);
+            } else {
+                showMessage(`${pet.name} 睡醒啦！`);
+            }
             
-            showSpeech('✨ 清爽！');
-            addMessage('给小龙虾洗了澡，清洁度满格！');
-            addExp(5);
-            updateDisplay();
             saveGame();
+            renderPets();
         }
 
-        // 气泡背景
-        function createBubbles() {
-            const oceanBg = document.getElementById('oceanBg');
-            for (let i = 0; i < 15; i++) {
-                const bubble = document.createElement('div');
-                bubble.className = 'bubble';
-                const size = Math.random() * 20 + 10;
-                bubble.style.width = size + 'px';
-                bubble.style.height = size + 'px';
-                bubble.style.left = Math.random() * 100 + '%';
-                bubble.style.animationDuration = (Math.random() * 10 + 10) + 's';
-                bubble.style.animationDelay = (Math.random() * 10) + 's';
-                oceanBg.appendChild(bubble);
+        function editPetName(petId) {
+            const pet = pets.find(p => p.id === petId);
+            if (!pet) return;
+            
+            const input = document.querySelector(`[data-pet-id="${petId}"] .name-input`);
+            const nameDisplay = document.querySelector(`[data-pet-id="${petId}"] .pet-name`);
+            
+            if (input.style.display === 'none') {
+                input.style.display = 'block';
+                input.value = pet.name;
+                input.focus();
+                nameDisplay.style.display = 'none';
+            } else {
+                if (input.value.trim()) {
+                    pet.name = input.value.trim();
+                    saveGame();
+                }
+                input.style.display = 'none';
+                nameDisplay.style.display = 'flex';
+                renderPets();
             }
         }
 
-        // 游戏循环
+        function deletePet(petId) {
+            if (confirm('确定要放生这只宠物吗？')) {
+                const pet = pets.find(p => p.id === petId);
+                pets = pets.filter(p => p.id !== petId);
+                saveGame();
+                renderPets();
+                showMessage(`${pet?.name || '宠物'} 被放生了...`);
+            }
+        }
+
+        function checkLevelUp(pet) {
+            const expNeeded = pet.level * 100;
+            while (pet.exp >= expNeeded) {
+                pet.exp -= expNeeded;
+                pet.level++;
+                showMessage(`🎊 ${pet.name} 升级了！现在是 ${pet.level} 级！`);
+            }
+        }
+
+        function getPetStatus(pet) {
+            if (pet.isSleeping) return { text: '💤 正在睡觉...', class: '' };
+            if (pet.hunger < 30) return { text: '😫 ' + PET_MESSAGES.hungry[Math.floor(Math.random() * 3)], class: 'hungry' };
+            if (pet.energy < 30) return { text: '😴 ' + PET_MESSAGES.tired[Math.floor(Math.random() * 3)], class: 'tired' };
+            if (pet.happy < 30) return { text: '😢 ' + PET_MESSAGES.sad[Math.floor(Math.random() * 3)], class: 'sad' };
+            return { text: '😊 ' + PET_MESSAGES.happy[Math.floor(Math.random() * 3)], class: 'happy' };
+        }
+
+        function renderPets() {
+            document.getElementById('petCount').textContent = pets.length;
+            const container = document.getElementById('petsContainer');
+            
+            if (pets.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-pets">
+                        <div class="icon">🥚</div>
+                        <h2>还没有宠物哦~</h2>
+                        <p>快去领养一只属于你的小宠物吧！</p>
+                        <button class="new-egg-btn" onclick="showHatchPanel()">🥚🥚 领养新宠物</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = pets.map(pet => {
+                const status = getPetStatus(pet);
+                const sleepingClass = pet.isSleeping ? 'sleeping' : '';
+                return `
+                    <div class="pet-card ${sleepingClass}" data-pet-id="${pet.id}">
+                        <div class="pet-header">
+                            <div class="pet-avatar ${pet.isSleeping ? '' : 'shake'}" onclick="playWithPet('${pet.id}')">
+                                ${PET_ICONS[pet.type]}
+                            </div>
+                            <div class="pet-info">
+                                <div class="pet-name">
+                                    ${pet.name}
+                                    <span class="edit-icon" onclick="editPetName('${pet.id}')">✏️</span>
+                                </div>
+                                <div class="pet-type">${PET_NAMES[pet.type]}</div>
+                                <div class="name-input-container">
+                                    <input type="text" class="name-input" maxlength="10" onkeypress="if(event.key==='Enter') editPetName('${pet.id}')">
+                                </div>
+                            </div>
+                            <div class="pet-level">Lv.${pet.level}</div>
+                        </div>
+                        
+                        <div class="pet-stats">
+                            <div class="stat-row">
+                                <span class="stat-icon">🍖</span>
+                                <div class="stat-bar-container">
+                                    <div class="stat-bar hunger" style="width: ${pet.hunger}%"></div>
+                                </div>
+                                <span class="stat-value">${pet.hunger}</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-icon">😊</span>
+                                <div class="stat-bar-container">
+                                    <div class="stat-bar happy" style="width: ${pet.happy}%"></div>
+                                </div>
+                                <span class="stat-value">${pet.happy}</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-icon">⚡</span>
+                                <div class="stat-bar-container">
+                                    <div class="stat-bar energy" style="width: ${pet.energy}%"></div>
+                                </div>
+                                <span class="stat-value">${pet.energy}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="pet-status ${status.class}">${status.text}</div>
+                        
+                        <div class="pet-actions">
+                            <button class="action-btn feed" onclick="showFoodPanel('${pet.id}')">
+                                🍖
+                                <span>喂食</span>
+                            </button>
+                            <button class="action-btn play" onclick="playWithPet('${pet.id}')">
+                                🎮
+                                <span>玩耍</span>
+                            </button>
+                            <button class="action-btn sleep" onclick="toggleSleep('${pet.id}')">
+                                ${pet.isSleeping ? '☀️' : '😴'}
+                                <span>${pet.isSleeping ? '唤醒' : '睡觉'}</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showMessage(text) {
+            const toast = document.getElementById('messageToast');
+            toast.textContent = text;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        // 游戏循环 - 每30秒更新一次宠物状态
         function gameLoop() {
-            gameState.hunger = Math.max(0, gameState.hunger - 1);
-            gameState.happy = Math.max(0, gameState.happy - 0.5);
-            gameState.clean = Math.max(0, gameState.clean - 0.3);
+            let changed = false;
+            pets.forEach(pet => {
+                if (pet.isSleeping) {
+                    // 睡觉时恢复体力
+                    if (pet.energy < 100) {
+                        pet.energy = Math.min(100, pet.energy + 5);
+                        changed = true;
+                    }
+                } else {
+                    // 醒着时消耗属性
+                    if (pet.hunger > 0) {
+                        pet.hunger = Math.max(0, pet.hunger - 1);
+                        changed = true;
+                    }
+                    if (pet.happy > 0) {
+                        pet.happy = Math.max(0, pet.happy - 0.5);
+                        changed = true;
+                    }
+                    if (pet.energy > 0) {
+                        pet.energy = Math.max(0, pet.energy - 0.3);
+                        changed = true;
+                    }
+                }
+            });
             
-            // 检查状态
-            if (gameState.hunger < 30) {
-                showSpeech('🍖 饿饿了...');
-            } else if (gameState.happy < 30) {
-                showSpeech('😢 无聊...');
-            } else if (gameState.clean < 30) {
-                showSpeech('🛁 脏脏的...');
-            }
-            
-            // 每天增加天数
-            if (gameState.hunger + gameState.happy + gameState.clean < 50) {
-                gameState.day++;
-            }
-            
-            updateDisplay();
-            saveGame();
-            
-            // 检查游戏结束
-            if (gameState.hunger === 0) {
-                showSpeech('💔 饿晕了...');
-                addMessage('小龙虾饿晕了！点击喂食来拯救它！');
+            if (changed) {
+                saveGame();
+                renderPets();
             }
         }
 
         // 初始化
-        function init() {
-            loadGame();
-            updateDisplay();
-            createBubbles();
-            
-            // 每5秒更新一次游戏状态
-            setInterval(gameLoop, 5000);
-            
-            // 显示欢迎消息
-            showSpeech('🦞 你好！');
-            setTimeout(() => addMessage('欢迎来到小龙虾养成记！'), 2000);
-        }
-
-        init();
+        loadGame();
+        setInterval(gameLoop, 30000); // 每30秒检查一次
     </script>
 </body>
 </html>
