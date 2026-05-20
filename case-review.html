@@ -1,152 +1,149 @@
-const fs = require('fs');
-const html = `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <title>我的宠物乐园 - 12生肖</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Nunito,sans-serif;background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);min-height:100vh;padding:20px}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-@keyframes float3d{0%,100%{transform:translateY(0) rotateX(-5deg) rotateY(5deg)}50%{transform:translateY(-10px) rotateX(-5deg) rotateY(5deg)}}
-@keyframes glow{0%,100%{filter:drop-shadow(0 0 8px rgba(255,200,100,0.3))}50%{filter:drop-shadow(0 0 20px rgba(255,200,100,0.6))}}
-@keyframes happy3d{0%{transform:translateY(0) rotateX(-5deg) rotateY(5deg) scale(1)}30%{transform:translateY(-18px) rotateX(-5deg) rotateY(5deg) scale(1.12)}60%{transform:translateY(-8px) rotateX(-5deg) rotateY(5deg) scale(1.06)}100%{transform:translateY(0) rotateX(-5deg) rotateY(5deg) scale(1)}}
-@keyframes fadeIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-@keyframes slideDown{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-.container{max-width:1100px;margin:0 auto}
-h1{color:#ffd700;text-align:center;font-size:2.2em;animation:bounce 2.5s infinite;text-shadow:0 0 20px rgba(255,215,0,0.5)}
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;gap:15px;flex-wrap:wrap}
-.stats-bar{background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);padding:12px 25px;border-radius:25px;color:#fff;font-weight:600}
-.new-btn{background:linear-gradient(135deg,#ffd700,#ff8c00);color:#1a1a2e;border:none;padding:14px 28px;border-radius:30px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.3s;box-shadow:0 5px 20px rgba(255,215,0,0.4)}
-.new-btn:hover{transform:scale(1.08)}
-.pets{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:25px}
-.card{background:linear-gradient(145deg,rgba(255,255,255,0.1),rgba(255,255,255,0.05));backdrop-filter:blur(15px);border-radius:25px;padding:22px;border:1px solid rgba(255,255,255,0.12);animation:fadeIn 0.5s ease;transition:all 0.4s}
-.card:hover{transform:translateY(-8px);box-shadow:0 20px 50px rgba(0,0,0,0.4)}
-.card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:15px}
-.name{font-size:22px;font-weight:700;color:#fff}
-.level{background:linear-gradient(135deg,#ffd700,#ff8c00);color:#1a1a2e;padding:6px 14px;border-radius:18px;font-size:13px;font-weight:700}
-.avatar-wrap{display:flex;justify-content:center;align-items:center;height:160px;perspective:500px;margin:10px 0}
-.avatar{width:130px;height:130px;position:relative;transform-style:preserve-3d;cursor:pointer;transition:transform 0.4s;animation:float3d 4s ease-in-out infinite,glow 3s ease-in-out infinite}
-.avatar:hover{transform:rotateY(15deg) rotateX(-5deg) scale(1.1)}
-.avatar.happy{animation:happy3d 0.7s ease}
-.stats{margin:18px 0}
-.stat{display:flex;align-items:center;margin-bottom:10px}
-.stat-icon{font-size:16px;width:28px}
-.stat-bar{flex:1;height:12px;background:rgba(0,0,0,0.3);border-radius:6px;margin:0 10px;overflow:hidden}
-.bar{height:100%;border-radius:6px;transition:width 0.6s}
+body{font-family:Nunito,sans-serif;background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);min-height:100vh;padding:15px}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes float3d{0%,100%{transform:translateY(0) rotateX(-5deg) rotateY(5deg)}50%{transform:translateY(-8px) rotateX(-5deg) rotateY(5deg)}}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 5px rgba(255,200,100,0.3))}50%{filter:drop-shadow(0 0 12px rgba(255,200,100,0.5))}}
+@keyframes happy3d{0%,100%{transform:scale(1)}30%{transform:scale(1.15)}60%{transform:scale(1.08)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+.container{max-width:1200px;margin:0 auto}
+h1{color:#ffd700;text-align:center;font-size:1.6em;animation:bounce 2s infinite;text-shadow:0 0 15px rgba(255,215,0,0.5);margin-bottom:12px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;gap:10px;flex-wrap:wrap}
+.stats-bar{background:rgba(255,255,255,0.1);padding:8px 18px;border-radius:20px;color:#fff;font-size:14px}
+.new-btn{background:linear-gradient(135deg,#ffd700,#ff8c00);color:#1a1a2e;border:none;padding:10px 20px;border-radius:20px;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.3s}
+.new-btn:hover{transform:scale(1.05)}
+.pets{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.card{background:linear-gradient(145deg,rgba(255,255,255,0.1),rgba(255,255,255,0.05));border-radius:18px;padding:14px;border:1px solid rgba(255,255,255,0.1);animation:fadeIn 0.4s ease;transition:all 0.3s}
+.card:hover{transform:translateY(-4px);box-shadow:0 10px 25px rgba(0,0,0,0.3)}
+.card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.name{font-size:15px;font-weight:700;color:#fff}
+.level{background:linear-gradient(135deg,#ffd700,#ff8c00);color:#1a1a2e;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700}
+.avatar-wrap{display:flex;justify-content:center;align-items:center;height:90px;perspective:400px}
+.avatar{width:80px;height:80px;position:relative;transform-style:preserve-3d;cursor:pointer;animation:float3d 3s ease-in-out infinite,glow 2.5s ease-in-out infinite}
+.avatar:hover{transform:rotateY(10deg) scale(1.08)}
+.avatar.happy{animation:happy3d 0.6s ease}
+.stats{display:flex;gap:8px;margin:10px 0}
+.stat{flex:1;display:flex;align-items:center;gap:4px;font-size:12px;color:rgba(255,255,255,0.8)}
+.stat-icon{font-size:14px}
+.stat-bar{flex:1;height:8px;background:rgba(0,0,0,0.3);border-radius:4px;overflow:hidden}
+.bar{height:100%;border-radius:4px;transition:width 0.5s}
 .bar.hunger{background:linear-gradient(90deg,#ff6b6b,#ee5a5a)}
 .bar.happy{background:linear-gradient(90deg,#51cf66,#40c057)}
 .bar.energy{background:linear-gradient(90deg,#339af0,#228be6)}
-.stat-val{width:32px;text-align:right;font-size:13px;color:rgba(255,255,255,0.8)}
-.status{text-align:center;padding:10px;background:rgba(0,0,0,0.25);border-radius:12px;margin-bottom:15px;font-size:14px;color:rgba(255,255,255,0.85)}
+.status{text-align:center;padding:6px;background:rgba(0,0,0,0.2);border-radius:8px;margin-bottom:10px;font-size:12px;color:rgba(255,255,255,0.85)}
 .status.hungry{background:rgba(255,107,107,0.2);color:#ff8787}
 .status.tired{background:rgba(255,206,82,0.2);color:#ffe066}
 .status.sad{background:rgba(180,130,255,0.2);color:#cc99ff}
 .status.happy{background:rgba(129,199,132,0.2);color:#8ce99a}
-.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.btn{border:none;border-radius:14px;padding:12px 8px;font-size:24px;cursor:pointer;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:4px}
-.btn span{font-size:11px;color:rgba(255,255,255,0.8)}
+.actions{display:flex;gap:6px}
+.btn{flex:1;border:none;border-radius:10px;padding:8px 4px;font-size:18px;cursor:pointer;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:2px}
+.btn span{font-size:9px;color:rgba(255,255,255,0.8)}
 .btn.feed{background:linear-gradient(135deg,#f093fb,#f5576c)}
 .btn.play{background:linear-gradient(135deg,#4fd1c5,#38b2ac)}
 .btn.sleep{background:linear-gradient(135deg,#667eea,#764ba2)}
 /* 3D Animals */
-.rat-face{position:absolute;width:90px;height:75px;background:linear-gradient(145deg,#b8b8b8,#909090);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
-.rat-ear{position:absolute;width:35px;height:35px;background:#d4a4a4;border-radius:50%;top:8px}
-.rat-ear.left{left:12px}
-.rat-ear.right{right:12px}
-.rat-eye{position:absolute;width:14px;height:16px;background:#1a1a2e;border-radius:50%;top:28px}
-.rat-eye.left{left:22px}
-.rat-eye.right{right:22px}
-.rat-eye::after{content:"";position:absolute;width:5px;height:5px;background:#fff;border-radius:50%;top:2px;left:2px}
-.rat-nose{position:absolute;width:12px;height:10px;background:#ff9999;border-radius:50%;top:48px;left:50%;transform:translateX(-50%)}
-.ox-face{position:absolute;width:95px;height:85px;background:linear-gradient(145deg,#8b7355,#6b5344);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
-.ox-horn{position:absolute;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:30px solid #d4a574;top:5px}
-.ox-horn.left{left:18px;transform:rotate(-15deg)}
-.ox-horn.right{right:18px;transform:rotate(15deg)}
-.ox-eye{position:absolute;width:16px;height:14px;background:#1a1a2e;border-radius:50%;top:30px}
-.ox-eye.left{left:22px}
-.ox-eye.right{right:22px}
-.tiger-face{position:absolute;width:100px;height:88px;background:linear-gradient(145deg,#ff8c00,#e67300);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
-.tiger-stripe{position:absolute;width:8px;height:25px;background:#2d2d2d;border-radius:4px}
-.tiger-stripe.s1{top:15px;left:20px;transform:rotate(-10deg)}
-.tiger-stripe.s2{top:12px;left:35px}
-.tiger-stripe.s3{top:15px;right:20px;transform:rotate(10deg)}
-.tiger-stripe.s4{top:12px;right:35px}
-.tiger-eye{position:absolute;width:20px;height:22px;background:#ffcc00;border-radius:50%;top:28px}
-.tiger-eye.left{left:20px}
-.tiger-eye.right{right:20px}
-.tiger-eye::after{content:"";position:absolute;width:6px;height:16px;background:#1a1a2e;border-radius:3px;top:3px;left:50%;transform:translateX(-50%)}
-.rabbit-face{position:absolute;width:85px;height:80px;background:linear-gradient(145deg,#f8f8f8,#e8e8e8);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
-.rabbit-ear{position:absolute;width:22px;height:55px;background:#f8f8f8;border-radius:50%;top:-35px;left:28px;transform:rotate(-10deg)}
-.rabbit-ear.right{right:28px;left:auto;transform:rotate(10deg)}
-.rabbit-ear::after{content:"";position:absolute;width:12px;height:45px;background:#ffb6c1;border-radius:50%;top:5px;left:50%;transform:translateX(-50%)}
-.rabbit-eye{position:absolute;width:16px;height:18px;background:#ff6b81;border-radius:50%;top:28px}
-.rabbit-eye.left{left:20px}
-.rabbit-eye.right{right:20px}
-.dragon-face{position:absolute;width:100px;height:90px;background:linear-gradient(145deg,#50c878,#3cb371);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
-.dragon-horn{position:absolute;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:25px solid #8b4513;top:2px}
-.dragon-horn.left{left:20px;transform:rotate(-20deg)}
-.dragon-horn.right{right:20px;transform:rotate(20deg)}
-.dragon-eye{position:absolute;width:18px;height:20px;background:#ffcc00;border-radius:50%;top:28px}
-.dragon-eye.left{left:22px}
-.dragon-eye.right{right:22px}
-.snake-body{position:absolute;width:70px;height:100px;background:linear-gradient(145deg,#9b59b6,#8e44ad);border-radius:50px;left:50%;top:50%;transform:translate(-50%,-50%)}
-.snake-eye{position:absolute;width:14px;height:16px;background:#ffcc00;border-radius:50%;top:15px}
-.snake-eye.left{left:16px}
-.snake-eye.right{right:16px}
-.horse-face{position:absolute;width:90px;height:95px;background:linear-gradient(145deg,#8b4513,#654321);border-radius:50%;left:50%;top:48%;transform:translate(-50%,-50%)}
-.horse-mane{position:absolute;width:30px;height:60px;background:#4a3728;border-radius:15px;top:-10px;left:50%;transform:translateX(-50%)}
-.horse-eye{position:absolute;width:16px;height:18px;background:#1a1a2e;border-radius:50%;top:28px}
-.horse-eye.left{left:18px}
-.horse-eye.right{right:18px}
-.goat-face{position:absolute;width:92px;height:82px;background:linear-gradient(145deg,#f5f5dc,#e8e8d0);border-radius:50%;left:50%;top:52%;transform:translate(-50%,-50%)}
-.goat-horn{position:absolute;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:35px solid #d4a574;top:0}
-.goat-horn.left{left:15px;transform:rotate(-25deg)}
-.goat-horn.right{right:15px;transform:rotate(25deg)}
-.goat-eye{position:absolute;width:14px;height:16px;background:#1a1a2e;border-radius:50%;top:30px}
-.goat-eye.left{left:22px}
-.goat-eye.right{right:22px}
-.monkey-face{position:absolute;width:90px;height:82px;background:linear-gradient(145deg,#d2691e,#8b4513);border-radius:50%;left:50%;top:52%;transform:translate(-50%,-50%)}
-.monkey-ear{position:absolute;width:30px;height:30px;background:#d2691e;border-radius:50%;top:18px}
+.rat-face{position:absolute;width:55px;height:45px;background:linear-gradient(145deg,#b8b8b8,#909090);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
+.rat-ear{position:absolute;width:20px;height:20px;background:#d4a4a4;border-radius:50%;top:5px}
+.rat-ear.left{left:8px}
+.rat-ear.right{right:8px}
+.rat-eye{position:absolute;width:8px;height:10px;background:#1a1a2e;border-radius:50%;top:17px}
+.rat-eye.left{left:14px}
+.rat-eye.right{right:14px}
+.rat-eye::after{content:"";position:absolute;width:3px;height:3px;background:#fff;border-radius:50%;top:1px;left:1px}
+.rat-nose{position:absolute;width:7px;height:6px;background:#ff9999;border-radius:50%;top:30px;left:50%;transform:translateX(-50%)}
+.ox-face{position:absolute;width:58px;height:50px;background:linear-gradient(145deg,#8b7355,#6b5344);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
+.ox-horn{position:absolute;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:18px solid #d4a574;top:3px}
+.ox-horn.left{left:11px;transform:rotate(-15deg)}
+.ox-horn.right{right:11px;transform:rotate(15deg)}
+.ox-eye{position:absolute;width:10px;height:8px;background:#1a1a2e;border-radius:50%;top:18px}
+.ox-eye.left{left:14px}
+.ox-eye.right{right:14px}
+.tiger-face{position:absolute;width:60px;height:52px;background:linear-gradient(145deg,#ff8c00,#e67300);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
+.tiger-stripe{position:absolute;width:5px;height:15px;background:#2d2d2d;border-radius:3px}
+.tiger-stripe.s1{top:9px;left:12px;transform:rotate(-10deg)}
+.tiger-stripe.s2{top:7px;left:22px}
+.tiger-stripe.s3{top:9px;right:12px;transform:rotate(10deg)}
+.tiger-stripe.s4{top:7px;right:22px}
+.tiger-eye{position:absolute;width:12px;height:14px;background:#ffcc00;border-radius:50%;top:17px}
+.tiger-eye.left{left:12px}
+.tiger-eye.right{right:12px}
+.tiger-eye::after{content:"";position:absolute;width:4px;height:10px;background:#1a1a2e;border-radius:2px;top:2px;left:50%;transform:translateX(-50%)}
+.rabbit-face{position:absolute;width:52px;height:48px;background:linear-gradient(145deg,#f8f8f8,#e8e8e8);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
+.rabbit-ear{position:absolute;width:13px;height:33px;background:#f8f8f8;border-radius:50%;top:-22px;left:17px;transform:rotate(-10deg)}
+.rabbit-ear.right{left:auto;right:17px;transform:rotate(10deg)}
+.rabbit-ear::after{content:"";position:absolute;width:7px;height:27px;background:#ffb6c1;border-radius:50%;top:3px;left:50%;transform:translateX(-50%)}
+.rabbit-eye{position:absolute;width:10px;height:12px;background:#ff6b81;border-radius:50%;top:17px}
+.rabbit-eye.left{left:12px}
+.rabbit-eye.right{right:12px}
+.dragon-face{position:absolute;width:60px;height:54px;background:linear-gradient(145deg,#50c878,#3cb371);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
+.dragon-horn{position:absolute;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:15px solid #8b4513;top:1px}
+.dragon-horn.left{left:12px;transform:rotate(-20deg)}
+.dragon-horn.right{right:12px;transform:rotate(20deg)}
+.dragon-eye{position:absolute;width:11px;height:12px;background:#ffcc00;border-radius:50%;top:17px}
+.dragon-eye.left{left:14px}
+.dragon-eye.right{right:14px}
+.snake-body{position:absolute;width:42px;height:60px;background:linear-gradient(145deg,#9b59b6,#8e44ad);border-radius:30px;left:50%;top:50%;transform:translate(-50%,-50%)}
+.snake-eye{position:absolute;width:9px;height:10px;background:#ffcc00;border-radius:50%;top:9px}
+.snake-eye.left{left:10px}
+.snake-eye.right{right:10px}
+.horse-face{position:absolute;width:55px;height:58px;background:linear-gradient(145deg,#8b4513,#654321);border-radius:50%;left:50%;top:48%;transform:translate(-50%,-50%)}
+.horse-mane{position:absolute;width:18px;height:36px;background:#4a3728;border-radius:10px;top:-6px;left:50%;transform:translateX(-50%)}
+.horse-eye{position:absolute;width:10px;height:11px;background:#1a1a2e;border-radius:50%;top:17px}
+.horse-eye.left{left:11px}
+.horse-eye.right{right:11px}
+.goat-face{position:absolute;width:56px;height:50px;background:linear-gradient(145deg,#f5f5dc,#e8e8d0);border-radius:50%;left:50%;top:52%;transform:translate(-50%,-50%)}
+.goat-horn{position:absolute;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:21px solid #d4a574;top:0}
+.goat-horn.left{left:9px;transform:rotate(-25deg)}
+.goat-horn.right{right:9px;transform:rotate(25deg)}
+.goat-eye{position:absolute;width:9px;height:10px;background:#1a1a2e;border-radius:50%;top:18px}
+.goat-eye.left{left:14px}
+.goat-eye.right{right:14px}
+.monkey-face{position:absolute;width:55px;height:50px;background:linear-gradient(145deg,#d2691e,#8b4513);border-radius:50%;left:50%;top:52%;transform:translate(-50%,-50%)}
+.monkey-ear{position:absolute;width:18px;height:18px;background:#d2691e;border-radius:50%;top:11px}
 .monkey-ear.left{left:0}
 .monkey-ear.right{right:0}
-.monkey-eye{position:absolute;width:16px;height:18px;background:#1a1a2e;border-radius:50%;top:25px}
-.monkey-eye.left{left:22px}
-.monkey-eye.right{right:22px}
-.rooster-face{position:absolute;width:88px;height:80px;background:linear-gradient(145deg,#ff6347,#ee5a3a);border-radius:50%;left:50%;top:55%;transform:translate(-50%,-50%)}
-.rooster-comb{position:absolute;width:35px;height:25px;background:#dc143c;border-radius:50%;top:-5px;left:50%;transform:translateX(-50%)}
-.rooster-eye{position:absolute;width:16px;height:16px;background:#1a1a2e;border-radius:50%;top:22px}
-.rooster-eye.left{left:22px}
-.rooster-eye.right{right:22px}
-.dog-face{position:absolute;width:95px;height:85px;background:linear-gradient(145deg,#c4a67c,#a68b5b);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
-.dog-ear{position:absolute;width:32px;height:40px;background:#a68b5b;border-radius:50%;top:8px;left:2px;transform:rotate(-20deg)}
-.dog-ear.right{right:2px;left:auto;transform:rotate(20deg)}
-.dog-eye{position:absolute;width:18px;height:20px;background:#1a1a2e;border-radius:50%;top:28px}
-.dog-eye.left{left:22px}
-.dog-eye.right{right:22px}
-.pig-face{position:absolute;width:100px;height:88px;background:linear-gradient(145deg,#ffb6c1,#ff9aa2);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
-.pig-snout{position:absolute;width:45px;height:32px;background:#ff9aa2;border-radius:50%;top:48px;left:50%;transform:translateX(-50%)}
+.monkey-eye{position:absolute;width:10px;height:11px;background:#1a1a2e;border-radius:50%;top:15px}
+.monkey-eye.left{left:14px}
+.monkey-eye.right{right:14px}
+.rooster-face{position:absolute;width:54px;height:48px;background:linear-gradient(145deg,#ff6347,#ee5a3a);border-radius:50%;left:50%;top:55%;transform:translate(-50%,-50%)}
+.rooster-comb{position:absolute;width:21px;height:15px;background:#dc143c;border-radius:50%;top:-3px;left:50%;transform:translateX(-50%)}
+.rooster-eye{position:absolute;width:10px;height:10px;background:#1a1a2e;border-radius:50%;top:13px}
+.rooster-eye.left{left:14px}
+.rooster-eye.right{right:14px}
+.dog-face{position:absolute;width:58px;height:52px;background:linear-gradient(145deg,#c4a67c,#a68b5b);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
+.dog-ear{position:absolute;width:19px;height:24px;background:#a68b5b;border-radius:50%;top:5px;left:1px;transform:rotate(-20deg)}
+.dog-ear.right{left:auto;right:1px;transform:rotate(20deg)}
+.dog-eye{position:absolute;width:11px;height:12px;background:#1a1a2e;border-radius:50%;top:17px}
+.dog-eye.left{left:14px}
+.dog-eye.right{right:14px}
+.pig-face{position:absolute;width:60px;height:53px;background:linear-gradient(145deg,#ffb6c1,#ff9aa2);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
+.pig-snout{position:absolute;width:27px;height:19px;background:#ff9aa2;border-radius:50%;top:30px;left:50%;transform:translateX(-50%)}
 /* Panels */
 .panel{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);display:none;align-items:center;justify-content:center;z-index:1000}
 .panel.active{display:flex;animation:fadeIn 0.3s}
-.modal{background:#2d2d4d;border-radius:28px;padding:28px;max-width:500px;width:90%;animation:slideDown 0.4s;position:relative}
-.modal h2,.modal h3{text-align:center;color:#ffd700;margin-bottom:22px}
-.modal h3{font-size:1.3em}
-.close{position:absolute;top:12px;right:12px;width:34px;height:34px;background:rgba(255,255,255,0.1);border:none;border-radius:50%;color:#fff;font-size:18px;cursor:pointer}
+.modal{background:#2d2d4d;border-radius:24px;padding:24px;max-width:450px;width:90%;animation:fadeIn 0.4s;position:relative}
+.modal h2,.modal h3{text-align:center;color:#ffd700;margin-bottom:18px;font-size:1.3em}
+.modal h3{font-size:1.1em}
+.close{position:absolute;top:10px;right:10px;width:30px;height:30px;background:rgba(255,255,255,0.1);border:none;border-radius:50%;color:#fff;font-size:16px;cursor:pointer}
 .close:hover{background:rgba(255,255,255,0.2)}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.item{background:rgba(255,255,255,0.1);border-radius:18px;padding:18px 8px;text-align:center;cursor:pointer;transition:all 0.3s;border:2px solid transparent}
-.item:hover{border-color:#ffd700;transform:translateY(-5px);background:rgba(255,215,0,0.2)}
-.ic{font-size:45px;display:block;margin-bottom:8px}
-.iname{font-size:13px;font-weight:600;color:#fff;margin-top:5px}
-.ieff{font-size:10px;color:rgba(255,255,255,0.6);margin-top:2px}
-.toast{position:fixed;bottom:35px;left:50%;transform:translateX(-50%);background:#ffd700;color:#1a1a2e;padding:14px 30px;border-radius:25px;font-size:15px;font-weight:700;opacity:0;z-index:2000;transition:opacity 0.3s}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.item{background:rgba(255,255,255,0.08);border-radius:14px;padding:14px 6px;text-align:center;cursor:pointer;transition:all 0.3s;border:2px solid transparent}
+.item:hover{border-color:#ffd700;transform:translateY(-4px);background:rgba(255,215,0,0.15)}
+.ic{font-size:38px;display:block;margin-bottom:6px}
+.iname{font-size:12px;font-weight:600;color:#fff;margin-top:4px}
+.ieff{font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px}
+.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background:#ffd700;color:#1a1a2e;padding:12px 24px;border-radius:20px;font-size:14px;font-weight:700;opacity:0;z-index:2000;transition:opacity 0.3s}
 .toast.show{opacity:1}
-.empty{text-align:center;padding:70px 20px}
-.empty .ic{font-size:100px;margin-bottom:20px;animation:pulse 2s infinite}
-.empty h2{color:#ffd700;margin-bottom:12px}
-.empty p{color:rgba(255,255,255,0.7);margin-bottom:25px}
+.empty{text-align:center;padding:50px 15px}
+.empty .ic{font-size:70px;margin-bottom:15px}
+.empty h2{color:#ffd700;margin-bottom:10px}
+.empty p{color:rgba(255,255,255,0.7);margin-bottom:18px}
+@media(max-width:500px){.pets{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}.grid{grid-template-columns:repeat(3,1fr)}}
 </style>
 </head>
 <body>
@@ -154,7 +151,7 @@ h1{color:#ffd700;text-align:center;font-size:2.2em;animation:bounce 2.5s infinit
 <h1>我的宠物乐园 - 12生肖</h1>
 <div class="header">
 <div class="stats-bar">宠物: <span id="count">0</span>只</div>
-<button class="new-btn" id="adoptBtn">领养生肖宠物</button>
+<button class="new-btn" id="adoptBtn">领养宠物</button>
 </div>
 <div id="petsContainer"></div>
 </div>
@@ -162,7 +159,7 @@ h1{color:#ffd700;text-align:center;font-size:2.2em;animation:bounce 2.5s infinit
 <div class="panel" id="adoptPanel">
 <div class="modal">
 <button class="close" id="closeAdopt">X</button>
-<h2>选择你的生肖守护神</h2>
+<h2>选择你的生肖</h2>
 <div class="grid">
 <div class="item" data-type="rat"><span class="ic">🐀</span><div class="iname">鼠</div></div>
 <div class="item" data-type="ox"><span class="ic">🐂</span><div class="iname">牛</div></div>
@@ -198,52 +195,190 @@ h1{color:#ffd700;text-align:center;font-size:2.2em;animation:bounce 2.5s infinit
 <script>
 (function(){
 var pets=[];
-var currentPetId=null;
+var currentId=null;
 var N={rat:"小老鼠",ox:"小牛牛",tiger:"小老虎",rabbit:"小兔兔",dragon:"小龙龙",snake:"小蛇蛇",horse:"小马马",goat:"小羊羊",monkey:"小猴猴",rooster:"小鸡鸡",dog:"小狗狗",pig:"小猪猪"};
 var M={hungry:["肚子饿了...","想吃东西~","好饿啊"],tired:["好困...","想睡觉","打哈欠"],sad:["不开心...","陪我玩","有点无聊"],happy:["好开心！","喜欢你！","真快乐~"]};
 var E={apple:15,carrot:12,fish:20,cake:25};
 
-function load(){var s=localStorage.getItem("zodiac12");if(s)pets=JSON.parse(s);render()}
-function save(){localStorage.setItem("zodiac12",JSON.stringify(pets))}
-function toast(msg){var t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(function(){t.classList.remove("show")},2500)}
-
-function showAdoptPanel(){document.getElementById("adoptPanel").classList.add("active")}
-function hideAdoptPanel(){document.getElementById("adoptPanel").classList.remove("active")}
-function showFeedPanel(id){currentPetId=id;document.getElementById("feedPanel").classList.add("active")}
-function hideFeedPanel(){document.getElementById("feedPanel").classList.remove("active");currentPetId=null}
-
-document.getElementById("adoptBtn").onclick=showAdoptPanel;
-document.getElementById("closeAdopt").onclick=hideAdoptPanel;
-document.getElementById("closeFeed").onclick=hideFeedPanel;
-
-document.getElementById("adoptPanel").onclick=function(e){if(e.target===this)hideAdoptPanel()};
-document.getElementById("feedPanel").onclick=function(e){if(e.target===this)hideFeedPanel()};
-
-var adoptItems=document.querySelectorAll("#adoptPanel .item");
-for(var i=0;i<adoptItems.length;i++){
-adoptItems[i].onclick=function(){hatch(this.getAttribute("data-type"))}
+function init(){
+  var s=localStorage.getItem("zodiac_v2");
+  if(s){try{pets=JSON.parse(s)}catch(e){pets=[]}}
+  bindEvents();
+  render()
 }
 
-var feedItems=document.querySelectorAll("#feedPanel .item");
-for(var i=0;i<feedItems.length;i++){
-feedItems[i].onclick=function(){feed(this.getAttribute("data-food"))}
+function save(){localStorage.setItem("zodiac_v2",JSON.stringify(pets))}
+function toast(msg){
+  var t=document.getElementById("toast");
+  t.textContent=msg;
+  t.classList.add("show");
+  setTimeout(function(){t.classList.remove("show")},2500)
 }
 
-function hatch(type){hideAdoptPanel();var p={id:Date.now().toString(36)+Math.random().toString(36).substr(2),type:type,name:N[type],level:1,exp:0,hunger:80,happy:80,energy:100,sleeping:false};pets.push(p);save();render();toast("恭喜获得 "+N[type]+"！")}
+function bindEvents(){
+  document.getElementById("adoptBtn").onclick=showAdopt;
+  document.getElementById("closeAdopt").onclick=hideAdopt;
+  document.getElementById("closeFeed").onclick=hideFeed;
+  document.getElementById("adoptPanel").onclick=function(e){if(e.target===this)hideAdopt()};
+  document.getElementById("feedPanel").onclick=function(e){if(e.target===this)hideFeed()};
+  var ai=document.querySelectorAll("#adoptPanel .item");
+  for(var i=0;i<ai.length;i++){
+    ai[i].onclick=(function(idx){
+      return function(){hatch(ai[idx].getAttribute("data-type"))}
+    })(i)
+  }
+  var fi=document.querySelectorAll("#feedPanel .item");
+  for(var i=0;i<fi.length;i++){
+    fi[i].onclick=(function(idx){
+      return function(){feed(fi[idx].getAttribute("data-food"))}
+    })(i)
+  }
+}
 
-function feed(food){if(!currentPetId)return;var p=null;for(var i=0;i<pets.length;i++){if(pets[i].id===currentPetId){p=pets[i];break}}if(!p){hideFeedPanel();return}p.hunger=Math.min(100,p.hunger+(E[food]||10));p.happy=Math.min(100,p.happy+3);p.exp+=10;checkLv(p);save();render();hideFeedPanel();toast(p.name+" 吃了食物！")}
+function showAdopt(){document.getElementById("adoptPanel").classList.add("active")}
+function hideAdopt(){document.getElementById("adoptPanel").classList.remove("active")}
+function showFeed(id){currentId=id;document.getElementById("feedPanel").classList.add("active")}
+function hideFeed(){document.getElementById("feedPanel").classList.remove("active");currentId=null}
 
-function play(id){var p=null;for(var i=0;i<pets.length;i++){if(pets[i].id===id){p=pets[i];break}}if(!p)return;if(p.sleeping){toast(p.name+" 在睡觉...");return}if(p.energy<20){toast(p.name+" 太累了！");return}p.energy=Math.max(0,p.energy-10);p.happy=Math.min(100,p.happy+15);p.hunger=Math.max(0,p.hunger-5);p.exp+=15;checkLv(p);save();render();var av=document.getElementById("av"+id);if(av){av.classList.add("happy");setTimeout(function(){av.classList.remove("happy")},700)}toast(p.name+" 玩得很开心！")}
+function hatch(type){
+  hideAdopt();
+  var pet={
+    id:Date.now().toString(36)+Math.random().toString(36).substr(2),
+    type:type,
+    name:N[type],
+    level:1,
+    exp:0,
+    hunger:80,
+    happy:80,
+    energy:100,
+    sleeping:false
+  };
+  pets.push(pet);
+  save();
+  render();
+  toast("恭喜获得 "+N[type]+"！")
+}
 
-function sleep(id){var p=null;for(var i=0;i<pets.length;i++){if(pets[i].id===id){p=pets[i];break}}if(!p)return;p.sleeping=!p.sleeping;if(p.sleeping){p.energy=100;toast(p.name+" 开始睡觉... Zzz")}else{toast(p.name+" 睡醒啦！")}save();render()}
+function getPet(id){
+  for(var i=0;i<pets.length;i++){if(pets[i].id===id)return pets[i]}
+  return null
+}
 
-function checkLv(p){var need=p.level*100;while(p.exp>=need){p.exp-=need;p.level++;toast(p.name+" 升级了！Lv."+p.level+"！")}}
+function feed(food){
+  if(!currentId)return;
+  var p=getPet(currentId);
+  if(!p){hideFeed();return}
+  p.hunger=Math.min(100,p.hunger+(E[food]||10));
+  p.happy=Math.min(100,p.happy+3);
+  p.exp+=10;
+  checkLv(p);
+  save();
+  render();
+  hideFeed();
+  toast(p.name+" 吃了食物！")
+}
 
-function getSt(p){if(p.sleeping)return{text:"💤 睡觉中...",cls:""};if(p.hunger<30)return{text:"😫 "+M.hungry[Math.floor(Math.random()*3)],cls:"hungry"};if(p.energy<30)return{text:"😴 "+M.tired[Math.floor(Math.random()*3)],cls:"tired"};if(p.happy<30)return{text:"😢 "+M.sad[Math.floor(Math.random()*3)],cls:"sad"};return{text:"😊 "+M.happy[Math.floor(Math.random()*3)],cls:"happy"}}
+function play(id){
+  var p=getPet(id);
+  if(!p)return;
+  if(p.sleeping){toast(p.name+" 在睡觉...");return}
+  if(p.energy<20){toast(p.name+" 太累了！");return}
+  p.energy=Math.max(0,p.energy-10);
+  p.happy=Math.min(100,p.happy+15);
+  p.hunger=Math.max(0,p.hunger-5);
+  p.exp+=15;
+  checkLv(p);
+  save();
+  render();
+  var av=document.getElementById("av"+id);
+  if(av){av.classList.add("happy");setTimeout(function(){av.classList.remove("happy")},600)}
+  toast(p.name+" 玩得很开心！")
+}
 
-function ava(t){var faces={rat:'<div class="rat-face"></div><div class="rat-ear left"></div><div class="rat-ear right"></div><div class="rat-eye left"></div><div class="rat-eye right"></div><div class="rat-nose"></div>',ox:'<div class="ox-face"></div><div class="ox-horn left"></div><div class="ox-horn right"></div><div class="ox-eye left"></div><div class="ox-eye right"></div>',tiger:'<div class="tiger-face"></div><div class="tiger-stripe s1"></div><div class="tiger-stripe s2"></div><div class="tiger-stripe s3"></div><div class="tiger-stripe s4"></div><div class="tiger-eye left"></div><div class="tiger-eye right"></div>',rabbit:'<div class="rabbit-face"></div><div class="rabbit-ear"></div><div class="rabbit-ear right"></div><div class="rabbit-eye left"></div><div class="rabbit-eye right"></div>',dragon:'<div class="dragon-face"></div><div class="dragon-horn left"></div><div class="dragon-horn right"></div><div class="dragon-eye left"></div><div class="dragon-eye right"></div>',snake:'<div class="snake-body"></div><div class="snake-eye left"></div><div class="snake-eye right"></div>',horse:'<div class="horse-face"></div><div class="horse-mane"></div><div class="horse-eye left"></div><div class="horse-eye right"></div>',goat:'<div class="goat-face"></div><div class="goat-horn left"></div><div class="goat-horn right"></div><div class="goat-eye left"></div><div class="goat-eye right"></div>',monkey:'<div class="monkey-face"></div><div class="monkey-ear left"></div><div class="monkey-ear right"></div><div class="monkey-eye left"></div><div class="monkey-eye right"></div>',rooster:'<div class="rooster-face"></div><div class="rooster-comb"></div><div class="rooster-eye left"></div><div class="rooster-eye right"></div>',dog:'<div class="dog-face"></div><div class="dog-ear"></div><div class="dog-ear right"></div><div class="dog-eye left"></div><div class="dog-eye right"></div>',pig:'<div class="pig-face"></div><div class="pig-snout"></div>'};return faces[t]||""}
+function sleep(id){
+  var p=getPet(id);
+  if(!p)return;
+  p.sleeping=!p.sleeping;
+  if(p.sleeping){p.energy=100;toast(p.name+" 开始睡觉... Zzz")}
+  else{toast(p.name+" 睡醒啦！")}
+  save();
+  render()
+}
 
-function render(){document.getElementById("count").textContent=pets.length;var c=document.getElementById("petsContainer");if(pets.length===0){c.innerHTML='<div class="empty"><div class="ic">🐾</div><h2>还没有生肖宠物~</h2><p>快来领养一只守护神吧！</p><button class="new-btn" id="emptyAdoptBtn">领养生肖宠物</button></div>';document.getElementById("emptyAdoptBtn").onclick=showAdoptPanel;return}var html="";for(var i=0;i<pets.length;i++){var p=pets[i];var s=getSt(p);html+='<div class="card"><div class="card-header"><div class="name">'+p.name+'</div><div class="level">Lv.'+p.level+'</div></div><div class="avatar-wrap"><div class="avatar" id="av'+p.id+'">'+ava(p.type)+'</div></div><div class="stats"><div class="stat"><span class="stat-icon">🍖</span><div class="stat-bar"><div class="bar hunger" style="width:'+p.hunger+'%"></div></div><span class="stat-val">'+p.hunger+'</span></div><div class="stat"><span class="stat-icon">😊</span><div class="stat-bar"><div class="bar happy" style="width:'+p.happy+'%"></div></div><span class="stat-val">'+p.happy+'</span></div><div class="stat"><span class="stat-icon">⚡</span><div class="stat-bar"><div class="bar energy" style="width:'+p.energy+'%"></div></div><span class="stat-val">'+p.energy+'</span></div></div><div class="status '+s.cls+'">'+s.text+'</div><div class="actions"><button class="btn feed" data-action="feed" data-id="'+p.id+'">🍖<span>喂食</span></button><button class="btn play" data-action="play" data-id="'+p.id+'">🎮<span>玩耍</span></button><button class="btn sleep" data-action="sleep" data-id="'+p.id+'">'+(p.sleeping?'☀️':'😴')+'<span>'+(p.sleeping?'唤醒':'睡觉')+'</span></button></div></div>'}c.innerHTML=html;var btns=document.querySelectorAll('.btn[data-action]');for(var j=0;j<btns.length;j++){btns[j].onclick=function(){var a=this.getAttribute('data-action');var id=this.getAttribute('data-id');if(a==='feed')showFeedPanel(id);else if(a==='play')play(id);else if(a==='sleep')sleep(id)}}}load()})()
+function checkLv(p){
+  var need=p.level*100;
+  while(p.exp>=need){p.exp-=need;p.level++;toast(p.name+" 升级了！Lv."+p.level+"！")}
+}
+
+function getStatus(p){
+  if(p.sleeping)return{text:"💤 睡觉中...",cls:""};
+  if(p.hunger<30)return{text:"😫 "+M.hungry[Math.floor(Math.random()*3)],cls:"hungry"};
+  if(p.energy<30)return{text:"😴 "+M.tired[Math.floor(Math.random()*3)],cls:"tired"};
+  if(p.happy<30)return{text:"😢 "+M.sad[Math.floor(Math.random()*3)],cls:"sad"};
+  return{text:"😊 "+M.happy[Math.floor(Math.random()*3)],cls:"happy"}
+}
+
+function getAvatar(t){
+  var f={
+    rat:'<div class="rat-face"></div><div class="rat-ear left"></div><div class="rat-ear right"></div><div class="rat-eye left"></div><div class="rat-eye right"></div><div class="rat-nose"></div>',
+    ox:'<div class="ox-face"></div><div class="ox-horn left"></div><div class="ox-horn right"></div><div class="ox-eye left"></div><div class="ox-eye right"></div>',
+    tiger:'<div class="tiger-face"></div><div class="tiger-stripe s1"></div><div class="tiger-stripe s2"></div><div class="tiger-stripe s3"></div><div class="tiger-stripe s4"></div><div class="tiger-eye left"></div><div class="tiger-eye right"></div>',
+    rabbit:'<div class="rabbit-face"></div><div class="rabbit-ear"></div><div class="rabbit-ear right"></div><div class="rabbit-eye left"></div><div class="rabbit-eye right"></div>',
+    dragon:'<div class="dragon-face"></div><div class="dragon-horn left"></div><div class="dragon-horn right"></div><div class="dragon-eye left"></div><div class="dragon-eye right"></div>',
+    snake:'<div class="snake-body"></div><div class="snake-eye left"></div><div class="snake-eye right"></div>',
+    horse:'<div class="horse-face"></div><div class="horse-mane"></div><div class="horse-eye left"></div><div class="horse-eye right"></div>',
+    goat:'<div class="goat-face"></div><div class="goat-horn left"></div><div class="goat-horn right"></div><div class="goat-eye left"></div><div class="goat-eye right"></div>',
+    monkey:'<div class="monkey-face"></div><div class="monkey-ear left"></div><div class="monkey-ear right"></div><div class="monkey-eye left"></div><div class="monkey-eye right"></div>',
+    rooster:'<div class="rooster-face"></div><div class="rooster-comb"></div><div class="rooster-eye left"></div><div class="rooster-eye right"></div>',
+    dog:'<div class="dog-face"></div><div class="dog-ear"></div><div class="dog-ear right"></div><div class="dog-eye left"></div><div class="dog-eye right"></div>',
+    pig:'<div class="pig-face"></div><div class="pig-snout"></div>'
+  };
+  return f[t]||""
+}
+
+function render(){
+  document.getElementById("count").textContent=pets.length;
+  var c=document.getElementById("petsContainer");
+  if(pets.length===0){
+    c.innerHTML='<div class="empty"><div class="ic">🐾</div><h2>还没有生肖宠物~</h2><p>快来领养一只吧！</p><button class="new-btn" id="emptyBtn">领养宠物</button></div>';
+    document.getElementById("emptyBtn").onclick=showAdopt;
+    return
+  }
+  var html="";
+  for(var i=0;i<pets.length;i++){
+    var p=pets[i];
+    var s=getStatus(p);
+    html+='<div class="card">';
+    html+='<div class="card-top"><div class="name">'+p.name+'</div><div class="level">Lv.'+p.level+'</div></div>';
+    html+='<div class="avatar-wrap"><div class="avatar" id="av'+p.id+'">'+getAvatar(p.type)+'</div></div>';
+    html+='<div class="stats">';
+    html+='<div class="stat"><span class="stat-icon">🍖</span><div class="stat-bar"><div class="bar hunger" style="width:'+p.hunger+'%"></div></div></div>';
+    html+='<div class="stat"><span class="stat-icon">😊</span><div class="stat-bar"><div class="bar happy" style="width:'+p.happy+'%"></div></div></div>';
+    html+='<div class="stat"><span class="stat-icon">⚡</span><div class="stat-bar"><div class="bar energy" style="width:'+p.energy+'%"></div></div></div>';
+    html+='</div>';
+    html+='<div class="status '+s.cls+'">'+s.text+'</div>';
+    html+='<div class="actions">';
+    html+='<button class="btn feed" data-id="'+p.id+'">🍖<span>喂食</span></button>';
+    html+='<button class="btn play" data-id="'+p.id+'">🎮<span>玩耍</span></button>';
+    html+='<button class="btn sleep" data-id="'+p.id+'">'+(p.sleeping?"☀️":"😴")+'<span>'+(p.sleeping?"唤醒":"睡觉")+'</span></button>';
+    html+='</div></div>'
+  }
+  c.innerHTML=html;
+  var btns=c.querySelectorAll(".btn");
+  for(var j=0;j<btns.length;j++){
+    btns[j].onclick=(function(b){
+      return function(){
+        var id=b.getAttribute("data-id");
+        if(b.classList.contains("feed")){showFeed(id)}
+        else if(b.classList.contains("play")){play(id)}
+        else if(b.classList.contains("sleep")){sleep(id)}
+      }
+    })(btns[j])
+  }
+}
+
+init()
+})()
 </script>
 </body>
 </html>
