@@ -3,307 +3,891 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>案件评查系统 - AI智能分析</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <title>小龙虾养成记</title>
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
     <style>
-        * { font-family: 'Noto Sans SC', sans-serif; }
-        :root { --bg-dark: #0f172a; }
-        body { background: var(--bg-dark); }
-        .glass { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(20px); border: 1px solid #334155; }
-        .btn-primary { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(59, 130, 246, 0.4); }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .spinner { animation: spin 1s linear infinite; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .ocean-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), rgba(100,200,255,0.1));
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .game-container {
+            position: relative;
+            z-index: 1;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 30px;
+            max-width: 450px;
+            width: 100%;
+            border: 2px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+
+        h1 {
+            text-align: center;
+            color: #ff6b6b;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 0 #c0392b;
+        }
+
+        .pet-area {
+            position: relative;
+            height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .crayfish {
+            position: relative;
+            width: 120px;
+            height: 140px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .crayfish:hover {
+            transform: scale(1.1);
+        }
+
+        .crayfish.shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .crayfish.happy {
+            animation: jump 0.6s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            25% { transform: translateX(-10px) rotate(-5deg); }
+            75% { transform: translateX(10px) rotate(5deg); }
+        }
+
+        @keyframes jump {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
+        }
+
+        .crayfish-body {
+            position: absolute;
+            width: 80px;
+            height: 90px;
+            background: linear-gradient(180deg, #e74c3c 0%, #c0392b 100%);
+            border-radius: 50% 50% 45% 45%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.3);
+        }
+
+        .crayfish-body::before {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 20px;
+            background: linear-gradient(180deg, #ff6b6b 0%, #e74c3c 100%);
+            border-radius: 50%;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: inset 0 5px 10px rgba(255,255,255,0.3);
+        }
+
+        .eye {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            top: 35px;
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .eye::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #1a1a2e;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: blink 4s ease-in-out infinite;
+        }
+
+        .eye.left { left: 18px; }
+        .eye.right { right: 18px; }
+
+        @keyframes blink {
+            0%, 90%, 100% { transform: translate(-50%, -50%) scaleY(1); }
+            95% { transform: translate(-50%, -50%) scaleY(0.1); }
+        }
+
+        .pupil {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            top: 40px;
+            animation: lookAround 8s ease-in-out infinite;
+        }
+
+        .pupil.left { left: 24px; }
+        .pupil.right { right: 24px; }
+
+        @keyframes lookAround {
+            0%, 30% { transform: translateX(0); }
+            35%, 45% { transform: translateX(4px); }
+            50%, 70% { transform: translateX(0); }
+            75%, 85% { transform: translateX(-4px); }
+            90%, 100% { transform: translateX(0); }
+        }
+
+        .antenna {
+            position: absolute;
+            width: 4px;
+            height: 40px;
+            background: #c0392b;
+            top: 10px;
+            border-radius: 50%;
+            transform-origin: bottom center;
+        }
+
+        .antenna.left {
+            left: 25px;
+            transform: rotate(-20deg);
+            animation: antennaWave 2s ease-in-out infinite;
+        }
+
+        .antenna.right {
+            right: 25px;
+            transform: rotate(20deg);
+            animation: antennaWave 2s ease-in-out infinite 0.5s;
+        }
+
+        @keyframes antennaWave {
+            0%, 100% { transform: rotate(-20deg); }
+            50% { transform: rotate(-30deg); }
+        }
+
+        .antenna.left { animation-name: antennaWaveL; }
+        .antenna.right { animation-name: antennaWaveR; }
+
+        @keyframes antennaWaveL {
+            0%, 100% { transform: rotate(-20deg); }
+            50% { transform: rotate(-35deg); }
+        }
+
+        @keyframes antennaWaveR {
+            0%, 100% { transform: rotate(20deg); }
+            50% { transform: rotate(35deg); }
+        }
+
+        .claw {
+            position: absolute;
+            width: 35px;
+            height: 45px;
+            background: linear-gradient(180deg, #e74c3c 0%, #c0392b 100%);
+            border-radius: 50% 50% 40% 40%;
+            top: 60px;
+            box-shadow: inset -5px -5px 15px rgba(0,0,0,0.3);
+        }
+
+        .claw.left {
+            left: -15px;
+            transform: rotate(30deg);
+        }
+
+        .claw.right {
+            right: -15px;
+            transform: rotate(-30deg);
+        }
+
+        .claw::before {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 30px;
+            background: #c0392b;
+            border-radius: 50%;
+            top: 5px;
+            left: 5px;
+        }
+
+        .legs {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            padding: 0 10px;
+        }
+
+        .leg {
+            width: 8px;
+            height: 30px;
+            background: #c0392b;
+            border-radius: 50%;
+            transform-origin: top center;
+            animation: legMove 1s ease-in-out infinite;
+        }
+
+        .leg:nth-child(1) { animation-delay: 0s; transform: rotate(-15deg); }
+        .leg:nth-child(2) { animation-delay: 0.1s; transform: rotate(-5deg); }
+        .leg:nth-child(3) { animation-delay: 0.2s; transform: rotate(5deg); }
+        .leg:nth-child(4) { animation-delay: 0.3s; transform: rotate(15deg); }
+
+        @keyframes legMove {
+            0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
+            50% { transform: translateY(-5px) rotate(var(--rot, 0deg)); }
+        }
+
+        .tail {
+            position: absolute;
+            width: 50px;
+            height: 35px;
+            background: linear-gradient(180deg, #c0392b 0%, #a93226 100%);
+            border-radius: 0 0 50% 50%;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: inset 0 -5px 15px rgba(0,0,0,0.3);
+        }
+
+        .tail::before,
+        .tail::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 20px;
+            background: #a93226;
+            border-radius: 50%;
+            bottom: 5px;
+        }
+
+        .tail::before { left: -15px; }
+        .tail::after { right: -15px; }
+
+        .speech-bubble {
+            position: absolute;
+            top: -20px;
+            right: -10px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 16px;
+            color: #333;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 20px;
+            border: 10px solid transparent;
+            border-top-color: white;
+            border-bottom: none;
+        }
+
+        .speech-bubble.show {
+            opacity: 1;
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat {
+            background: rgba(0,0,0,0.3);
+            padding: 15px 10px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-label {
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .stat-bar {
+            height: 12px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .stat-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .stat-fill.hunger { background: linear-gradient(90deg, #f39c12, #e67e22); }
+        .stat-fill.happy { background: linear-gradient(90deg, #9b59b6, #8e44ad); }
+        .stat-fill.clean { background: linear-gradient(90deg, #3498db, #2980b9); }
+
+        .stat-value {
+            color: white;
+            font-size: 18px;
+            margin-top: 5px;
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 15px 10px;
+            border: none;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.9);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .food-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .food-panel.show {
+            display: flex;
+        }
+
+        .food-content {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 350px;
+            width: 90%;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .food-content h2 {
+            color: #ff6b6b;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .food-item {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .food-item:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+
+        .food-icon {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .food-name {
+            color: white;
+            font-size: 14px;
+        }
+
+        .food-effect {
+            color: rgba(255,255,255,0.6);
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+        }
+
+        .level-display {
+            text-align: center;
+            color: #ffd700;
+            font-size: 20px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0 #b8860b;
+        }
+
+        .day-display {
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .message-log {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            max-width: 300px;
+            z-index: 50;
+        }
+
+        .message {
+            background: rgba(255,255,255,0.95);
+            padding: 15px 20px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        .title {
+            text-align: center;
+            font-size: 14px;
+            color: #fff;
+            margin-top: 10px;
+            opacity: 0.6;
+        }
     </style>
 </head>
-<body class="min-h-screen text-white">
-    <div class="container mx-auto px-4 py-8 max-w-3xl">
-        <header class="text-center mb-8">
-            <h1 class="text-3xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">案件评查系统</h1>
-            <p class="text-slate-400">AI智能案件分析与评查报告生成</p>
-        </header>
+<body>
+    <div class="ocean-bg" id="oceanBg"></div>
 
-        <div class="glass rounded-3xl p-6">
-            <!-- 步骤1: 上传案件附件 -->
-            <div class="mb-6">
-                <div class="flex items-center gap-3 mb-4">
-                    <span class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold">1</span>
-                    <h2 class="text-xl font-semibold">上传案件附件</h2>
-                </div>
-                <button type="button" onclick="document.getElementById('fileInput').click()" class="block w-full p-6 bg-slate-800 border-2 border-dashed border-slate-700 rounded-xl text-center cursor-pointer hover:border-blue-500">
-                    <svg class="w-12 h-12 mx-auto mb-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
-                    <p class="text-lg mb-1">点击选择案件文件</p>
-                    <p class="text-sm text-slate-500">支持 TXT、Word、Excel、图片(OCR)、PDF</p>
-                </button>
-                <input type="file" id="fileInput" multiple onchange="handleFiles()" style="display: none;">
-                
-                <!-- 免责声明 -->
-                <div class="mt-3 p-3 bg-amber-900/30 border border-amber-700/50 rounded-xl">
-                    <p class="text-sm text-amber-200">⚠️ 免责声明：本系统数据仅保存在本地浏览器，不会泄露。分析结果仅供参考，不作为正式法律意见。请勿上传涉密信息！</p>
-                </div>
-                
-                <div id="fileList" class="mt-3 space-y-2"></div>
-            </div>
+    <div class="game-container">
+        <h1>🦞 小龙虾养成记</h1>
+        
+        <div class="level-display">等级: <span id="level">1</span></div>
+        <div class="day-display">第 <span id="day">1</span> 天</div>
 
-            <!-- 步骤2: 补充案件描述 -->
-            <div class="mb-6">
-                <div class="flex items-center gap-3 mb-4">
-                    <span class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center font-bold">2</span>
-                    <h2 class="text-xl font-semibold">补充案件描述（可选）</h2>
+        <div class="pet-area">
+            <div class="crayfish" id="crayfish">
+                <div class="speech-bubble" id="speech"></div>
+                <div class="antenna left"></div>
+                <div class="antenna right"></div>
+                <div class="eye left"></div>
+                <div class="eye right"></div>
+                <div class="pupil left"></div>
+                <div class="pupil right"></div>
+                <div class="crayfish-body"></div>
+                <div class="claw left"></div>
+                <div class="claw right"></div>
+                <div class="legs">
+                    <div class="leg"></div>
+                    <div class="leg"></div>
+                    <div class="leg"></div>
+                    <div class="leg"></div>
                 </div>
-                <textarea id="caseContent" class="w-full h-40 bg-slate-200 border border-slate-400 rounded-xl p-3 text-black placeholder-gray-500" placeholder="��输入案件内容...
-例：原告张三诉被告李四民间借贷纠纷一案...
-诉讼请求：要求被告偿还借款10万元...
-事实与理由：2023年1月1日，原告借给被告10万元..."></textarea>
-            </div>
-
-            <!-- 步骤3: AI智能分析 -->
-            <div class="mb-6">
-                <div class="flex items-center gap-3 mb-4">
-                    <span class="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center font-bold">3</span>
-                    <h2 class="text-xl font-semibold">AI智能分析</h2>
-                </div>
-                <button onclick="generateReport()" class="btn-primary w-full py-4 rounded-xl font-semibold text-lg flex items-center justify-center gap-3">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.3 3.3 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
-                    <span>生成评查报告</span>
-                </button>
-
-                <!-- 状态 -->
-                <div id="status" class="hidden mt-4 p-4 rounded-xl bg-slate-800/50">
-                    <div class="flex items-center gap-3">
-                        <div class="spinner w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full"></div>
-                        <span id="statusText" class="text-blue-400">正在生成评查报告...</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 步骤4: 评查报告 -->
-            <div id="reportSection" class="hidden">
-                <div class="flex items-center gap-3 mb-4">
-                    <span class="w-8 h-8 rounded-full bg-amber-600 flex items-center justify-center font-bold">4</span>
-                    <h2 class="text-xl font-semibold">评查报告</h2>
-                </div>
-                
-                <!-- 免责声明 -->
-                <div class="mb-4 p-3 bg-amber-900/30 border border-amber-700/50 rounded-xl">
-                    <p class="text-sm text-amber-200">⚠️ 免责声明：分析结果仅供参考，不作为正式法律意见。请勿上传涉密信息！本系统数据仅保存在本地浏览器，不会泄露。</p>
-                </div>
-                
-                <div class="flex gap-3 mb-4">
-                    <button onclick="copyReport()" class="px-4 py-2 bg-slate-700 rounded-lg flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                        复制
-                    </button>
-                    <button onclick="downloadReport()" class="px-4 py-2 bg-green-600 rounded-lg flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                        下载
-                    </button>
-                </div>
-                <div id="reportContent" class="bg-slate-800/50 rounded-xl p-6 max-h-96 overflow-y-auto text-sm leading-relaxed whitespace-pre-wrap"></div>
+                <div class="tail"></div>
             </div>
         </div>
 
-        <footer class="text-center py-6 text-slate-500 text-sm">
-            <p>联系QQ：7879113 | 版本 V2.3</p>
-        </footer>
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-label">🍖 饱食度</div>
+                <div class="stat-bar">
+                    <div class="stat-fill hunger" id="hungerBar" style="width: 100%"></div>
+                </div>
+                <div class="stat-value" id="hungerValue">100</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">😊 快乐度</div>
+                <div class="stat-bar">
+                    <div class="stat-fill happy" id="happyBar" style="width: 100%"></div>
+                </div>
+                <div class="stat-value" id="happyValue">100</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">✨ 清洁度</div>
+                <div class="stat-bar">
+                    <div class="stat-fill clean" id="cleanBar" style="width: 100%"></div>
+                </div>
+                <div class="stat-value" id="cleanValue">100</div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn" id="feedBtn" onclick="showFoodPanel()">
+                🍕
+                <span class="btn-label">喂食</span>
+            </button>
+            <button class="btn" id="playBtn" onclick="play()">
+                🎮
+                <span class="btn-label">玩耍</span>
+            </button>
+            <button class="btn" id="cleanBtn" onclick="clean()">
+                🛁
+                <span class="btn-label">清洁</span>
+            </button>
+        </div>
     </div>
 
+    <div class="food-panel" id="foodPanel">
+        <button class="close-btn" onclick="hideFoodPanel()">✕</button>
+        <div class="food-content">
+            <h2>🍽️ 选择食物</h2>
+            <div class="food-grid">
+                <div class="food-item" onclick="feed('🍚', 25, '米饭')">
+                    <span class="food-icon">🍚</span>
+                    <span class="food-name">米饭</span>
+                    <div class="food-effect">+25 饱食度</div>
+                </div>
+                <div class="food-item" onclick="feed('🥬', 20, '生菜')">
+                    <span class="food-icon">🥬</span>
+                    <span class="food-name">生菜</span>
+                    <div class="food-effect">+20 饱食度</div>
+                </div>
+                <div class="food-item" onclick="feed('🦐', 30, '虾仁')">
+                    <span class="food-icon">🦐</span>
+                    <span class="food-name">虾仁</span>
+                    <div class="food-effect">+30 饱食度</div>
+                </div>
+                <div class="food-item" onclick="feed('🍗', 35, '鸡肉')">
+                    <span class="food-icon">🍗</span>
+                    <span class="food-name">鸡肉</span>
+                    <div class="food-effect">+35 饱食度</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="message-log" id="messageLog"></div>
+    <div class="title">小龙虾宠物养成游戏</div>
+
     <script>
-        // ============ 配置 ============
-        const CONFIG = {
-            API_KEY: 'sk-cp-3_mAX-zdVmNqEJY9mvVaTtaaUag9r4Dm8YnT7b5BGjywY0AFefzPEHAs0EktthEzjJWEGU-xC2-ah5hyHAPgDEWevBTwxHUcHMuVBPWsaBvztRXKrJRhhGw',
-            API_URL: 'https://api.minimax.chat/v1/text/chatcompletion_v2',
-            MODEL: 'MiniMax-M2.5'
+        // 游戏状态
+        let gameState = {
+            hunger: 100,
+            happy: 100,
+            clean: 100,
+            level: 1,
+            day: 1,
+            exp: 0,
+            lastUpdate: Date.now()
         };
 
-        // 初始化PDF.js
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-        let uploadedFiles = [];
-        let reportText = '';
-
-        // ============ 文件上传 ============
-        function handleFiles() {
-            const files = Array.from(document.getElementById('fileInput').files);
-            files.forEach(f => uploadedFiles.push(f));
-            renderFileList();
-            document.getElementById('fileInput').value = '';
-        }
-
-        function renderFileList() {
-            document.getElementById('fileList').innerHTML = uploadedFiles.map((f, i) => `
-                <div class="flex items-center justify-between p-2 bg-slate-800 rounded-lg">
-                    <span>${f.name}</span>
-                    <button onclick="uploadedFiles.splice(${i},1);renderFileList()" class="text-red-400">删除</button>
-                </div>
-            `).join('');
-        }
-
-        // ============ 读取文件内容 ============
-        async function mergeFileContent() {
-            let content = '';
-            for (const file of uploadedFiles) {
-                try {
-                    const text = await readFileContent(file);
-                    content += `\n[文件: ${file.name}]\n${text}\n`;
-                } catch (e) {
-                    content += `\n[文件: ${file.name}]\n读取失败: ${e.message}\n`;
-                }
+        // 加载游戏状态
+        function loadGame() {
+            const saved = localStorage.getItem('crayfishGame');
+            if (saved) {
+                gameState = JSON.parse(saved);
+                // 计算离线时间
+                const now = Date.now();
+                const offlineTime = (now - gameState.lastUpdate) / 1000;
+                const offlineDays = Math.floor(offlineTime / 60); // 每分钟消耗1点属性
+                gameState.hunger = Math.max(0, gameState.hunger - offlineDays * 2);
+                gameState.happy = Math.max(0, gameState.happy - offlineDays);
+                gameState.clean = Math.max(0, gameState.clean - offlineDays);
             }
-            return content;
         }
 
-        async function readFileContent(file) {
-            const ext = file.name.split('.').pop().toLowerCase();
-            if (['txt', 'log', 'json', 'xml', 'csv'].includes(ext)) return await readTextFile(file);
-            if (['doc', 'docx'].includes(ext)) return await readDocxFile(file);
-            if (['xls', 'xlsx'].includes(ext)) return await readExcelFile(file);
-            if (['pdf'].includes(ext)) return await readPdfFile(file);
-            if (['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'].includes(ext)) return await readImageFile(file);
-            try { return await readTextFile(file); } catch { return '[无法识别的文件格式]' }
+        // 保存游戏状态
+        function saveGame() {
+            gameState.lastUpdate = Date.now();
+            localStorage.setItem('crayfishGame', JSON.stringify(gameState));
         }
 
-        function readTextFile(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = e => resolve(e.target.result);
-                reader.onerror = () => reject(new Error('文件读取失败'));
-                reader.readAsText(file, 'utf-8');
-            });
+        // 更新显示
+        function updateDisplay() {
+            document.getElementById('hungerBar').style.width = gameState.hunger + '%';
+            document.getElementById('hungerValue').textContent = gameState.hunger;
+            document.getElementById('happyBar').style.width = gameState.happy + '%';
+            document.getElementById('happyValue').textContent = gameState.happy;
+            document.getElementById('cleanBar').style.width = gameState.clean + '%';
+            document.getElementById('cleanValue').textContent = gameState.clean;
+            document.getElementById('level').textContent = gameState.level;
+            document.getElementById('day').textContent = gameState.day;
         }
 
-        function readDocxFile(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    mammoth.extractRawText({arrayBuffer: e.target.result})
-                        .then(r => resolve(r.value || '[Word文件为空]'))
-                        .catch(() => reject(new Error('Word解析失败')));
-                };
-                reader.onerror = () => reject(new Error('文件读取失败'));
-                reader.readAsArrayBuffer(file);
-            });
+        // 显示对话框
+        function showSpeech(text) {
+            const speech = document.getElementById('speech');
+            speech.textContent = text;
+            speech.classList.add('show');
+            setTimeout(() => {
+                speech.classList.remove('show');
+            }, 2000);
         }
 
-        function readExcelFile(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    try {
-                        const wb = XLSX.read(e.target.result, {type: 'array'});
-                        let text = '';
-                        wb.SheetNames.forEach(name => {
-                            text += '\n--- ' + name + ' ---\n' + XLSX.utils.sheet_to_csv(wb.Sheets[name]);
-                        });
-                        resolve(text || '[Excel文件为空]');
-                    } catch { reject(new Error('Excel解析失败')) }
-                };
-                reader.onerror = () => reject(new Error('文件读取失败'));
-                reader.readAsArrayBuffer(file);
-            });
+        // 添加消息
+        function addMessage(text) {
+            const log = document.getElementById('messageLog');
+            const msg = document.createElement('div');
+            msg.className = 'message';
+            msg.textContent = text;
+            log.appendChild(msg);
+            setTimeout(() => {
+                msg.style.animation = 'slideOut 0.3s ease forwards';
+                setTimeout(() => msg.remove(), 300);
+            }, 4000);
         }
 
-        function readPdfFile(file) {
-            return new Promise(async (resolve, reject) => {
-                try {
-                    const arr = await file.arrayBuffer();
-                    const pdf = await pdfjsLib.getDocument({data: arr}).promise;
-                    let text = '';
-                    for (let i = 1; i <= pdf.numPages; i++) {
-                        const page = await pdf.getPage(i);
-                        const content = await page.getTextContent();
-                        text += content.items.map(item => item.str).join(' ') + '\n';
-                    }
-                    resolve(text || '[PDF无文字]');
-                } catch { reject(new Error('PDF解析失败')) }
-            });
+        // 添加经验
+        function addExp(amount) {
+            gameState.exp += amount;
+            if (gameState.exp >= gameState.level * 100) {
+                gameState.level++;
+                gameState.exp = 0;
+                showSpeech('🦞 升级啦！');
+                addMessage('✨ 小龙虾升级到 ' + gameState.level + ' 级！');
+            }
         }
 
-        function readImageFile(file) {
-            return new Promise(async (resolve, reject) => {
-                try {
-                    const result = await Tesseract.recognize(file, 'chi_sim+eng');
-                    resolve(result.data.text.trim() || '[图片无文字]');
-                } catch { reject(new Error('OCR识别失败')) }
-            });
+        // 喂食面板
+        function showFoodPanel() {
+            document.getElementById('foodPanel').classList.add('show');
         }
 
-        // ============ 生成评查报告 ============
-        async function generateReport() {
-            const content = document.getElementById('caseContent').value.trim();
+        function hideFoodPanel() {
+            document.getElementById('foodPanel').classList.remove('show');
+        }
+
+        // 喂食
+        function feed(foodIcon, amount, foodName) {
+            gameState.hunger = Math.min(100, gameState.hunger + amount);
+            hideFoodPanel();
             
-            let fileContent = '';
-            if (uploadedFiles.length > 0) {
-                try {
-                    fileContent = await mergeFileContent();
-                } catch (e) {
-                    console.error('文件读取失败:', e);
-                }
+            const crayfish = document.getElementById('crayfish');
+            crayfish.classList.add('happy');
+            setTimeout(() => crayfish.classList.remove('happy'), 600);
+            
+            showSpeech(foodIcon + ' 好吃！');
+            addMessage('喂了 ' + foodName + '，饱食度 +' + amount);
+            addExp(10);
+            updateDisplay();
+            saveGame();
+        }
+
+        // 玩耍
+        function play() {
+            if (gameState.hunger < 20) {
+                showSpeech('🍖 好饿啊...');
+                addMessage('小龙虾太饿了，无法玩耍');
+                return;
             }
             
-            const fullContent = fileContent ? (content ? content + '\n\n=== 上传文件内容 ===\n' + fileContent : fileContent) : content;
+            gameState.hunger = Math.max(0, gameState.hunger - 10);
+            gameState.happy = Math.min(100, gameState.happy + 25);
             
-            if (!fullContent) return alert('请输入案件内容或上传文件');
+            const crayfish = document.getElementById('crayfish');
+            crayfish.classList.add('happy');
+            setTimeout(() => crayfish.classList.remove('happy'), 600);
+            
+            showSpeech('🎮 好开心！');
+            addMessage('和小龙虾玩耍，快乐度 +25');
+            addExp(15);
+            updateDisplay();
+            saveGame();
+        }
 
-            document.getElementById('status').classList.remove('hidden');
-            document.getElementById('reportSection').classList.add('hidden');
+        // 清洁
+        function clean() {
+            gameState.clean = 100;
+            
+            const crayfish = document.getElementById('crayfish');
+            crayfish.classList.add('happy');
+            setTimeout(() => crayfish.classList.remove('happy'), 600);
+            
+            showSpeech('✨ 清爽！');
+            addMessage('给小龙虾洗了澡，清洁度满格！');
+            addExp(5);
+            updateDisplay();
+            saveGame();
+        }
 
-            try {
-                const response = await fetch(CONFIG.API_URL, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json', 
-                        'Authorization': 'Bearer ' + CONFIG.API_KEY,
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        model: CONFIG.MODEL,
-                        messages: [
-                            { role: 'system', content: '你是法律案件评查专家，擅长行政案件、民事纠纷、刑事案件的专业评查。请生成非常详细、专业的评查报告，包括：\n1. 案件基本信息（案号、当事人、案件类型）\n2. 案件事实详细梳理\n3. 法律适用分析（实体法和程序法）\n4. 证据审查（真实性、合法性、关联性）\n5. 程序合法性审查\n6. 实体审查（法律关系、责任认定）\n7. 存在的问题与风险\n8. 专业建议与解决方案\n9. 相关法律依据（列出具体法条）\n10. 评查结论与建议\n请用专业、详尽的方式撰写报告。' },
-                            { role: 'user', content: '【案件内容】\n' + fullContent + '\n\n请生成详细的专业评查报告。' }
-                        ]
-                    })
-                });
-                
-                if (!response.ok) throw new Error('API请求失败: ' + response.status);
-                
-                const data = await response.json();
-                console.log('API响应:', data);
-                
-                if (data.choices && data.choices[0] && data.choices[0].message) {
-                    const now = new Date();
-                    const reportDate = now.getFullYear() + '年' + (now.getMonth() + 1) + '月' + now.getDate() + '日';
-                    reportText = data.choices[0].message.content + '\n\n--- 评查日期：' + reportDate + ' ---';
-                    document.getElementById('reportContent').textContent = reportText;
-                    document.getElementById('reportSection').classList.remove('hidden');
-                } else {
-                    throw new Error(data.base_resp?.status_msg || 'API返回格式错误');
-                }
-            } catch (e) {
-                console.error('生成错误:', e);
-                alert('生成失败: ' + e.message);
+        // 气泡背景
+        function createBubbles() {
+            const oceanBg = document.getElementById('oceanBg');
+            for (let i = 0; i < 15; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                const size = Math.random() * 20 + 10;
+                bubble.style.width = size + 'px';
+                bubble.style.height = size + 'px';
+                bubble.style.left = Math.random() * 100 + '%';
+                bubble.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                bubble.style.animationDelay = (Math.random() * 10) + 's';
+                oceanBg.appendChild(bubble);
             }
-
-            document.getElementById('status').classList.add('hidden');
         }
 
-        function copyReport() { navigator.clipboard.writeText(reportText).then(() => alert('已复制')); }
-        
-        function downloadReport() {
-            const now = new Date();
-            const dateStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
-            const timeStr = now.toTimeString().split(' ')[0].replace(/:/g, '');
-            const fileName = '案件评查报告_' + dateStr + '_' + timeStr + '.txt';
-            const blob = new Blob([reportText], { type: 'text/plain;charset=utf-8' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = fileName;
-            a.click();
+        // 游戏循环
+        function gameLoop() {
+            gameState.hunger = Math.max(0, gameState.hunger - 1);
+            gameState.happy = Math.max(0, gameState.happy - 0.5);
+            gameState.clean = Math.max(0, gameState.clean - 0.3);
+            
+            // 检查状态
+            if (gameState.hunger < 30) {
+                showSpeech('🍖 饿饿了...');
+            } else if (gameState.happy < 30) {
+                showSpeech('😢 无聊...');
+            } else if (gameState.clean < 30) {
+                showSpeech('🛁 脏脏的...');
+            }
+            
+            // 每天增加天数
+            if (gameState.hunger + gameState.happy + gameState.clean < 50) {
+                gameState.day++;
+            }
+            
+            updateDisplay();
+            saveGame();
+            
+            // 检查游戏结束
+            if (gameState.hunger === 0) {
+                showSpeech('💔 饿晕了...');
+                addMessage('小龙虾饿晕了！点击喂食来拯救它！');
+            }
         }
+
+        // 初始化
+        function init() {
+            loadGame();
+            updateDisplay();
+            createBubbles();
+            
+            // 每5秒更新一次游戏状态
+            setInterval(gameLoop, 5000);
+            
+            // 显示欢迎消息
+            showSpeech('🦞 你好！');
+            setTimeout(() => addMessage('欢迎来到小龙虾养成记！'), 2000);
+        }
+
+        init();
     </script>
 </body>
 </html>
