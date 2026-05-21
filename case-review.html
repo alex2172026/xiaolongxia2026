@@ -303,9 +303,14 @@ function render(){
   var html="";
   for(var i=0;i<pets.length;i++){
     var p=pets[i];
-    var avatarImg='assets/'+(p.type||p.name)+'-3d.png';
+    var avatarImg='assets/'+(PET_AVATARS[p.type]||p.type)+'-3d.png';
+    var videoImg='assets/'+(PET_AVATARS[p.type]||p.type)+'-fly.mp4';
+    var hasVideo=true;
     html+='<div class="card"><div class="card-top"><div class="name">'+p.name+'</div><div class="level">Lv.'+p.level+'</div></div>';
-    html+='<img src="'+avatarImg+'" class="pet-avatar-img" alt="'+p.name+'" onerror="this.style.display=\'none\'" />';
+    if(hasVideo){
+      html+='<video src="'+videoImg+'" class="pet-avatar-img" autoplay loop muted playsinline onerror="this.style.display=\'none\';document.querySelector(\'#img-'+p.id+'\').style.display=\'block\'" style="display:none"></video>';
+      html+='<img id="img-'+p.id+'" src="'+avatarImg+'" class="pet-avatar-img" alt="'+p.name+'" style="display:block" />';
+    }else{
     html+='<div class="stats"><div class="stat">🍖'+p.hunger+'</div><div class="stat">😊'+p.happy+'</div><div class="stat">⚡'+p.energy+'</div></div>';
     html+='<div style="text-align:center;color:rgba(255,255,255,0.8);margin:10px 0">'+getStatus(p)+'</div>';
     html+='<div class="actions">';
