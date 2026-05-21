@@ -21,6 +21,7 @@ body{font-family:Nunito,sans-serif;background:linear-gradient(135deg,#1a1a2e,#16
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
 h1{color:#ffd700;text-align:center;margin-bottom:15px}
 .pets{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.pet-avatar-img{width:120px;height:120px;border-radius:50%;object-fit:cover;margin:10px auto;display:block;box-shadow:0 5px 20px rgba(0,0,0,0.3)}
 .card{background:rgba(255,255,255,0.1);padding:15px;border-radius:15px}
 .card-top{display:flex;justify-content:space-between;margin-bottom:10px}
 .name{color:#fff;font-weight:bold}
@@ -116,6 +117,21 @@ var pets=[];
 var feedId=null;
 var users={};
 var N={rat:"小老鼠",ox:"小牛牛",tiger:"小老虎",rabbit:"小兔兔",dragon:"小龙龙",snake:"小蛇蛇",horse:"小马马",goat:"小羊羊",monkey:"小猴猴",rooster:"小鸡鸡",dog:"小狗狗",pig:"小猪猪"};
+// 宠物类型对应的3D图片映射
+var PET_AVATARS={
+  rat:"rat-3d",
+  ox:"ox-3d",
+  tiger:"tiger-3d",
+  rabbit:"rabbit-3d",
+  dragon:"dragon-3d",
+  snake:"snake-3d",
+  horse:"horse-3d",
+  goat:"goat-3d",
+  monkey:"monkey-3d",
+  rooster:"rooster-3d",
+  dog:"dog-3d",
+  pig:"pig-3d"
+};
 var E={apple:15,carrot:12,fish:20,cake:25};
 
 function init(){
@@ -287,7 +303,9 @@ function render(){
   var html="";
   for(var i=0;i<pets.length;i++){
     var p=pets[i];
+    var avatarImg='assets/'+(p.type||p.name)+'-3d.png';
     html+='<div class="card"><div class="card-top"><div class="name">'+p.name+'</div><div class="level">Lv.'+p.level+'</div></div>';
+    html+='<img src="'+avatarImg+'" class="pet-avatar-img" alt="'+p.name+'" onerror="this.style.display=\'none\'" />';
     html+='<div class="stats"><div class="stat">🍖'+p.hunger+'</div><div class="stat">😊'+p.happy+'</div><div class="stat">⚡'+p.energy+'</div></div>';
     html+='<div style="text-align:center;color:rgba(255,255,255,0.8);margin:10px 0">'+getStatus(p)+'</div>';
     html+='<div class="actions">';
