@@ -3,571 +3,557 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SONG AI - 歌词一键成歌</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>雅韵诗乐 - AI诗词作曲</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cinnabar: #AA3215;
+            --gold: #D4A849;
+            --ink-black: #1A1A1A;
+            --indigo: #2C3E50;
+            --jade: #2D6A4F;
+            --pearl: #F5F0E6;
+            --cream: #FAF6EF;
+        }
+        * {
+            font-family: 'Noto Serif SC', 'ZCOOL XiaoWei', serif;
+        }
+        body {
+            background: var(--cream);
+            min-height: 100vh;
+        }
+        
+        /* 水墨晕染背景 */
+        .ink-bg {
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(180, 140, 100, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(45, 106, 79, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(212, 168, 73, 0.04) 0%, transparent 60%),
+                var(--cream);
+            background-attachment: fixed;
+        }
+        
+        /* 云纹装饰 */
+        .cloud-pattern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M30 5 Q35 15 30 25 Q25 15 30 5 M15 20 Q20 30 15 40 Q10 30 15 20 M45 20 Q50 30 45 40 Q40 30 45 20' stroke='%23D4A849' stroke-width='0.5' fill='none' opacity='0.15'/%3E%3C/svg%3E");
+            pointer-events: none;
+            opacity: 0.5;
+        }
+        
+        /* 印章按钮 */
+        .seal-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1.25rem;
+            background: var(--cinnabar);
+            color: #FFFDE7;
+            font-size: 0.875rem;
+            letter-spacing: 0.125em;
+            border-radius: 2px;
+            box-shadow: 2px 2px 0 rgba(26, 26, 26, 0.2);
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        .seal-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 3px 3px 0 rgba(26, 26, 26, 0.25);
+        }
+        .seal-btn.secondary {
+            background: var(--ink-black);
+        }
+        .seal-btn.gold {
+            background: var(--gold);
+            color: var(--ink-black);
+        }
+        
+        /* 卷轴边框 */
+        .scroll-border {
+            position: relative;
+            background: #FFFEF9;
+            border-radius: 4px;
+            box-shadow: 
+                0 0 0 1px rgba(170, 50, 21, 0.1),
+                0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        .scroll-border::before,
+        .scroll-border::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 12px;
+            background: linear-gradient(90deg, 
+                transparent 0%,
+                rgba(170, 50, 21, 0.15) 20%,
+                rgba(170, 50, 21, 0.15) 80%,
+                transparent 100%
+            );
+        }
+        .scroll-border::before { top: -6px; }
+        .scroll-border::after { bottom: -6px; }
+        
+        /* 输入框样式 */
+        .classic-input {
+            background: rgba(255, 253, 249, 0.8);
+            border: 1px solid rgba(170, 50, 21, 0.2);
+            border-radius: 4px;
+            padding: 1rem;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+        .classic-input:focus {
+            outline: none;
+            border-color: var(--cinnabar);
+            box-shadow: 0 0 0 3px rgba(170, 50, 21, 0.1);
+        }
+        
+        /* 选项标签 */
+        .option-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.375rem 0.875rem;
+            background: rgba(250, 246, 239, 0.9);
+            border: 1px solid rgba(170, 50, 21, 0.15);
+            border-radius: 999px;
+            font-size: 0.8125rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .option-tag:hover {
+            border-color: var(--cinnabar);
+            background: rgba(170, 50, 21, 0.08);
+        }
+        .option-tag.selected {
+            background: var(--cinnabar);
+            border-color: var(--cinnabar);
+            color: #FFFDE7;
+        }
+        
+        /* 卡片 */
+        .classic-card {
+            background: #FFFEF9;
+            border: 1px solid rgba(170, 50, 21, 0.12);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .classic-card:hover {
+            box-shadow: 0 8px 30px rgba(170, 50, 21, 0.12);
+            transform: translateY(-2px);
+        }
+        
+        /* 进度条 */
+        .progress-bar {
+            height: 4px;
+            background: rgba(170, 50, 21, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cinnabar), var(--gold));
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        
+        /* 古琴图标动画 */
+        @keyframes gentle-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        .floating-note {
+            animation: gentle-float 3s ease-in-out infinite;
+        }
+        
+        /* 会员卡片 */
+        .vip-card {
+            background: linear-gradient(145deg, #1A1A1A 0%, #2C3E50 100%);
+            border: 2px solid var(--gold);
+            position: relative;
+            overflow: hidden;
+        }
+        .vip-card::before {
+            content: '雅士';
+            position: absolute;
+            top: 10px;
+            right: -25px;
+            background: var(--gold);
+            color: var(--ink-black);
+            font-size: 0.625rem;
+            padding: 2px 30px;
+            transform: rotate(45deg);
+        }
+        
+        /* 列表演唱列表 */
+        .song-row {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            background: rgba(255, 253, 249, 0.6);
+            border-bottom: 1px solid rgba(170, 50, 21, 0.08);
+            transition: all 0.2s ease;
+        }
+        .song-row:hover {
+            background: rgba(170, 50, 21, 0.05);
+        }
+        .song-row:first-child {
+            border-radius: 8px 8px 0 0;
+        }
+        .song-row:last-child {
+            border-radius: 0 0 8px 8px;
+            border-bottom: none;
+        }
+        
+        /* 中国结装饰 */
+        .china-knot {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: var(--cinnabar);
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Ccircle cx='12' cy='16' r='4'/%3E%3Cpath d='M8 8 Q8 4 12 4 Q16 4 16 8' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E");
+            -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Ccircle cx='12' cy='16' r='4'/%3E%3Cpath d='M8 8 Q8 4 12 4 Q16 4 16 8' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E");
+        }
+    </style>
 </head>
-<body>
+<body class="ink-bg cloud-pattern relative">
+
     <!-- 顶部导航 -->
-    <header>
-        <nav class="navbar">
-            <div class="logo">
-                <span class="logo-icon">🎵</span>
-                <span class="logo-text">SONG <span class="logo-ai">AI</span></span>
-            </div>
-            <div class="nav-links">
-                <a href="#works" class="nav-item">🎶 作品库</a>
-                <a href="#pricing" class="nav-item">💎 会员</a>
-                <div class="user-area" id="userArea">
-                    <button class="login-btn" id="loginBtn">登录</button>
-                    <button class="register-btn" id="registerBtn">注册</button>
+    <nav class="relative z-10 bg-white/80 backdrop-blur-sm border-b border-amber-900/10 sticky top-0">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-amber-800 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-amber-100" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                    </svg>
                 </div>
-                <div class="user-info hidden" id="userInfo">
-                    <div class="user-avatar">🦞</div>
-                    <span class="user-name" id="userName">用户</span>
-                    <div class="user-points">
-                        <span class="points-icon">💰</span>
-                        <span class="points-num" id="userPoints">10</span>
-                        <span class="points-label">积分</span>
-                    </div>
-                    <button class=" recharge-btn" id="rechargeBtn">充值</button>
-                    <button class="vip-btn hidden" id="vipBtn">VIP</button>
-                </div>
-            </div>
-        </nav>
-    </header>
-
-    <!-- 主内容区 -->
-    <main>
-        <!-- Hero 区域 - 歌词输入 -->
-        <section class="hero">
-            <div class="hero-content">
-                <h1 class="hero-title">写出你的歌词，<span class="highlight">AI为你谱曲</span></h1>
-                <p class="hero-subtitle">支持中文、英文、日文等多种语言 · 无需懂乐理，一键生成完整歌曲</p>
-                
-                <div class="lyrics-input-container" id="lyricsContainer">
-                    <div class="lyrics-header">
-                        <span class="lyrics-label">📝 歌词输入</span>
-                        <span class="lyrics-hint">（支持 [Verse] 主歌 / [Chorus] 副歌 / [Bridge] 桥段 标签）</span>
-                    </div>
-                    <textarea 
-                        id="lyricsInput" 
-                        class="lyrics-input" 
-                        placeholder="在这里输入你的歌词...
-
-[Verse]
-清晨的阳光洒在窗前
-新的一天开始啦
-
-[Chorus]
-一起向前奔跑
-追逐心中的光
-
-=== 登录后即可开始创作 ==="
-                        rows="8"
-                        disabled
-                    ></textarea>
-                    <div class="login-prompt" id="loginPrompt">
-                        <span>🔒</span>
-                        <span>登录后即可开始创作</span>
-                        <button class=" login-now-btn" id="loginNowBtn">立即登录</button>
-                    </div>
-                    <div class="lyrics-footer">
-                        <span class="word-count">字数: <span id="wordCount">0</span></span>
-                        <button class="clear-btn" id="clearBtn">清空</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 用户信息栏 -->
-        <section class="user-bar hidden" id="userBar">
-            <div class="user-bar-content">
-                <div class="user-stats">
-                    <div class="stat-item">
-                        <span class="stat-icon">💰</span>
-                        <span class="stat-label">我的积分</span>
-                        <span class="stat-value" id="myPoints">10</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-icon">🎵</span>
-                        <span class="stat-label">已生成</span>
-                        <span class="stat-value" id="myWorks">0</span>
-                        <span class="stat-label">首</span>
-                    </div>
-                    <div class="stat-item member-badge hidden" id="memberBadge">
-                        <span class="stat-icon">👑</span>
-                        <span class="stat-value">VIP会员</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 生成配置区域 -->
-        <section class="config-section" id="configSection">
-            <div class="config-grid">
-                <div class="config-item">
-                    <label class="config-label">🎼 音乐风格</label>
-                    <select id="styleSelect" class="config-select">
-                        <option value="pop">流行 Pop</option>
-                        <option value="rock">摇滚 Rock</option>
-                        <option value="electronic">电子 Electronic</option>
-                        <option value="folk">民谣 Folk</option>
-                        <option value="rnb">R&B 节奏布鲁斯</option>
-                        <option value="ancient">古风 Chinese</option>
-                        <option value="jazz">爵士 Jazz</option>
-                        <option value="hiphop">嘻哈 Hip-Hop</option>
-                        <option value="ballad">抒情 Ballad</option>
-                    </select>
-                </div>
-                
-                <div class="config-item">
-                    <label class="config-label">⏱️ 歌曲时长</label>
-                    <select id="durationSelect" class="config-select">
-                        <option value="30">30秒（副歌版）</option>
-                        <option value="60">1分钟</option>
-                        <option value="180">3分钟</option>
-                        <option value="240">4分钟</option>
-                        <option value="300" selected>5分钟（完整版）</option>
-                    </select>
-                </div>
-                
-                <div class="config-item">
-                    <label class="config-label">🎤 人声选择</label>
-                    <select id="voiceSelect" class="config-select">
-                        <option value="male-young">青叔音（推荐）</option>
-                        <option value="female-sweet">甜妹音</option>
-                        <option value="male-teen">少年音</option>
-                        <option value="female-mature">御姐音</option>
-                        <option value="male-deep">沉稳音</option>
-                        <option value="female-young">少女音</option>
-                        <option value="male-middle">大叔音</option>
-                        <option value="female-soft">轻柔女声</option>
-                        <option value="male-rich">浑厚男声</option>
-                        <option value="female-ethereal">空灵女声</option>
-                    </select>
-                </div>
-                
-                <div class="config-item">
-                    <label class="config-label">🎸 乐器配置</label>
-                    <select id="instrumentSelect" class="config-select">
-                        <option value="auto" selected>自动适配</option>
-                        <option value="gpd">吉他+钢琴+鼓</option>
-                        <option value="piano">纯钢琴</option>
-                        <option value="guitar">纯吉他</option>
-                        <option value="synth">电子合成</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- 生成按钮 -->
-            <div class="generate-section">
-                <button id="generateBtn" class="generate-btn" disabled>
-                    <span class="btn-icon">🔒</span>
-                    <span class="btn-text">登录后生成歌曲</span>
-                </button>
-                <p class="generate-hint">每次生成消耗 2 积分，会员无限生成</p>
-            </div>
-        </section>
-
-        <!-- 加载状态 -->
-        <div id="loadingSection" class="loading-section hidden">
-            <div class="loading-content">
-                <div class="loading-icon">🎵</div>
-                <div class="loading-text">AI正在编曲中...</div>
-                <div class="loading-progress">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill"></div>
-                    </div>
-                    <span class="progress-text" id="progressText">0%</span>
-                </div>
-                <p class="loading-tip">AI正在理解歌词情感，匹配和弦走向，生成旋律...</p>
-                <p class="loading-points">消耗积分: <span id="costPoints">2</span></p>
-            </div>
-        </div>
-
-        <!-- 生成结果展示 -->
-        <section id="resultSection" class="result-section hidden">
-            <div class="result-header">
-                <h2>🎧 生成结果</h2>
-                <p>点击播放按钮试听，满意即可下载</p>
-                <div class="result-points-info">
-                    <span>剩余积分: <strong id="remainPoints">8</strong></span>
+                <div>
+                    <h1 class="text-xl font-bold text-amber-900">雅韵诗乐</h1>
+                    <p class="text-xs text-amber-700/60 tracking-widest">诗词作曲 · 古风新韵</p>
                 </div>
             </div>
             
-            <div class="result-grid">
-                <!-- 版本卡片 1 -->
-                <div class="result-card" data-version="1">
-                    <div class="card-badge">V1</div>
-                    <div class="card-wave">
-                        <div class="wave-bars">
-                            <span></span><span></span><span></span><span></span><span></span>
-                            <span></span><span></span><span></span><span></span><span></span>
-                        </div>
-                    </div>
-                    <div class="card-info">
-                        <h3>流行抒情版</h3>
-                        <p class="card-duration">时长: 4:58</p>
-                        <p class="card-style">风格: 流行 · 钢琴+弦乐</p>
-                    </div>
-                    <div class="card-actions">
-                        <button class="play-btn" data-audio="demo1.mp3">
-                            <span class="play-icon">▶</span>
-                            <span class="play-text">播放</span>
-                        </button>
-                        <div class="card-progress hidden">
-                            <div class="mini-progress">
-                                <div class="mini-fill"></div>
-                            </div>
-                            <span class="mini-time">0:00 / 4:58</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <button class="download-btn">📥 下载</button>
-                        <button class="share-btn">🔗 分享</button>
-                    </div>
-                </div>
-
-                <!-- 版本卡片 2 -->
-                <div class="result-card" data-version="2">
-                    <div class="card-badge">V2</div>
-                    <div class="card-wave">
-                        <div class="wave-bars">
-                            <span></span><span></span><span></span><span></span><span></span>
-                            <span></span><span></span><span></span><span></span><span></span>
-                        </div>
-                    </div>
-                    <div class="card-info">
-                        <h3>电子潮流版</h3>
-                        <p class="card-duration">时长: 4:52</p>
-                        <p class="card-style">风格: 电子 · synthesizer</p>
-                    </div>
-                    <div class="card-actions">
-                        <button class="play-btn" data-audio="demo2.mp3">
-                            <span class="play-icon">▶</span>
-                            <span class="play-text">播放</span>
-                        </button>
-                        <div class="card-progress hidden">
-                            <div class="mini-progress">
-                                <div class="mini-fill"></div>
-                            </div>
-                            <span class="mini-time">0:00 / 4:52</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <button class="download-btn">📥 下载</button>
-                        <button class="share-btn">🔗 分享</button>
-                    </div>
-                </div>
-
-                <!-- 版本卡片 3 -->
-                <div class="result-card" data-version="3">
-                    <div class="card-badge">V3</div>
-                    <div class="card-wave">
-                        <div class="wave-bars">
-                            <span></span><span></span><span></span><span></span><span></span>
-                            <span></span><span></span><span></span><span></span><span></span>
-                        </div>
-                    </div>
-                    <div class="card-info">
-                        <h3>民谣温暖版</h3>
-                        <p class="card-duration">时长: 4:55</p>
-                        <p class="card-style">风格: 民谣 · 吉他弹唱</p>
-                    </div>
-                    <div class="card-actions">
-                        <button class="play-btn" data-audio="demo3.mp3">
-                            <span class="play-icon">▶</span>
-                            <span class="play-text">播放</span>
-                        </button>
-                        <div class="card-progress hidden">
-                            <div class="mini-progress">
-                                <div class="mini-fill"></div>
-                            </div>
-                            <span class="mini-time">0:00 / 4:55</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <button class="download-btn">📥 下载</button>
-                        <button class="share-btn">🔗 分享</button>
-                    </div>
-                </div>
-
-                <!-- 版本卡片 4 -->
-                <div class="result-card" data-version="4">
-                    <div class="card-badge">V4</div>
-                    <div class="card-wave">
-                        <div class="wave-bars">
-                            <span></span><span></span><span></span><span></span><span></span>
-                            <span></span><span></span><span></span><span></span><span></span>
-                        </div>
-                    </div>
-                    <div class="card-info">
-                        <h3>摇滚热血版</h3>
-                        <p class="card-duration">时长: 4:40</p>
-                        <p class="card-style">风格: 摇滚 · 吉他+鼓</p>
-                    </div>
-                    <div class="card-actions">
-                        <button class="play-btn" data-audio="demo4.mp3">
-                            <span class="play-icon">▶</span>
-                            <span class="play-text">播放</span>
-                        </button>
-                        <div class="card-progress hidden">
-                            <div class="mini-progress">
-                                <div class="mini-fill"></div>
-                            </div>
-                            <span class="mini-time">0:00 / 4:40</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <button class="download-btn">📥 下载</button>
-                        <button class="share-btn">🔗 分享</button>
-                    </div>
-                </div>
+            <!-- 导航链接 -->
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#" class="text-sm text-amber-800 hover:text-amber-600 transition">诗词汇</a>
+                <a href="#" class="text-sm text-amber-800 hover:text-amber-600 transition">雅士阁</a>
             </div>
+            
+            <!-- 用户状态 -->
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden sm:block">
+                    <p class="text-xs text-amber-700/60">音缘</p>
+                    <p class="text-sm font-medium text-amber-900">10 音</p>
+                </div>
+                <button class="seal-btn secondary text-xs">登入</button>
+            </div>
+        </div>
+    </nav>
 
-            <!-- 重新生成 -->
-            <div class="result-actions">
-                <button class="regenerate-btn" id="regenerateBtn">🔄 重新生成 (消耗 2 积分)</button>
-                <button class="save-btn" id="saveBtn">💾 保存到作品库</button>
+    <main class="relative z-10 max-w-5xl mx-auto px-4 py-8 md:py-12">
+        
+        <!-- 英雄区 -->
+        <section class="text-center mb-12">
+            <div class="floating-note inline-block mb-4">
+                <svg class="w-12 h-12 text-amber-700" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                </svg>
+            </div>
+            <h2 class="text-3xl md:text-4xl font-bold text-amber-900 mb-3">填写诗词意 AI 谱雅曲</h2>
+            <p class="text-amber-700/70 max-w-lg mx-auto">支持古风、现代等多种风格，无须通晓乐理，只需填入您心之诗句，即可成就独属于您的妙韵。</p>
+        </section>
+
+        <!-- 主创作区 -->
+        <section class="scroll-border p-6 md:p-8 mb-10">
+            <h3 class="text-lg font-semibold text-amber-900 mb-4 flex items-center gap-2">
+                <span class="w-1 h-5 bg-amber-700 rounded-sm"></span>
+                诗词输入
+            </h3>
+            
+            <!-- 歌词输入框 -->
+            <textarea 
+                id="lyricsInput"
+                class="classic-input w-full h-40 resize-none" 
+                placeholder="在此输入您的诗词...&#10;&#10;支持标记：&#10;[Verse] 主歌内容&#10;[Chorus] 副歌高潮&#10;[Bridge] 过渡转承"
+            ></textarea>
+            
+            <div class="flex items-center justify-between mt-3 text-xs text-amber-600/50">
+                <span>当前字数：<span id="charCount">0</span> 字</span>
+                <button class="hover:text-amber-700 transition" onclick="document.getElementById('lyricsInput').value=''; document.getElementById('charCount').innerText='0'">清空重写</button>
             </div>
         </section>
 
-        <!-- 功能特点 -->
-        <section class="features-section">
-            <h2 class="section-title">为什么选择 SONG AI？</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3>一键生成</h3>
-                    <p>无需懂乐理，输入歌词即刻生成完整歌曲</p>
+        <!-- 参数选择 -->
+        <section class="grid md:grid-cols-3 gap-6 mb-10">
+            <!-- 音乐风格 -->
+            <div class="classic-card">
+                <h4 class="text-sm font-medium text-amber-900 mb-4 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                    曲风
+                </h4>
+                <div class="flex flex-wrap gap-2">
+                    <span class="option-tag selected" data-value="folk">古风</span>
+                    <span class="option-tag" data-value="pop">流行</span>
+                    <span class="option-tag" data-value="rock">摇滚</span>
+                    <span class="option-tag" data-value="electronic">电子</span>
+                    <span class="option-tag" data-value="rnb">R&amp;B</span>
+                    <span class="option-tag" data-value="jazz">爵��</span>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎭</div>
-                    <h3>多风格选择</h3>
-                    <p>流行、摇滚、电子、古风等多种风格任选</p>
+            </div>
+
+            <!-- 歌曲时长 -->
+            <div class="classic-card">
+                <h4 class="text-sm font-medium text-amber-900 mb-4 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                    曲长
+                </h4>
+                <div class="flex flex-wrap gap-2">
+                    <span class="option-tag" data-value="30">30秒</span>
+                    <span class="option-tag selected" data-value="60">1分钟</span>
+                    <span class="option-tag" data-value="180">3分钟</span>
+                    <span class="option-tag" data-value="300">5分钟</span>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎤</div>
-                    <h3>多版本选择</h3>
-                    <p>一次生成4个版本，总有一款适合你</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🔊</div>
-                    <h3>高品质输出</h3>
-                    <p>320kbps高品质MP3，满足商用需求</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🌐</div>
-                    <h3>多语言支持</h3>
-                    <p>支持中文、英文、日文等多种语言</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">💰</div>
-                    <h3>免费试用</h3>
-                    <p>新用户赠送10积分，先体验再付费</p>
+            </div>
+
+            <!-- 人声 -->
+            <div class="classic-card">
+                <h4 class="text-sm font-medium text-amber-900 mb-4 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="currentColor"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg>
+                    人声
+                </h4>
+                <div class="flex flex-wrap gap-2">
+                    <span class="option-tag selected" data-value="qing">青叔音</span>
+                    <span class="option-tag" data-value="tian">甜妹音</span>
+                    <span class="option-tag" data-value="shao">少年音</span>
+                    <span class="option-tag" data-value="yu">御姐音</span>
+                    <span class="option-tag" data-value="cheng">沉稳音</span>
+                    <span class="option-tag" data-value="nv">少女音</span>
                 </div>
             </div>
         </section>
 
-        <!-- 定价 -->
-        <section class="pricing-section" id="pricing">
-            <h2 class="section-title">💎 会员套餐</h2>
-            <div class="pricing-grid">
-                <div class="pricing-card">
-                    <div class="pricing-icon">🎵</div>
-                    <h3>免费用户</h3>
-                    <div class="pricing-price">¥0</div>
-                    <ul class="pricing-features">
-                        <li>✅ 新人赠送 10 积分</li>
-                        <li>✅ 可生成 5 首歌曲</li>
-                        <li>✅ 30秒/1分钟时长</li>
-                        <li>✅ 标准音质</li>
-                        <li>❌ 无法商用</li>
-                    </ul>
+        <!-- 生成按钮 -->
+        <section class="text-center mb-12">
+            <button class="seal-btn gold text-lg px-12 py-4">
+                <span class="flex items-center gap-3">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                    妙手丹青
+                </span>
+            </button>
+            <p class="mt-3 text-xs text-amber-600/50">每次消耗 2 音缘</p>
+        </section>
+
+        <!-- 生成结果展示 -->
+        <section class="scroll-border p-6 mb-10">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-amber-900 flex items-center gap-2">
+                    <span class="w-1 h-5 bg-amber-700 rounded-sm"></span>
+                    妙韵初成
+                </h3>
+                <span class="text-xs text-amber-600/50">共含四阙，各具风韵</span>
+            </div>
+            
+            <!-- 进度条 -->
+            <div class="mb-6">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
                 </div>
-                <div class="pricing-card popular">
-                    <div class="popular-tag">最划算</div>
-                    <div class="pricing-icon">👑</div>
-                    <h3>月度会员</h3>
-                    <div class="pricing-price">¥29<span>/月</span></div>
-                    <ul class="pricing-features">
-                        <li>✅ 无限生成</li>
-                        <li>✅ 5分钟完整版</li>
-                        <li>✅ 320kbps高品质</li>
-                        <li>✅ 商用授权</li>
-                        <li>✅ 专属人声</li>
-                    </ul>
-                    <button class="pricing-btn" data-plan="month">立即开通</button>
+                <p class="text-xs text-amber-600/50 mt-2 text-center">正在悟境通幽，循诗情画意...</p>
+            </div>
+            
+            <!-- 生成结果列表 -->
+            <div class="space-y-0">
+                <!-- V1 -->
+                <div class="song-row">
+                    <div class="flex items-center gap-3 flex-1">
+                        <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 text-xs font-bold">V1</div>
+                        <div class="flex-1">
+                            <p class="text-sm text-amber-900 font-medium">古韵悠然版</p>
+                            <p class="text-xs text-amber-600/50">古风 · 琴箫和鸣 · 4:58</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button class="w-8 h-8 rounded-full bg-amber-100 hover:bg-amber-200 flex items-center justify-center transition">
+                            <svg class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                        </button>
+                        <button class="w-8 h-8 rounded-full bg-amber-100 hover:bg-amber-200 flex items-center justify-center transition">
+                            <svg class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                        </button>
+                    </div>
                 </div>
-                <div class="pricing-card">
-                    <div class="pricing-icon">🌟</div>
-                    <h3>年度会员</h3>
-                    <div class="pricing-price">¥259<span>/年</span></div>
-                    <ul class="pricing-features">
-                        <li>✅ 月度会员全部权益</li>
-                        <li>✅ 8折优惠</li>
-                        <li>✅ 优先生成队列</li>
-                        <li>✅ 专属客服</li>
-                    </ul>
-                    <button class="pricing-btn" data-plan="year">立即开通</button>
+                
+                <!-- V2 -->
+                <div class="song-row">
+                    <div class="flex items-center gap-3 flex-1">
+                        <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 text-xs font-bold">V2</div>
+                        <div class="flex-1">
+                            <p class="text-sm text-amber-900 font-medium">明月轻风版</p>
+                            <p class="text-xs text-amber-600/50">古风 · 琵琶丝竹 · 4:52</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button class="w-8 h-8 rounded-full bg-amber-100 hover:bg-amber-200 flex items-center justify-center transition">
+                            <svg class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                        </button>
+                        <button class="w-8 h-8 rounded-full bg-amber-100 hover:bg-amber-200 flex items-center justify-center transition">
+                            <svg class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                        </button>
+                    </div>
                 </div>
+                
+                <!-- V3 -->
+                <div class="song-row">
+                    <div class="flex items-center gap-3 flex-1">
+                        <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 text-xs font-bold">V3</div>
+                        <div class="flex-1">
+                            <p class="text-sm text-amber-900 font-medium">高山流水版</p>
+                            <p class="text-xs text-amber-600/50">古风 · 古琴雅韵 · 4:55</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button class="w-8 h-8 rounded-full bg-amber-100 hover:bg-amber-200 flex items-center justify-center transition">
+                            <svg class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                        </button>
+                        <button class="w-8 h-8 rounded-full bg-amber-100 hover:bg-amber-200 flex items-center justify-center transition">
+                            <svg class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- V4 -->
+                <div class="song-row">
+                    <div class="flex items-center gap-3 flex-1">
+                        <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 text-xs font-bold">V4</div>
+                        <div class="flex-1">
+                            <p class="text-sm text-amber-900 font-medium">大漠孤烟版</p>
+                            <p class="text-xs text-amber-600/50">古风 · 胡笳驼铃 · 4:40</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button class="w-8 h-8 rounded-full bg-amber-100 hover:bg-amber-200 flex items-center justify-center transition">
+                            <svg class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                        </button>
+                        <button class="w-8 h-8 rounded-full bg-amber-100 hover:bg-amber-200 flex items-center justify-center transition">
+                            <svg class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 操作按钮 -->
+            <div class="flex items-center justify-center gap-4 mt-6">
+                <button class="seal-btn text-sm">
+                    <span class="flex items-center gap-2">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                        再酿新韵
+                    </span>
+                </button>
+                <button class="seal-btn secondary text-sm">
+                    <span class="flex items-center gap-2">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
+                        藏入诗库
+                    </span>
+                </button>
             </div>
         </section>
 
-        <!-- 页脚 -->
-        <footer>
-            <div class="footer-content">
-                <div class="footer-logo">
-                    <span class="logo-icon">🎵</span>
-                    <span class="logo-text">SONG <span class="logo-ai">AI</span></span>
+        <!-- 会员体系 -->
+        <section class="mb-12">
+            <h3 class="text-lg font-semibold text-amber-900 mb-6 text-center flex items-center justify-center gap-3">
+                <span class="w-12 h-px bg-amber-300"></span>
+                雅士礼遇
+                <span class="w-12 h-px bg-amber-300"></span>
+            </h3>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- 免费 -->
+                <div class="classic-card text-center">
+                    <h4 class="text-base font-medium text-amber-900 mb-2">初学</h4>
+                    <p class="text-3xl font-bold text-amber-900 mb-1">¥0</p>
+                    <p class="text-xs text-amber-600/50 mb-4">终身免费</p>
+                    <ul class="text-xs text-amber-700/70 space-y-2 mb-6">
+                        <li>✓ 新人赠10音缘</li>
+                        <li>✓ 可酿5首</li>
+                        <li>✓ 30秒/1分钟</li>
+                        <li>✓ 标准音质</li>
+                        <li class="opacity-50">✗ 不可商用</li>
+                    </ul>
+                    <button class="seal-btn secondary w-full text-sm">入门</button>
                 </div>
-                <p class="footer-tagline">歌词一键成歌，让音乐创作更简单</p>
-                <div class="footer-links">
-                    <a href="#">关于我们</a>
-                    <a href="#">使用条款</a>
-                    <a href="#">隐私政策</a>
-                    <a href="#">联系客服</a>
+                
+                <!-- 月度 -->
+                <div class="classic-card text-center ring-2 ring-amber-500 relative">
+                    <span class="absolute -top-2 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-amber-500 text-white text-xs rounded">超值</span>
+                    <h4 class="text-base font-medium text-amber-900 mb-2">雅士</h4>
+                    <p class="text-3xl font-bold text-amber-900 mb-1">¥29<span class="text-sm font-normal">/月</span></p>
+                    <p class="text-xs text-amber-600/50 mb-4">月度礼遇</p>
+                    <ul class="text-xs text-amber-700/70 space-y-2 mb-6">
+                        <li>✓ 无限酿造</li>
+                        <li>✓ 5分钟完整版</li>
+                        <li>✓ 320kbps高清</li>
+                        <li>✓ 商演授权</li>
+                        <li>✓ 专属人声</li>
+                    </ul>
+                    <button class="seal-btn gold w-full text-sm">尊享</button>
                 </div>
-                <p class="footer-copyright">© 2026 SONG AI · 小龙虾作品</p>
+                
+                <!-- 年度 -->
+                <div class="classic-card text-center">
+                    <h4 class="text-base font-medium text-amber-900 mb-2">雅客流徽</h4>
+                    <p class="text-3xl font-bold text-amber-900 mb-1">¥259<span class="text-sm font-normal">/年</span></p>
+                    <p class="text-xs text-amber-600/50 mb-4">年度钜惠</p>
+                    <ul class="text-xs text-amber-700/70 space-y-2 mb-6">
+                        <li>✓ 雅士全部权益</li>
+                        <li>✓ 8折特惠</li>
+                        <li>✓ 优酿队列</li>
+                        <li>✓ 专属礼待</li>
+                    </ul>
+                    <button class="seal-btn secondary w-full text-sm">入库</button>
+                </div>
             </div>
-        </footer>
+        </section>
+        
     </main>
 
-    <!-- 登录弹窗 -->
-    <div class="modal hidden" id="loginModal">
-        <div class="modal-backdrop"></div>
-        <div class="modal-content login-modal">
-            <button class="modal-close" id="loginModalClose">×</button>
-            <div class="modal-header">
-                <h2>🎵 SONG AI - 登录</h2>
-                <p>登录后即可开始创作</p>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>用户名</label>
-                    <input type="text" id="loginUsername" placeholder="请输入用户名" autocomplete="username">
-                </div>
-                <div class="form-group">
-                    <label>密码</label>
-                    <input type="password" id="loginPassword" placeholder="请输入密码" autocomplete="current-password">
-                </div>
-                <button class="submit-btn" id="loginSubmit">⭐ 登录</button>
-                <div class="form-footer">
-                    <span>还没有账号？</span>
-                    <a href="#" id="goToRegister">立即注册</a>
-                    <span>（新用户送 10 积分）</span>
-                </div>
-            </div>
-            <div class="modal-social">
-                <p>社交账号登录</p>
-                <div class="social-btns">
-                    <button class="social-btn wechat">微信</button>
-                    <button class="social-btn qq">QQ</button>
-                    <button class="social-btn tiktok">抖音</button>
-                </div>
+    <!-- 页脚 -->
+    <footer class="relative z-10 bg-amber-900/5 border-t border-amber-900/10 py-8">
+        <div class="max-w-5xl mx-auto px-4 text-center">
+            <p class="text-sm text-amber-700/60 mb-2">© 2026 雅韵诗乐 · 小龙虾作品</p>
+            <div class="flex items-center justify-center gap-4 text-xs text-amber-600/40">
+                <a href="#" class="hover:text-amber-600 transition">关于我们</a>
+                <span>·</span>
+                <a href="#" class="hover:text-amber-600 transition">使用条款</a>
+                <span>·</span>
+                <a href="#" class="hover:text-amber-600 transition">隐私权政策</a>
+                <span>·</span>
+                <a href="#" class="hover:text-amber-600 transition">联系客服</a>
             </div>
         </div>
-    </div>
+    </footer>
 
-    <!-- 注册弹窗 -->
-    <div class="modal hidden" id="registerModal">
-        <div class="modal-backdrop"></div>
-        <div class="modal-content register-modal">
-            <button class="modal-close" id="registerModalClose">×</button>
-            <div class="modal-header">
-                <h2>🎵 SONG AI - 注册</h2>
-                <p>新用户赠送 <strong>10 积分</strong></p>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>用户名</label>
-                    <input type="text" id="regUsername" placeholder="请输入用户名" autocomplete="username">
-                </div>
-                <div class="form-group">
-                    <label>密码</label>
-                    <input type="password" id="regPassword" placeholder="请设置密码" autocomplete="new-password">
-                </div>
-                <div class="form-group">
-                    <label>确认密码</label>
-                    <input type="password" id="regPassword2" placeholder="请再次输入密码" autocomplete="new-password">
-                </div>
-                <button class="submit-btn" id="registerSubmit">✨ 立即注册</button>
-                <div class="form-footer">
-                    <span>已有账号？</span>
-                    <a href="#" id="goToLogin">立即登录</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 充值弹窗 -->
-    <div class="modal hidden" id="rechargeModal">
-        <div class="modal-backdrop"></div>
-        <div class="modal-content recharge-modal">
-            <button class="modal-close" id="rechargeModalClose">×</button>
-            <div class="modal-header">
-                <h2>💰 积分充值</h2>
-                <p>当前积分: <strong id="currentPoints">10</strong></p>
-            </div>
-            <div class="modal-body">
-                <div class="recharge-options">
-                    <div class="recharge-card" data-amount="10" data-points="10">
-                        <div class="recharge-amount">¥10</div>
-                        <div class="recharge-points">10 积分</div>
-                    </div>
-                    <div class="recharge-card" data-amount="30" data-points="35">
-                        <div class="recharge-amount">¥30</div>
-                        <div class="recharge-points">35 积分</div>
-                        <div class="recharge-tag">，送5</div>
-                    </div>
-                    <div class="recharge-card" data-amount="50" data-points="60">
-                        <div class="recharge-amount">¥50</div>
-                        <div class="recharge-points">60 积分</div>
-                        <div class="recharge-tag">，送10</div>
-                    </div>
-                    <div class="recharge-card" data-amount="100" data-points="130">
-                        <div class="recharge-amount">¥100</div>
-                        <div class="recharge-points">130 积分</div>
-                        <div class="recharge-tag">，送30</div>
-                    </div>
-                </div>
-                <div class="recharge-vip">
-                    <h3>💎 开通会员</h3>
-                    <div class="vip-cards">
-                        <div class="vip-card" data-plan="month" data-price="29">
-                            <div class="vip-name">月度会员</div>
-                            <div class="vip-price">¥29/月</div>
-                            <div class="vip-feature">无限生成 + 商用授权</div>
-                        </div>
-                        <div class="vip-card" data-plan="year" data-price="259">
-                            <div class="vip-name">年度会员</div>
-                            <div class="vip-price">¥259/年</div>
-                            <div class="vip-feature">8折优惠</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 消息提示 -->
-    <div class="toast hidden" id="toast"></div>
-
-    <!-- 作品库弹窗 -->
-    <div class="modal hidden" id="worksModal">
-        <div class="modal-backdrop"></div>
-        <div class="modal-content works-modal">
-            <button class="modal-close" id="worksModalClose">×</button>
-            <div class="modal-header">
-                <h2>🎶 我的作品库</h2>
-                <p>共 <span id="worksCount">0</span> 首歌曲</p>
-            </div>
-            <div class="modal-body">
-                <div id="worksList" class="works-list"></div>
-            </div>
-        </div>
-    </div>
-
-    <script src="app.js"></script>
+    <script>
+        // 字数统计
+        document.getElementById('lyricsInput').addEventListener('input', function(e) {
+            document.getElementById('charCount').innerText = e.target.value.length;
+        });
+        
+        // 选项切换
+        document.querySelectorAll('.option-tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                const siblings = this.parentElement.querySelectorAll('.option-tag');
+                siblings.forEach(s => s.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+    </script>
 </body>
 </html>
