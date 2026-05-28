@@ -3,38 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>雅韵诗乐 - AI诗词作曲</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>中华传统文化 - 传承千年文明</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
-            --cinnabar: #AA3215;
-            --gold: #D4A849;
+            --cinnabar: #AA3216;
+            --gold: #D4A84B;
             --ink-black: #1A1A1A;
-            --indigo: #2C3E50;
-            --jade: #2D6A4F;
-            --pearl: #F5F0E6;
-            --cream: #FAF6EF;
+            --jade: #2D5A4A;
+            --ivory: #F5F5F0;
+            --rice-paper: #FDFBF7;
         }
+        
         * {
-            font-family: 'Noto Serif SC', 'ZCOOL XiaoWei', serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
+        
         body {
-            background: var(--cream);
-            min-height: 100vh;
+            font-family: "PingFang SC", "Microsoft YaHei", "Noto Serif SC", serif;
+            background: var(--rice-paper);
         }
         
         /* 水墨晕染背景 */
         .ink-bg {
             background: 
-                radial-gradient(ellipse at 20% 20%, rgba(180, 140, 100, 0.08) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(45, 106, 79, 0.06) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(212, 168, 73, 0.04) 0%, transparent 60%),
-                var(--cream);
-            background-attachment: fixed;
+                radial-gradient(ellipse at 20% 20%, rgba(170,50,21,0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(212,168,75,0.05) 0%, transparent 50%),
+                linear-gradient(180deg, #FDFBF7 0%, #F5F0E8 100%);
         }
         
         /* 云纹装饰 */
+        .cloud-pattern {
+            position: relative;
+        }
         .cloud-pattern::before {
             content: '';
             position: absolute;
@@ -42,11 +45,30 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: 
-                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M30 5 Q35 15 30 25 Q25 15 30 5 M15 20 Q20 30 15 40 Q10 30 15 20 M45 20 Q50 30 45 40 Q40 30 45 20' stroke='%23D4A849' stroke-width='0.5' fill='none' opacity='0.15'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cpath d='M10 30 Q25 15 40 30 Q55 45 70 30 Q85 15 100 30' stroke='%23D4A84B' stroke-width='0.5' fill='none' opacity='0.15'/%3E%3C/svg%3E");
+            background-size: 100px 100px;
             pointer-events: none;
-            opacity: 0.5;
+            opacity: 0.3;
         }
+        
+        /*  卷轴边框 */
+        .scroll-border {
+            position: relative;
+            background: linear-gradient(135deg, #FAF8F3 0%, #F5F0E8 100%);
+            border-left: 4px solid var(--gold);
+            border-right: 4px solid var(--gold);
+        }
+        .scroll-border::before,
+        .scroll-border::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 20px;
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), #C9A050);
+        }
+        .scroll-border::before { left: -4px; }
+        .scroll-border::after { right: -4px; }
         
         /* 印章按钮 */
         .seal-btn {
@@ -55,114 +77,54 @@
             justify-content: center;
             padding: 0.5rem 1.25rem;
             background: var(--cinnabar);
-            color: #FFFDE7;
-            font-size: 0.875rem;
+            color: #FFF;
+            font-size: 0.75rem;
             letter-spacing: 0.125em;
+            border: none;
             border-radius: 2px;
-            box-shadow: 2px 2px 0 rgba(26, 26, 26, 0.2);
-            transition: all 0.2s ease;
-            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: "Noto Serif SC", serif;
         }
         .seal-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 3px 3px 0 rgba(26, 26, 26, 0.25);
+            background: #8B2510;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(170,50,22,0.3);
         }
         .seal-btn.secondary {
-            background: var(--ink-black);
+            background: transparent;
+            color: var(--cinnabar);
+            border: 1px solid var(--cinnabar);
         }
-        .seal-btn.gold {
-            background: var(--gold);
-            color: var(--ink-black);
-        }
-        
-        /* 卷轴边框 */
-        .scroll-border {
-            position: relative;
-            background: #FFFEF9;
-            border-radius: 4px;
-            box-shadow: 
-                0 0 0 1px rgba(170, 50, 21, 0.1),
-                0 4px 20px rgba(0, 0, 0, 0.08);
-        }
-        .scroll-border::before,
-        .scroll-border::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            right: 0;
-            height: 12px;
-            background: linear-gradient(90deg, 
-                transparent 0%,
-                rgba(170, 50, 21, 0.15) 20%,
-                rgba(170, 50, 21, 0.15) 80%,
-                transparent 100%
-            );
-        }
-        .scroll-border::before { top: -6px; }
-        .scroll-border::after { bottom: -6px; }
-        
-        /* 输入框样式 */
-        .classic-input {
-            background: rgba(255, 253, 249, 0.8);
-            border: 1px solid rgba(170, 50, 21, 0.2);
-            border-radius: 4px;
-            padding: 1rem;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-        }
-        .classic-input:focus {
-            outline: none;
-            border-color: var(--cinnabar);
-            box-shadow: 0 0 0 3px rgba(170, 50, 21, 0.1);
-        }
-        
-        /* 选项标签 */
-        .option-tag {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.375rem 0.875rem;
-            background: rgba(250, 246, 239, 0.9);
-            border: 1px solid rgba(170, 50, 21, 0.15);
-            border-radius: 999px;
-            font-size: 0.8125rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .option-tag:hover {
-            border-color: var(--cinnabar);
-            background: rgba(170, 50, 21, 0.08);
-        }
-        .option-tag.selected {
+        .seal-btn.secondary:hover {
             background: var(--cinnabar);
-            border-color: var(--cinnabar);
-            color: #FFFDE7;
+            color: #FFF;
         }
         
         /* 卡片 */
         .classic-card {
-            background: #FFFEF9;
-            border: 1px solid rgba(170, 50, 21, 0.12);
-            border-radius: 8px;
+            background: linear-gradient(145deg, #FFF 0%, #FAF8F3 100%);
+            border: 1px solid rgba(170,50,21,0.1);
+            border-radius: 4px;
             padding: 1.5rem;
             transition: all 0.3s ease;
         }
         .classic-card:hover {
-            box-shadow: 0 8px 30px rgba(170, 50, 21, 0.12);
-            transform: translateY(-2px);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(170,50,22,0.15);
+            border-color: rgba(170,50,21,0.2);
         }
         
-        /* 进度条 */
-        .progress-bar {
-            height: 4px;
-            background: rgba(170, 50, 21, 0.1);
+        /* 类别标签 */
+        .category-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(170,50,21,0.08);
+            color: var(--cinnabar);
+            font-size: 0.75rem;
             border-radius: 2px;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--cinnabar), var(--gold));
-            border-radius: 2px;
-            transition: width 0.3s ease;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
         }
         
         /* 古琴图标动画 */
@@ -170,444 +132,546 @@
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-6px); }
         }
-        @keyframes scale-in {
-            0% { transform: scale(0.9); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .floating-note {
+        .floating-icon {
             animation: gentle-float 3s ease-in-out infinite;
         }
-        .animate-scale-in {
-            animation: scale-in 0.2s ease-out;
+        
+        /* 汉字线条动画 */
+        @keyframes draw-line {
+            from { stroke-dashoffset: 1000; }
+            to { stroke-dashoffset: 0; }
         }
         
-        /* 会员卡片 */
-        .vip-card {
-            background: linear-gradient(145deg, #1A1A1A 0%, #2C3E50 100%);
-            border: 2px solid var(--gold);
-            position: relative;
-            overflow: hidden;
-        }
-        .vip-card::before {
-            content: '雅士';
-            position: absolute;
-            top: 10px;
-            right: -25px;
-            background: var(--gold);
-            color: var(--ink-black);
-            font-size: 0.625rem;
-            padding: 2px 30px;
-            transform: rotate(45deg);
+        /* 内容卡片网格 */
+        .culture-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
         }
         
-        /* 列表演唱列表 */
-        .song-row {
+        /* 详情内容 */
+        .detail-content {
+            line-height: 1.8;
+            color: #4A4A4A;
+        }
+        .detail-content p {
+            margin-bottom: 1rem;
+            text-indent: 2em;
+        }
+        
+        /* 诗词内容 */
+        .poem-text {
+            font-family: "Noto Serif SC", "Kaiti SC", STKaiti, serif;
+            font-size: 1.125rem;
+            line-height: 2;
+            color: #2A2A2A;
+        }
+        .poem-text .title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--cinnabar);
+        }
+        .poem-text .author {
+            text-align: right;
+            margin-top: 1rem;
+            color: #666;
+            font-size: 0.875rem;
+        }
+        
+        /* 返回顶部 */
+        .back-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 3rem;
+            height: 3rem;
+            background: var(--cinnabar);
+            color: #FFF;
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            padding: 1rem 1.25rem;
-            background: rgba(255, 253, 249, 0.6);
-            border-bottom: 1px solid rgba(170, 50, 21, 0.08);
-            transition: all 0.2s ease;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 100;
         }
-        .song-row:hover {
-            background: rgba(170, 50, 21, 0.05);
+        .back-top.show {
+            opacity: 1;
         }
-        .song-row:first-child {
-            border-radius: 8px 8px 0 0;
-        }
-        .song-row:last-child {
-            border-radius: 0 0 8px 8px;
-            border-bottom: none;
+        .back-top:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 16px rgba(170,50,22,0.3);
         }
         
-        /* 中国结装饰 */
-        .china-knot {
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            background: var(--cinnabar);
-            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Ccircle cx='12' cy='16' r='4'/%3E%3Cpath d='M8 8 Q8 4 12 4 Q16 4 16 8' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E");
-            -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Ccircle cx='12' cy='16' r='4'/%3E%3Cpath d='M8 8 Q8 4 12 4 Q16 4 16 8' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E");
+        /* 夜间模式 */
+        body.dark-mode {
+            --rice-paper: #1A1A1A;
+            background: #121212;
+        }
+        body.dark-mode .classic-card {
+            background: linear-gradient(145deg, #2A2A2A 0%, #1F1F1F 100%);
+            border-color: rgba(212,168,75,0.2);
+        }
+        body.dark-mode .scroll-border {
+            background: linear-gradient(135deg, #1F1F1F 0%, #1A1A1A 100%);
         }
     </style>
 </head>
-<body class="ink-bg cloud-pattern relative">
+<body class="ink-bg cloud-pattern">
 
     <!-- 顶部导航 -->
-    <nav class="relative z-10 bg-white/80 backdrop-blur-sm border-b border-amber-900/10 sticky top-0">
-        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-amber-900/10">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
             <!-- Logo -->
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-amber-800 flex items-center justify-center">
-                    <svg class="w-6 h-6 text-amber-100" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
-                    </svg>
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-amber-700 to-amber-800 flex items-center justify-center shadow-lg">
+                    <span class="text-amber-100 text-xl font-bold">文</span>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold text-amber-900">雅韵诗乐</h1>
-                    <p class="text-xs text-amber-700/60 tracking-widest">诗词作曲 · 古风新韵</p>
+                    <h1 class="text-xl font-bold text-amber-900">中华传统文化</h1>
+                    <p class="text-xs text-amber-700/60 tracking-widest">传承千年文明 · 弘扬民族文化</p>
                 </div>
             </div>
             
             <!-- 导航链接 -->
-            <div class="hidden md:flex items-center gap-8">
-                <a href="#" class="text-sm text-amber-800 hover:text-amber-600 transition">诗词汇</a>
-                <a href="#" class="text-sm text-amber-800 hover:text-amber-600 transition">雅士阁</a>
+            <div class="hidden md:flex items-center gap-6">
+                <a href="#home" class="text-sm text-amber-800 hover:text-amber-600 transition">首页</a>
+                <a href="#poetry" class="text-sm text-amber-800 hover:text-amber-600 transition">诗词</a>
+                <a href="#calligraphy" class="text-sm text-amber-800 hover:text-amber-600 transition">书法</a>
+                <a href="#customs" class="text-sm text-amber-800 hover:text-amber-600 transition">民俗</a>
+                <a href="#music" class="text-sm text-amber-800 hover:text-amber-600 transition">民乐</a>
             </div>
             
-            <!-- 用户状态 -->
-            <div class="flex items-center gap-3">
-                <div class="text-right hidden sm:block">
-                    <p class="text-xs text-amber-700/60">音缘</p>
-                    <p class="text-sm font-medium text-amber-900">10 音</p>
-                </div>
-                <button class="seal-btn secondary text-xs">登入</button>
-            </div>
+            <!-- 主题切换 -->
+            <button id="themeToggle" class="seal-btn secondary text-xs">深色</button>
         </div>
     </nav>
 
-    <main class="relative z-10 max-w-5xl mx-auto px-4 py-8 md:py-12">
+    <main class="relative z-10 max-w-6xl mx-auto px-4 py-8">
         
-        <!-- 英雄区 -->
-        <section class="text-center mb-12">
-            <div class="floating-note inline-block mb-4">
-                <svg class="w-12 h-12 text-amber-700" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
-                </svg>
-            </div>
-            <h2 class="text-3xl md:text-4xl font-bold text-amber-900 mb-3">填写诗词意 AI 谱雅曲</h2>
-            <p class="text-amber-700/70 max-w-lg mx-auto">支持古风、现代等多种风格，无须通晓乐理，只需填入您心之诗句，即可成就独属于您的妙韵。</p>
-        </section>
-
-        <!-- 主创作区 -->
-        <section class="scroll-border p-6 md:p-8 mb-10">
-            <h3 class="text-lg font-semibold text-amber-900 mb-4 flex items-center gap-2">
-                <span class="w-1 h-5 bg-amber-700 rounded-sm"></span>
-                诗词输入
-            </h3>
-            
-            <!-- 歌词输入框 -->
-            <textarea 
-                id="lyricsInput"
-                class="classic-input w-full h-40 resize-none" 
-                placeholder="在此输入您的诗词...&#10;&#10;支持标记：&#10;[Verse] 主歌内容&#10;[Chorus] 副歌高潮&#10;[Bridge] 过渡转承"
-            ></textarea>
-            
-            <div class="flex items-center justify-between mt-3 text-xs text-amber-600/50">
-                <span>当前字数：<span id="charCount">0</span> 字</span>
-                <button class="hover:text-amber-700 transition" onclick="document.getElementById('lyricsInput').value=''; document.getElementById('charCount').innerText='0'">清空重写</button>
-            </div>
-        </section>
-
-        <!-- 参数选择 -->
-        <section class="grid md:grid-cols-3 gap-6 mb-10">
-            <!-- 音乐风格 -->
-            <div class="classic-card">
-                <h4 class="text-sm font-medium text-amber-900 mb-4 flex items-center gap-2">
-                    <svg class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
-                    曲风
-                </h4>
-                <div class="flex flex-wrap gap-2">
-                    <span class="option-tag selected" data-value="folk">古风</span>
-                    <span class="option-tag" data-value="pop">流行</span>
-                    <span class="option-tag" data-value="rock">摇滚</span>
-                    <span class="option-tag" data-value="electronic">电子</span>
-                    <span class="option-tag" data-value="rnb">R&amp;B</span>
-                    <span class="option-tag" data-value="jazz">爵��</span>
+        <!-- 首页英雄区 -->
+        <section id="home" class="text-center mb-16 py-12">
+            <div class="floating-icon inline-block mb-6">
+                <div class="w-20 h-20 rounded-full bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
+                    <svg class="w-10 h-10 text-amber-700" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
                 </div>
             </div>
-
-            <!-- 歌曲时长 -->
-            <div class="classic-card">
-                <h4 class="text-sm font-medium text-amber-900 mb-4 flex items-center gap-2">
-                    <svg class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
-                    曲长
-                </h4>
-                <div class="flex flex-wrap gap-2">
-                    <span class="option-tag" data-value="30">30秒</span>
-                    <span class="option-tag selected" data-value="60">1分钟</span>
-                    <span class="option-tag" data-value="180">3分钟</span>
-                    <span class="option-tag" data-value="300">5分钟</span>
-                </div>
-            </div>
-
-            <!-- 人声 -->
-            <div class="classic-card">
-                <h4 class="text-sm font-medium text-amber-900 mb-4 flex items-center gap-2">
-                    <svg class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="currentColor"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg>
-                    人声
-                </h4>
-                <div class="flex flex-wrap gap-2">
-                    <span class="option-tag selected" data-value="qing">青叔音</span>
-                    <span class="option-tag" data-value="tian">甜妹音</span>
-                    <span class="option-tag" data-value="shao">少年音</span>
-                    <span class="option-tag" data-value="yu">御姐音</span>
-                    <span class="option-tag" data-value="cheng">沉稳音</span>
-                    <span class="option-tag" data-value="nv">少女音</span>
-                </div>
+            <h2 class="text-4xl md:text-5xl font-bold text-amber-900 mb-4">中华传统文化</h2>
+            <p class="text-amber-700/70 text-lg max-w-2xl mx-auto mb-8">五千年文明积淀，留下了璀璨的文化瑰宝。从诗词歌赋到书法绘画，从礼仪制度到节日民俗，让我们一起品味传统文化的独特魅力。</p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#poetry" class="seal-btn">探索诗词</a>
+                <a href="#calligraphy" class="seal-btn secondary">欣赏书法</a>
             </div>
         </section>
 
-        <!-- 生成按钮 -->
-        <section class="text-center mb-12">
-            <button class="seal-btn gold text-lg px-12 py-4">
-                <span class="flex items-center gap-3">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
-                    妙手丹青
-                </span>
-            </button>
-            <p class="mt-3 text-xs text-amber-600/50">每次消耗 2 音缘</p>
-        </section>
-
-        <!-- 生成结果展示 -->
-        <section class="scroll-border p-6 mb-10">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-amber-900 flex items-center gap-2">
-                    <span class="w-1 h-5 bg-amber-700 rounded-sm"></span>
-                    妙韵初成
+        <!-- 诗词专栏 -->
+        <section id="poetry" class="mb-16 scroll-border p-8">
+            <div class="text-center mb-8">
+                <h3 class="text-2xl font-bold text-amber-900 mb-2 flex items-center justify-center gap-3">
+                    <span class="w-16 h-px bg-amber-300"></span>
+                    诗词鉴赏
+                    <span class="w-16 h-px bg-amber-300"></span>
                 </h3>
-                <span class="text-xs text-amber-600/50">共含四阙，各具风韵</span>
+                <p class="text-amber-600/60">诗言志，歌永言</p>
             </div>
             
-            <!-- 进度条 -->
-            <div class="mb-6">
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 0%"></div>
-                </div>
-                <p class="text-xs text-amber-600/50 mt-2 text-center">正在悟境通幽，循诗情画意...</p>
-            </div>
-            
-            <!-- 生成结果列表 -->
-            <div class="space-y-0">
-                <!-- V1 -->
-                <div class="song-row">
-                    <div class="flex items-center gap-3 flex-1">
-                        <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 text-xs font-bold">V1</div>
-                        <div class="flex-1">
-                            <p class="text-sm text-amber-900 font-medium">古韵悠然版</p>
-                            <p class="text-xs text-amber-600/50">古风 · 琴箫和鸣 · 4:58</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button class="w-8 h-8 rounded-full bg-amber-100 hover:bg-amber-200 flex items-center justify-center transition">
-                            <svg class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                        </button>
-                        <button class="w-8 h-8 rounded-full bg-amber-100 hover:bg-amber-200 flex items-center justify-center transition">
-                            <svg class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                        </button>
-                    </div>
+            <div class="culture-grid">
+                <!-- 静夜思 -->
+                <div class="classic-card cursor-pointer" onclick="showPoem('静夜思', '李白', '床前明月光，疑是地上霜。举头望明月，低头思故乡。')">
+                    <span class="category-tag">唐诗</span>
+                    <h4 class="text-lg font-bold text-amber-900 mb-2">静夜思</h4>
+                    <p class="text-sm text-amber-700/70 mb-3">李白 · 五言绝句</p>
+                    <p class="text-sm text-amber-600/50">床前明月光，疑是地上霜...</p>
                 </div>
                 
-                <!-- V2 -->
-                <div class="song-row">
-                    <div class="flex items-center gap-3 flex-1">
-                        <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 text-xs font-bold">V2</div>
-                        <div class="flex-1">
-                            <p class="text-sm text-amber-900 font-medium">明月轻风版</p>
-                            <p class="text-xs text-amber-600/50">古风 · 琵琶丝竹 · 4:52</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button class="w-8 h-8 rounded-full bg-amber-100 hover:bg-amber-200 flex items-center justify-center transition">
-                            <svg class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                        </button>
-                        <button class="w-8 h-8 rounded-full bg-amber-100 hover:bg-amber-200 flex items-center justify-center transition">
-                            <svg class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                        </button>
-                    </div>
+                <!-- 春晓 -->
+                <div class="classic-card cursor-pointer" onclick="showPoem('春晓', '孟浩然', '春眠不觉晓，处处闻啼鸟。夜来风雨声，花落知多少。')">
+                    <span class="category-tag">唐诗</span>
+                    <h4 class="text-lg font-bold text-amber-900 mb-2">春晓</h4>
+                    <p class="text-sm text-amber-700/70 mb-3">孟浩然 · 五言绝句</p>
+                    <p class="text-sm text-amber-600/50">春眠不觉晓，处处闻啼鸟...</p>
                 </div>
                 
-                <!-- V3 -->
-                <div class="song-row">
-                    <div class="flex items-center gap-3 flex-1">
-                        <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 text-xs font-bold">V3</div>
-                        <div class="flex-1">
-                            <p class="text-sm text-amber-900 font-medium">高山流水版</p>
-                            <p class="text-xs text-amber-600/50">古风 · 古琴雅韵 · 4:55</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button class="w-8 h-8 rounded-full bg-amber-100 hover:bg-amber-200 flex items-center justify-center transition">
-                            <svg class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                        </button>
-                        <button class="w-8 h-8 rounded-full bg-amber-100 hover:bg-amber-200 flex items-center justify-center transition">
-                            <svg class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                        </button>
-                    </div>
+                <!-- 登鹳雀楼 -->
+                <div class="classic-card cursor-pointer" onclick="showPoem('登鹳雀楼', '王之涣', '白日依山尽，黄河入海流。欲穷千里目，更上一层楼。')">
+                    <span class="category-tag">唐诗</span>
+                    <h4 class="text-lg font-bold text-amber-900 mb-2">登鹳雀楼</h4>
+                    <p class="text-sm text-amber-700/70 mb-3">王之涣 · 五言绝句</p>
+                    <p class="text-sm text-amber-600/50">白日依山尽，黄河入海流...</p>
                 </div>
                 
-                <!-- V4 -->
-                <div class="song-row">
-                    <div class="flex items-center gap-3 flex-1">
-                        <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 text-xs font-bold">V4</div>
-                        <div class="flex-1">
-                            <p class="text-sm text-amber-900 font-medium">大漠孤烟版</p>
-                            <p class="text-xs text-amber-600/50">古风 · 胡笳驼铃 · 4:40</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button class="w-8 h-8 rounded-full bg-amber-100 hover:bg-amber-200 flex items-center justify-center transition">
-                            <svg class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                        </button>
-                        <button class="w-8 h-8 rounded-full bg-amber-100 hover:bg-amber-200 flex items-center justify-center transition">
-                            <svg class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                        </button>
-                    </div>
+                <!-- 江雪 -->
+                <div class="classic-card cursor-pointer" onclick="showPoem('江雪', '柳宗元', '千山鸟飞绝，万径人踪灭。孤舟蓑笠翁，独钓寒江雪。')">
+                    <span class="category-tag">唐诗</span>
+                    <h4 class="text-lg font-bold text-amber-900 mb-2">江雪</h4>
+                    <p class="text-sm text-amber-700/70 mb-3">柳宗元 · 五言绝句</p>
+                    <p class="text-sm text-amber-600/50">千山鸟飞绝，万径人踪灭...</p>
                 </div>
-            </div>
-            
-            <!-- 操作按钮 -->
-            <div class="flex items-center justify-center gap-4 mt-6">
-                <button class="seal-btn text-sm">
-                    <span class="flex items-center gap-2">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
-                        再酿新韵
-                    </span>
-                </button>
-                <button class="seal-btn secondary text-sm">
-                    <span class="flex items-center gap-2">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
-                        藏入诗库
-                    </span>
-                </button>
+                
+                <!-- 相思 -->
+                <div class="classic-card cursor-pointer" onclick="showPoem('相思', '王维', '红豆生南国，春来发几枝。愿君多采撷，此物最相思。')">
+                    <span class="category-tag">唐诗</span>
+                    <h4 class="text-lg font-bold text-amber-900 mb-2">相思</h4>
+                    <p class="text-sm text-amber-700/70 mb-3">王维 · 五言绝句</p>
+                    <p class="text-sm text-amber-600/50">红豆生南国，春来发几枝...</p>
+                </div>
+                
+                <!-- 鹿柴 -->
+                <div class="classic-card cursor-pointer" onclick="showPoem('鹿柴', '王维', '空山不见人，但闻人语响。返景入深林，复照青苔上。')">
+                    <span class="category-tag">唐诗</span>
+                    <h4 class="text-lg font-bold text-amber-900 mb-2">鹿柴</h4>
+                    <p class="text-sm text-amber-700/70 mb-3">王维 · 五言绝句</p>
+                    <p class="text-sm text-amber-600/50">空山不见人，但闻人语响...</p>
+                </div>
             </div>
         </section>
 
-        <!-- 会员体系 -->
-        <section class="mb-12">
-            <h3 class="text-lg font-semibold text-amber-900 mb-6 text-center flex items-center justify-center gap-3">
-                <span class="w-12 h-px bg-amber-300"></span>
-                雅士礼遇
-                <span class="w-12 h-px bg-amber-300"></span>
-            </h3>
+        <!-- 书法专栏 -->
+        <section id="calligraphy" class="mb-16">
+            <div class="text-center mb-8">
+                <h3 class="text-2xl font-bold text-amber-900 mb-2 flex items-center justify-center gap-3">
+                    <span class="w-16 h-px bg-amber-300"></span>
+                    书法鉴赏
+                    <span class="w-16 h-px bg-amber-300"></span>
+                </h3>
+                <p class="text-amber-600/60">书，心画也</p>
+            </div>
             
-            <div class="grid md:grid-cols-3 gap-6">
-                <!-- 免费 -->
+            <div class="culture-grid">
+                <!-- 楷书 -->
                 <div class="classic-card text-center">
-                    <h4 class="text-base font-medium text-amber-900 mb-2">初学</h4>
-                    <p class="text-3xl font-bold text-amber-900 mb-1">¥0</p>
-                    <p class="text-xs text-amber-600/50 mb-4">终身免费</p>
-                    <ul class="text-xs text-amber-700/70 space-y-2 mb-6">
-                        <li>✓ 新人赠10音缘</li>
-                        <li>✓ 可酿5首</li>
-                        <li>✓ 30秒/1分钟</li>
-                        <li>✓ 标准音质</li>
-                        <li class="opacity-50">✗ 不可商用</li>
-                    </ul>
-                    <button class="seal-btn secondary w-full text-sm">入门</button>
+                    <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-100 flex items-center justify-center">
+                        <span class="text-4xl text-amber-700 font-bold">永</span>
+                    </div>
+                    <h4 class="text-lg font-bold text-amber-900 mb-2">楷书</h4>
+                    <p class="text-sm text-amber-700/70 mb-3">欧阳询·颜真卿·柳公权</p>
+                    <p class="text-xs text-amber-600/50">形体方正，笔画平直</p>
                 </div>
                 
-                <!-- 月度 -->
-                <div class="classic-card text-center ring-2 ring-amber-500 relative">
-                    <span class="absolute -top-2 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-amber-500 text-white text-xs rounded">超值</span>
-                    <h4 class="text-base font-medium text-amber-900 mb-2">雅士</h4>
-                    <p class="text-3xl font-bold text-amber-900 mb-1">¥29<span class="text-sm font-normal">/月</span></p>
-                    <p class="text-xs text-amber-600/50 mb-4">月度礼遇</p>
-                    <ul class="text-xs text-amber-700/70 space-y-2 mb-6">
-                        <li>✓ 无限酿造</li>
-                        <li>✓ 5分钟完整版</li>
-                        <li>✓ 320kbps高清</li>
-                        <li>✓ 商演授权</li>
-                        <li>✓ 专属人声</li>
-                    </ul>
-                    <button class="seal-btn gold w-full text-sm">尊享</button>
+                <!-- 行书 -->
+                <div class="classic-card text-center">
+                    <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-100 flex items-center justify-center">
+                        <span class="text-4xl text-amber-700 font-bold" style="font-family: cursive">之</span>
+                    </div>
+                    <h4 class="text-lg font-bold text-amber-900 mb-2">行书</h4>
+                    <p class="text-sm text-amber-700/70 mb-3">王羲之·苏轼·米芾</p>
+                    <p class="text-xs text-amber-600/50">流畅飘逸，笔走龙蛇</p>
                 </div>
                 
-                <!-- 年度 -->
+                <!-- 草书 -->
                 <div class="classic-card text-center">
-                    <h4 class="text-base font-medium text-amber-900 mb-2">雅客流徽</h4>
-                    <p class="text-3xl font-bold text-amber-900 mb-1">¥259<span class="text-sm font-normal">/年</span></p>
-                    <p class="text-xs text-amber-600/50 mb-4">年度钜惠</p>
-                    <ul class="text-xs text-amber-700/70 space-y-2 mb-6">
-                        <li>✓ 雅士全部权益</li>
-                        <li>✓ 8折特惠</li>
-                        <li>✓ 优酿队列</li>
-                        <li>✓ 专属礼待</li>
-                    </ul>
-                    <button class="seal-btn secondary w-full text-sm">入库</button>
+                    <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-100 flex items-center justify-center">
+                        <span class="text-4xl text-amber-700 font-bold" style="font-family: cursive">心</span>
+                    </div>
+                    <h4 class="text-lg font-bold text-amber-900 mb-2">草书</h4>
+                    <p class="text-sm text-amber-700/70 mb-3">张旭·怀素·孙过庭</p>
+                    <p class="text-xs text-amber-600/50">龙飞凤舞，笔势连绵</p>
+                </div>
+                
+                <!-- 隶书 -->
+                <div class="classic-card text-center">
+                    <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-100 flex items-center justify-center">
+                        <span class="text-4xl text-amber-700 font-bold">汉</span>
+                    </div>
+                    <h4 class="text-lg font-bold text-amber-900 mb-2">隶书</h4>
+                    <p class="text-sm text-amber-700/70 mb-3">东汉碑刻·石门颂</p>
+                    <p class="text-xs text-amber-600/50">蚕头燕尾，一波三折</p>
+                </div>
+                
+                <!-- 篆书 -->
+                <div class="classic-card text-center">
+                    <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-100 flex items-center justify-center">
+                        <span class="text-3xl text-amber-700 font-bold">天</span>
+                    </div>
+                    <h4 class="text-lg font-bold text-amber-900 mb-2">篆书</h4>
+                    <p class="text-sm text-amber-700/70 mb-3">甲骨文·金文·小篆</p>
+                    <p class="text-xs text-amber-600/50">圆转流畅，古朴典雅</p>
+                </div>
+                
+                <!-- 魏碑 -->
+                <div class="classic-card text-center">
+                    <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-100 flex items-center justify-center">
+                        <span class="text-4xl text-amber-700 font-bold">道</span>
+                    </div>
+                    <h4 class="text-lg font-bold text-amber-900 mb-2">魏碑</h4>
+                    <p class="text-sm text-amber-700/70 mb-3">龙门十二品·张猛龙</p>
+                    <p class="text-xs text-amber-600/50">雄奇刚健，方峻峭拔</p>
                 </div>
             </div>
         </section>
-        
+
+        <!-- 民俗专栏 -->
+        <section id="customs" class="mb-16 scroll-border p-8">
+            <div class="text-center mb-8">
+                <h3 class="text-2xl font-bold text-amber-900 mb-2 flex items-center justify-center gap-3">
+                    <span class="w-16 h-px bg-amber-300"></span>
+                    传统节日
+                    <span class="w-16 h-px bg-amber-300"></span>
+                </h3>
+                <p class="text-amber-600/60">岁时节令，文化传承</p>
+            </div>
+            
+            <div class="culture-grid">
+                <!-- 春节 -->
+                <div class="classic-card">
+                    <div class="flex items-start gap-4">
+                        <div class="w-16 h-16 rounded-lg bg-red-600 flex items-center justify-center flex-shrink-0">
+                            <span class="text-white text-2xl">春</span>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-amber-900 mb-1">春节</h4>
+                            <p class="text-xs text-amber-600/50 mb-2">正月初一</p>
+                            <p class="text-sm text-amber-700/70">阖家团聚，迎春接福。贴春联、放鞭炮、拜年祝福。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 元宵 -->
+                <div class="classic-card">
+                    <div class="flex items-start gap-4">
+                        <div class="w-16 h-16 rounded-lg bg-red-600 flex items-center justify-center flex-shrink-0">
+                            <span class="text-white text-2xl">元</span>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-amber-900 mb-1">元宵节</h4>
+                            <p class="text-xs text-amber-600/50 mb-2">正月十五</p>
+                            <p class="text-sm text-amber-700/70">赏花灯、猜灯谜、吃元宵。灯火阑珊处，共庆团圆。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 清明 -->
+                <div class="classic-card">
+                    <div class="flex items-start gap-4">
+                        <div class="w-16 h-16 rounded-lg bg-green-700 flex items-center justify-center flex-shrink-0">
+                            <span class="text-white text-2xl">清</span>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-amber-900 mb-1">清明节</h4>
+                            <p class="text-xs text-amber-600/50 mb-2">春分后15日</p>
+                            <p class="text-sm text-amber-700/70">踏青扫墓，缅怀先人。春风拂柳绿，哀思寄清明。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 端午 -->
+                <div class="classic-card">
+                    <div class="flex items-start gap-4">
+                        <div class="w-16 h-16 rounded-lg bg-green-700 flex items-center justify-center flex-shrink-0">
+                            <span class="text-white text-2xl">端</span>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-amber-900 mb-1">端午节</h4>
+                            <p class="text-xs text-amber-600/50 mb-2">五月初五</p>
+                            <p class="text-sm text-amber-700/70">赛龙舟、包粽子、挂艾草。纪念屈原，驱邪避疫。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 中秋 -->
+                <div class="classic-card">
+                    <div class="flex items-start gap-4">
+                        <div class="w-16 h-16 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0">
+                            <span class="text-white text-2xl">中</span>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-amber-900 mb-1">中秋节</h4>
+                            <p class="text-xs text-amber-600/50 mb-2">八月十五</p>
+                            <p class="text-sm text-amber-700/70">赏月拜月，分食月饼。海上生明月，天涯共此时。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 重阳 -->
+                <div class="classic-card">
+                    <div class="flex items-start gap-4">
+                        <div class="w-16 h-16 rounded-lg bg-orange-600 flex items-center justify-center flex-shrink-0">
+                            <span class="text-white text-2xl">重</span>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-amber-900 mb-1">重阳节</h4>
+                            <p class="text-xs text-amber-600/50 mb-2">九月初九</p>
+                            <p class="text-sm text-amber-700/70">登高眺远，饮菊酒。敬老思亲，祈福安康。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 民乐专栏 -->
+        <section id="music" class="mb-16">
+            <div class="text-center mb-8">
+                <h3 class="text-2xl font-bold text-amber-900 mb-2 flex items-center justify-center gap-3">
+                    <span class="w-16 h-px bg-amber-300"></span>
+                    古典民乐
+                    <span class="w-16 h-px bg-amber-300"></span>
+                </h3>
+                <p class="text-amber-600/60">八音迭奏，雅乐清音</p>
+            </div>
+            
+            <div class="culture-grid">
+                <!-- 古琴 -->
+                <div class="classic-card">
+                    <div class="text-center">
+                        <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-800 flex items-center justify-center">
+                            <svg class="w-10 h-10 text-amber-100" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-amber-900 mb-2">古琴</h4>
+                        <p class="text-sm text-amber-700/70 mb-2">七弦十三徽</p>
+                        <p class="text-xs text-amber-600/50">高山流水，阳春白雪</p>
+                    </div>
+                </div>
+                
+                <!-- 琵琶 -->
+                <div class="classic-card">
+                    <div class="text-center">
+                        <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-800 flex items-center justify-center">
+                            <svg class="w-10 h-10 text-amber-100" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-amber-900 mb-2">琵琶</h4>
+                        <p class="text-sm text-amber-700/70 mb-2">四弦五品</p>
+                        <p class="text-xs text-amber-600/50">珠落玉盘，大珠小珠</p>
+                    </div>
+                </div>
+                
+                <!-- 古筝 -->
+                <div class="classic-card">
+                    <div class="text-center">
+                        <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-800 flex items-center justify-center">
+                            <svg class="w-10 h-10 text-amber-100" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-amber-900 mb-2">古筝</h4>
+                        <p class="text-sm text-amber-700/70 mb-2">二十一弦</p>
+                        <p class="text-xs text-amber-600/50">渔舟唱晚，层层递进</p>
+                    </div>
+                </div>
+                
+                <!-- 笛子 -->
+                <div class="classic-card">
+                    <div class="text-center">
+                        <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-800 flex items-center justify-center">
+                            <svg class="w-10 h-10 text-amber-100" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-amber-900 mb-2">笛子</h4>
+                        <p class="text-sm text-amber-700/70 mb-2">竹笛六孔</p>
+                        <p class="text-xs text-amber-600/50">悠扬婉转，清脆明亮</p>
+                    </div>
+                </div>
+                
+                <!-- 二胡 -->
+                <div class="classic-card">
+                    <div class="text-center">
+                        <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-800 flex items-center justify-center">
+                            <svg class="w-10 h-10 text-amber-100" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-amber-900 mb-2">二胡</h4>
+                        <p class="text-sm text-amber-700/70 mb-2">两根琴弦</p>
+                        <p class="text-xs text-amber-600/50">如泣如诉，婉转缠绵</p>
+                    </div>
+                </div>
+                
+                <!-- 萧 -->
+                <div class="classic-card">
+                    <div class="text-center">
+                        <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-800 flex items-center justify-center">
+                            <svg class="w-10 h-10 text-amber-100" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-amber-900 mb-2">洞箫</h4>
+                        <p class="text-sm text-amber-700/70 mb-2">六孔竹萧</p>
+                        <p class="text-xs text-amber-600/50">深沉苍凉，意境悠远</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 关于 -->
+        <section class="text-center py-8 border-t border-amber-900/10">
+            <p class="text-sm text-amber-600/50 mb-2">中华传统文化 · 传承千年文明</p>
+            <p class="text-xs text-amber-600/40">让优秀传统文化在新时代焕发新的光彩</p>
+        </section>
+
     </main>
 
-    <!-- 页脚 -->
-    <footer class="relative z-10 bg-amber-900/5 border-t border-amber-900/10 py-8">
-        <div class="max-w-5xl mx-auto px-4 text-center">
-            <p class="text-sm text-amber-700/60 mb-2">© 2026 雅韵诗乐 · 小龙虾作品</p>
-            <div class="flex items-center justify-center gap-4 text-xs text-amber-600/40">
-                <a href="#" class="hover:text-amber-600 transition">关于我们</a>
-                <span>·</span>
-                <a href="#" class="hover:text-amber-600 transition">使用条款</a>
-                <span>·</span>
-                <a href="#" class="hover:text-amber-600 transition">隐私权政策</a>
-                <span>·</span>
-                <a href="#" class="hover:text-amber-600 transition">联系客服</a>
+    <!-- 返回顶部 -->
+    <div id="backTop" class="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
+        </svg>
+    </div>
+
+    <!-- 诗词弹窗 -->
+    <div id="poemModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4" onclick="if(event.target.id==='poemModal')closePoem()">
+        <div class="classic-card max-w-lg w-full p-8 animate-scale-in">
+            <div class="poem-text" id="poemContent"></div>
+            <div class="text-center mt-6">
+                <button class="seal-btn secondary" onclick="closePoem()">关闭</button>
             </div>
         </div>
-    </footer>
+    </div>
 
     <script>
-        // 字数统计
-        document.getElementById('lyricsInput').addEventListener('input', function(e) {
-            document.getElementById('charCount').innerText = e.target.value.length;
-        });
+        // 诗词弹窗
+        function showPoem(title, author, content) {
+            const modal = document.getElementById('poemModal');
+            const contentDiv = document.getElementById('poemContent');
+            contentDiv.innerHTML = `
+                <div class="title">${title}</div>
+                <div class="author">【${author}】</div>
+                <p>${content}</p>
+            `;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
         
-        // 选项切换
-        document.querySelectorAll('.option-tag').forEach(tag => {
-            tag.addEventListener('click', function() {
-                const siblings = this.parentElement.querySelectorAll('.option-tag');
-                siblings.forEach(s => s.classList.remove('selected'));
-                this.classList.add('selected');
+        function closePoem() {
+            const modal = document.getElementById('poemModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+        
+        // 导航平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const target = document.getElementById(targetId);
+                if (target) {
+                    target.scrollIntoView({behavior: 'smooth', block: 'start'});
+                }
             });
         });
         
-        // 登入按钮 - 显示登录弹窗
-        document.querySelector('.seal-btn.secondary')?.addEventListener('click', function() {
-            const modal = document.createElement('div');
-            modal.id = 'loginModal';
-            modal.innerHTML = `
-                <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="if(event.target===this)this.remove()">
-                    <div class="classic-card max-w-sm w-full p-6 animate-scale-in">
-                        <div class="text-center mb-6">
-                            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-100 flex items-center justify-center">
-                                <svg class="w-8 h-8 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                </svg>
-                            </div>
-                            <h3 class="text-xl font-bold text-amber-900">音缘登入</h3>
-                            <p class="text-sm text-amber-600/70 mt-1">登录后可开启更多雅士礼遇</p>
-                        </div>
-                        <div class="space-y-3">
-                            <input type="text" placeholder="邮箱 / 手机号" class="w-full px-4 py-3 rounded-lg border border-amber-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none bg-white/80">
-                            <input type="password" placeholder="密码" class="w-full px-4 py-3 rounded-lg border border-amber-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none bg-white/80">
-                            <button class="seal-btn w-full py-3" onclick="alert('演示模式：登录功能即将上线！')">登 入</button>
-                        </div>
-                        <div class="text-center mt-4 text-sm text-amber-600/60">
-                            还没有音缘？<a href="#" class="text-amber-700 underline" onclick="event.preventDefault();alert('注册功能即将上线！')">立即注册</a>
-                        </div>
-                        <button class="absolute top-4 right-4 text-amber-600/50 hover:text-amber-800" onclick="this.closest('#loginModal').remove()">✕</button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
+        // 返回顶部显示
+        window.addEventListener('scroll', function() {
+            const backTop = document.getElementById('backTop');
+            if (window.scrollY > 300) {
+                backTop.classList.add('show');
+            } else {
+                backTop.classList.remove('show');
+            }
         });
         
-        // 雅士阁 - 滚动到会员区域
-        document.querySelectorAll('a[href="#"]').forEach(link => {
-            if (link.textContent.trim() === '雅士阁') {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    document.querySelector('[class*="mb-12"]:has(h3)')?.scrollIntoView({behavior: 'smooth'});
-                });
-            }
-            if (link.textContent.trim() === '诗词汇') {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    // 滚动到歌词输入区域
-                    document.getElementById('lyricsInput')?.scrollIntoView({behavior: 'smooth', block: 'center'});
-                });
-            }
+        // 主题切换
+        document.getElementById('themeToggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            this.textContent = document.body.classList.contains('dark-mode') ? '浅色' : '深色';
         });
     </script>
 </body>
