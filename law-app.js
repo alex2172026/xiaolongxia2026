@@ -1520,6 +1520,45 @@ li {
                 tree.innerHTML = '<div class="text-xs text-slate-400 text-center py-8">法典数据加载中…</div>';
             }
         }
+
+        // 启动法典数据的后台预加载（不阻塞 UI），带进度反馈
+        function prefetchCodexData() {
+            if (CODEX || CODEX_LOADING) return;
+            var el = document.getElementById('codexLoadingHint');
+            var tree = document.getElementById('codexTree');
+            var tip = el ? el.querySelector('[data-tip]') : null;
+            var started = Date.now();
+            var t = setInterval(function() {
+                if (CODEX) { clearInterval(t); return; }
+                var sec = Math.round((Date.now() - started) / 1000);
+                var tip2 = document.getElementById('codexLoadingHint');
+                var tipEl = tip2 ? tip2.querySelector('[data-tip]') : null;
+                if (tipEl) tipEl.textContent = '法典数据加载中…（已等待 ' + sec + ' 秒，GitHub Pages 首次加载较慢）';
+                if (sec > 8) {
+                    var tr = document.getElementById('codexTree');
+                    if (tr && tr.innerHTML.indexOf('加载中') >= 0) {
+                        tr.innerHTML = '<div class="text-xs text-slate-400 text-center py-8 leading-relaxed">' +
+                            '法典数据仍在加载…<br><span class="text-[11px] text-slate-300">' +
+                            '（GitHub Pages 在国内带宽较低，全量法典约需 1.8MB）<br>您可以先使用「案件评查」功能，加载完成后法典检索自动可用</span></div>';
+                    }
+                }
+            }, 1000);
+            loadCodexData().then(function(ok) {
+                clearInterval(t);
+                if (ok) {
+                    initCodex().then(function(codex) {
+                        showCodexLoading(false);
+                        if (codex) renderCodexTree();
+                    });
+                } else {
+                    showCodexLoading(false);
+                    var tree2 = document.getElementById('codexTree');
+                    if (tree2 && !CODEX) {
+                        tree2.innerHTML = '<div class="text-xs text-amber-300 text-center py-8">法典数据加载失败，请检查网络后刷新重试</div>';
+                    }
+                }
+            });
+        }
         function showMainView() {
             document.body.classList.remove('codex-mode');
         }
@@ -1597,11 +1636,28 @@ li {
             try {
                 if (!CODEX) initCodex();
                 if (!CODEX || !CODEX.articles || CODEX.articles.length === 0) {
-                    const resultsEl = document.getElementById('codexSearchResults');
-                    if (resultsEl) {
-                        resultsEl.innerHTML = '<div class="text-center text-amber-300 py-8">⚠️ 法典数据未初始化，请刷新页面重试。如仍有问题请打开浏览器控制台查看错误。</div>';
+                    // 数据仍在下载：等待加载完成后自动重试，而不是直接报错
+                    var resultsEl0 = document.getElementById('codexSearchResults');
+                    if (resultsEl0) {
+                        resultsEl0.innerHTML = '<div class="text-center text-blue-300 py-8">' +
+                            '<div class="spinner w-6 h-6 border-2 border-blue-400 border-t-transparent rounded-full mx-auto mb-3"></div>' +
+                            '法典数据加载中，请稍候…<br><span class="text-xs text-slate-400">加载完成后会自动显示结果</span></div>';
                     }
-                    console.error('CODEX 未初始化，当前值:', CODEX);
+                    showCodexLoading(true);
+                    var waitStart = Date.now();
+                    var poll = setInterval(function() {
+                        if (CODEX) {
+                            clearInterval(poll);
+                            showCodexLoading(false);
+                            doCodexSearch();
+                        } else if (Date.now() - waitStart > 120000) {
+                            clearInterval(poll);
+                            if (resultsEl0) {
+                                resultsEl0.innerHTML = '<div class="text-center text-amber-300 py-8">⚠️ 法典数据加载超时，请检查网络后刷新重试</div>';
+                            }
+                            showCodexLoading(false);
+                        }
+                    }, 500);
                     return;
                 }
                 const query = document.getElementById('codexSearchInput').value.trim();

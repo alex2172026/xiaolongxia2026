@@ -619,6 +619,15 @@ body.codex-mode:not(.light-theme)::-webkit-scrollbar-thumb {
     if (typeof showCodexView === 'function') {
       showCodexView();
     }
+    // 后台预加载法典数据（不阻塞 UI 交互）
+    if (typeof prefetchCodexData === 'function') {
+      prefetchCodexData();
+    } else {
+      // 兜底：defer 脚本若尚未就绪，稍后重试
+      setTimeout(function() {
+        if (typeof prefetchCodexData === 'function') prefetchCodexData();
+      }, 300);
+    }
     // 隐藏主题切换按钮
     var themeBtn = document.getElementById('themeBtn');
     var codexThemeBtn = document.getElementById('codexThemeBtn');
