@@ -51,10 +51,164 @@
             color: #1e293b;
         }
         .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(16, 185, 129, 0.3); box-shadow: 0 8px 32px rgba(16, 185, 129, 0.1); }
-        .btn-primary { background: linear-gradient(135deg, #059669 0%, #10b981 100%); }
+        .btn-primary { background: linear-gradient(135deg, #047857 0%, #059669 100%); }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(16, 185, 129, 0.4); }
         @keyframes spin { to { transform: rotate(360deg); } }
         .spinner { animation: spin 1s linear infinite; }
+
+        /* ============ 可读性修复：浅色底框统一使用深色文字 ============ */
+        /* 背景：body 是浅绿渐变，.glass 是 85% 白，
+           但 Tailwind 的 .text-white 会把文字刷成纯白 → 白底白字。
+           这里对所有浅色容器显式指定深色前景色。 */
+        #mainView,
+        #mainView .glass,
+        #mainView .bg-slate-800,
+        #mainView .bg-slate-700,
+        #mainView .bg-slate-200,
+        #mainView .bg-blue-900\/30,
+        #mainView .bg-blue-900\/25,
+        #mainView .bg-amber-900\/30,
+        #mainView .bg-amber-900\/20,
+        #mainView .bg-red-900\/30,
+        #mainView .bg-green-900\/30 {
+            color: #1e293b;
+        }
+        /* 卡片内的次级说明文字 */
+        #mainView .text-slate-400 { color: #64748b !important; }
+        #mainView .text-slate-300 { color: #475569 !important; }
+        #mainView .text-slate-500 { color: #64748b !important; }
+        /* 拖拽区：浅色虚线框 + 深色文字 */
+        #mainView .drop-zone {
+            background: rgba(255,255,255,0.6) !important;
+            border-color: #94a3b8 !important;
+            color: #334155 !important;
+        }
+        #mainView .drop-zone p { color: #475569 !important; }
+        #mainView .drop-zone .text-slate-500 { color: #64748b !important; }
+        /* 单份笔录 / 免责声明 / 政策库提示等彩色条 */
+        #mainView .bg-blue-900\/25 { background: rgba(219,234,254,0.75) !important; border-color: #93c5fd !important; color: #1e3a8a !important; }
+        #mainView .bg-blue-900\/25 p,
+        #mainView .bg-blue-900\/25 span,
+        #mainView .bg-blue-900\/25 .text-blue-300,
+        #mainView .bg-blue-900\/25 .text-blue-200 { color: #1e40af !important; }
+        #mainView .bg-blue-900\/30 { background: rgba(219,234,254,0.75) !important; border-color: #93c5fd !important; color: #1e3a8a !important; }
+        #mainView .bg-blue-900\/30 p,
+        #mainView .bg-blue-900\/30 .text-blue-200 { color: #1e40af !important; }
+        #mainView .bg-amber-900\/30 { background: rgba(254,243,199,0.85) !important; border-color: #fcd34d !important; color: #78350f !important; }
+        #mainView .bg-amber-900\/30 p,
+        #mainView .bg-amber-900\/30 .text-amber-200 { color: #92400e !important; }
+        /* 输入框 */
+        #mainView textarea,
+        #mainView input {
+            background: #ffffff !important;
+            color: #1e293b !important;
+            border-color: #cbd5e1 !important;
+        }
+        #mainView textarea::placeholder,
+        #mainView input::placeholder { color: #94a3b8 !important; }
+        /* 顶部按钮组：浅色底 + 深色字 */
+        #mainView header button[class*="bg-slate-"] {
+            background: #ffffff !important;
+            color: #334155 !important;
+            border: 1px solid #cbd5e1 !important;
+        }
+        #mainView header button[class*="bg-slate-"]:hover {
+            background: #f1f5f9 !important;
+            color: #0f172a !important;
+        }
+        /* 主标题：深色文字渐变（原来是白→透明导致不可见） */
+        #mainView header h2 {
+            background: none !important;
+            -webkit-text-fill-color: #0f172a !important;
+            color: #0f172a !important;
+        }
+        /* 步骤编号圆点（彩色底 + 白字） */
+        #mainView .bg-blue-600,
+        #mainView .bg-purple-600,
+        #mainView .bg-green-600,
+        #mainView .bg-amber-600,
+        #mainView .bg-blue-500,
+        #mainView .bg-green-500 {
+            color: #ffffff !important;
+        }
+        /* 彩色实心按钮上的文字也保持白字 */
+        #mainView .bg-blue-600,
+        #mainView .bg-blue-500,
+        #mainView .bg-green-600,
+        #mainView .bg-green-500,
+        #mainView .bg-amber-600,
+        #mainView .bg-amber-500,
+        #mainView .bg-purple-600 {
+            color: #ffffff !important;
+        }
+        /* 主行动按钮（渐变绿底）：文字必须为白 */
+        #mainView .btn-primary,
+        #mainView .btn-primary span,
+        #mainView .btn-primary svg {
+            color: #ffffff !important;
+        }
+        /* 文件列表项 */
+        #mainView #fileList .bg-slate-800 {
+            background: rgba(255,255,255,0.9) !important;
+            color: #1e293b !important;
+        }
+        /* 状态与进度区 */
+        #mainView #status { color: #334155 !important; }
+        /* 报告区域 */
+        #mainView #reportContent { color: #1e293b !important; }
+        /* 批量标签 */
+        #mainView .batch-tag { background: #7c3aed !important; color: #ffffff !important; }
+        /* 打印时恢复为黑色文字 */
+        @media print {
+            #mainView, #mainView .glass { color: black !important; }
+        }
+
+        /* ============ 深色弹窗：显式白字（body 已改为深色默认，需单独指定） ============ */
+        .history-box,
+        .settings-box {
+            color: #e2e8f0 !important;
+        }
+        .history-box label,
+        .history-box p,
+        .history-box span,
+        .settings-box label,
+        .settings-box p,
+        .settings-box span {
+            color: #cbd5e1 !important;
+        }
+        .history-box h3,
+        .settings-box h3 { color: #ffffff !important; }
+        /* 弹窗内的输入框 / 下拉框：深色底 + 白字 */
+        .history-box input,
+        .history-box select,
+        .history-box textarea,
+        .settings-box input,
+        .settings-box select,
+        .settings-box textarea {
+            background: #334155 !important;
+            color: #f1f5f9 !important;
+            border-color: #475569 !important;
+        }
+        .history-box input::placeholder,
+        .settings-box input::placeholder { color: #94a3b8 !important; }
+        /* 弹窗内次级说明 */
+        .settings-box .text-slate-400,
+        .history-box .text-slate-400 { color: #94a3b8 !important; }
+        /* 关闭按钮 */
+        .history-box button.text-slate-400,
+        .settings-box button.text-slate-400 { color: #94a3b8 !important; }
+        .history-box button.text-slate-400:hover,
+        .settings-box button.text-slate-400:hover { color: #ffffff !important; }
+        /* 清空按钮 */
+        .history-box .text-red-400 { color: #f87171 !important; }
+        .history-box .bg-red-900\/30 { background: rgba(127,29,29,0.4) !important; border-color: rgba(248,113,113,0.4) !important; }
+        /* 绿色实心按钮：加深底色以满足 WCAG AA（白字对比度 >= 4.5） */
+        .history-box .bg-green-600,
+        .settings-box .bg-green-600 { background: #047857 !important; color: #ffffff !important; }
+        .history-box .bg-green-600:hover,
+        .settings-box .bg-green-600:hover { background: #065f46 !important; }
+        #mainView .bg-green-600 { background: #047857 !important; }
+        #mainView .bg-green-600:hover { background: #065f46 !important; }
 
         /* 历史记录面板 */
         #historyPanel {
@@ -533,6 +687,42 @@ body.codex-mode #codexView .hover\:bg-blue-500:hover {
   background-color: #1d4ed8 !important;
 }
 
+/* ---- codex-mode 可读性修复 ---- */
+/* codex-mode 是白底，.bg-slate-700 被改成白色，
+   但 .codex-tab-btn 自带深色背景规则优先级更高 → 白底浅字 */
+body.codex-mode #codexView .codex-tab-btn {
+  background: #e2e8f0 !important;
+  color: #334155 !important;
+}
+body.codex-mode #codexView .codex-tab-btn:hover:not(.active) {
+  background: #cbd5e1 !important;
+  color: #1e293b !important;
+}
+body.codex-mode #codexView .codex-tab-btn.active {
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%) !important;
+  color: #ffffff !important;
+}
+/* 渐变标题：text-transparent 在白底会变全透明 → 改用实色 */
+body.codex-mode #codexView h1.bg-clip-text,
+body.codex-mode #codexView h2.bg-clip-text {
+  background: none !important;
+  -webkit-text-fill-color: #1f2937 !important;
+  color: #1f2937 !important;
+}
+/* 搜索/浏览/问答面板内的次级文字 */
+body.codex-mode #codexView .text-slate-400 { color: #64748b !important; }
+body.codex-mode #codexView .text-slate-300 { color: #475569 !important; }
+body.codex-mode #codexView .text-slate-500 { color: #64748b !important; }
+/* 彩色实心按钮上的 text-white 需保持白色（codex-mode 把它改成了深色） */
+body.codex-mode #codexView .bg-blue-600 .text-white,
+body.codex-mode #codexView .bg-blue-500 .text-white,
+body.codex-mode #codexView .bg-amber-600 .text-white,
+body.codex-mode #codexView .bg-green-600 .text-white,
+body.codex-mode #codexView button.text-white { color: #ffffff !important; }
+/* 输入框占位符 */
+body.codex-mode #codexView input::placeholder,
+body.codex-mode #codexView textarea::placeholder { color: #94a3b8 !important; }
+
 /* 紧凑布局 */
 body.codex-mode #codexView .py-8 {
   padding-top: 1rem !important;
@@ -611,7 +801,7 @@ body.codex-mode:not(.light-theme)::-webkit-scrollbar-thumb {
 
 </style>
 </head>
-<body class="min-h-screen text-white">
+<body class="min-h-screen">
 <script>
 // 法典查询独立页面: 进入 codex-mode, 隐藏主题切换按钮 (黑字白底, 不再区分白天/夜晚)
 (function() {
