@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中华传统文化 - 传承千年文明</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --cinnabar: #AA3216;
+            --gold: #D4A84B;
+            --ink-black: #1A1A1A;
+            --jade: #2D5A4A;
+            --ivory: #F5F5F0;
+            --rice-paper: #FDFBF7;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", "Noto Serif SC", serif;
+            background: var(--rice-paper);
+        }
+        
+        /* 水墨晕染背景 */
+        .ink-bg {
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(170,50,21,0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(212,168,75,0.05) 0%, transparent 50%),
+                linear-gradient(180deg, #FDFBF7 0%, #F5F0E8 100%);
+        }
+        
+        /* 云纹装饰 */
+        .cloud-pattern {
+            position: relative;
+        }
+        .cloud-pattern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cpath d='M10 30 Q25 15 40 30 Q55 45 70 30 Q85 15 100 30' stroke='%23D4A84B' stroke-width='0.5' fill='none' opacity='0.15'/%3E%3C/svg%3E");
+            background-size: 100px 100px;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+        
+        /*  卷轴边框 */
+        .scroll-border {
+            position: relative;
+            background: linear-gradient(135deg, #FAF8F3 0%, #F5F0E8 100%);
+            border-left: 4px solid var(--gold);
+            border-right: 4px solid var(--gold);
+        }
+        .scroll-border::before,
+        .scroll-border::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 20px;
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), #C9A050);
+        }
+        .scroll-border::before { left: -4px; }
+        .scroll-border::after { right: -4px; }
+        
+        /* 印章按钮 */
+        .seal-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1.25rem;
+            background: var(--cinnabar);
+            color: #FFF;
+            font-size: 0.75rem;
+            letter-spacing: 0.125em;
+            border: none;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: "Noto Serif SC", serif;
+        }
+        .seal-btn:hover {
+            background: #8B2510;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(170,50,22,0.3);
+        }
+        .seal-btn.secondary {
+            background: transparent;
+            color: var(--cinnabar);
+            border: 1px solid var(--cinnabar);
+        }
+        .seal-btn.secondary:hover {
+            background: var(--cinnabar);
+            color: #FFF;
+        }
+        
+        /* 卡片 */
+        .classic-card {
+            background: linear-gradient(145deg, #FFF 0%, #FAF8F3 100%);
+            border: 1px solid rgba(170,50,21,0.1);
+            border-radius: 4px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .classic-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(170,50,22,0.15);
+            border-color: rgba(170,50,21,0.2);
+        }
+        
+        /* 类别标签 */
+        .category-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(170,50,21,0.08);
+            color: var(--cinnabar);
+            font-size: 0.75rem;
+            border-radius: 2px;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* 古琴图标动画 */
+        @keyframes gentle-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        .floating-icon {
+            animation: gentle-float 3s ease-in-out infinite;
+        }
+        
+        /* 汉字线条动画 */
+        @keyframes draw-line {
+            from { stroke-dashoffset: 1000; }
+            to { stroke-dashoffset: 0; }
+        }
+        
+        /* 内容卡片网格 */
+        .culture-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        /* 详情内容 */
+        .detail-content {
+            line-height: 1.8;
+            color: #4A4A4A;
+        }
+        .detail-content p {
+            margin-bottom: 1rem;
+            text-indent: 2em;
+        }
+        
+        /* 诗词内容 */
+        .poem-text {
+            font-family: "Noto Serif SC", "Kaiti SC", STKaiti, serif;
+            font-size: 1.125rem;
+            line-height: 2;
+            color: #2A2A2A;
+        }
+        .poem-text .title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--cinnabar);
+        }
+        .poem-text .author {
+            text-align: right;
+            margin-top: 1rem;
+            color: #666;
+            font-size: 0.875rem;
+        }
+        
+        /* 返回顶部 */
+        .back-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 3rem;
+            height: 3rem;
+            background: var(--cinnabar);
+            color: #FFF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        .back-top.show {
+            opacity: 1;
+        }
+        .back-top:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 16px rgba(170,50,22,0.3);
+        }
+        
+        /* 夜间模式 */
+        body.dark-mode {
+            --rice-paper: #1A1A1A;
+            background: #121212;
+        }
+        body.dark-mode .classic-card {
+            background: linear-gradient(145deg, #2A2A2A 0%, #1F1F1F 100%);
+            border-color: rgba(212,168,75,0.2);
+        }
+        body.dark-mode .scroll-border {
+            background: linear-gradient(135deg, #1F1F1F 0%, #1A1A1A 100%);
+        }
+    </style>
+</head>
+<body class="ink-bg cloud-pattern">
+
+    <!-- 顶部导航 -->
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-amber-900/10">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-amber-700 to-amber-800 flex items-center justify-center shadow-lg">
+                    <span class="text-amber-100 text-xl font-bold">文</span>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-amber-900">中华传统文化</h1>
+                    <p class="text-xs text-amber-700/60 tracking-widest">传承千年文明 · 弘扬民族文化</p>
+                </div>
+            </div>
+            
+            <!-- 导航链接 -->
+            <div class="hidden md:flex items-center gap-6">
+                <a href="#home" class="text-sm text-amber-800 hover:text-amber-600 transition">首页</a>
+                <a href="#poetry" class="text-sm text-amber-800 hover:text-amber-600 transition">诗词</a>
+                <a href="#calligraphy" class="text-sm text-amber-800 hover:text-amber-600 transition">书法</a>
+                <a href="#customs" class="text-sm text-amber-800 hover:text-amber-600 transition">民俗</a>
+                <a href="#music" class="text-sm text-amber-800 hover:text-amber-600 transition">民乐</a>
+            </div>
+            
+            <!-- 主题切换 -->
+            <button id="themeToggle" class="seal-btn secondary text-xs">深色</button>
+        </div>
+    </nav>
+
+    <main class="relative z-10 max-w-6xl mx-auto px-4 py-8">
+        
+        <!-- 首页英雄区 -->
+        <section id="home" class="text-center mb-16 py-12">
+            <div class="floating-icon inline-block mb-6">
+                <div class="w-20 h-20 rounded-full bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
+                    <svg class="w-10 h-10 text-amber-700" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+            </div>
+            <h2 class="text-4xl md:text-5xl font-bold text-amber-900 mb-4">中华传统文化</h2>
+            <p class="text-amber-700/70 text-lg max-w-2xl mx-auto mb-8">五千年文明积淀，留下了璀璨的文化瑰宝。从诗词歌赋到书法绘画，从礼仪制度到节日民俗，让我们一起品味传统文化的独特魅力。</p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#poetry" class="seal-btn">探索诗词</a>
+                <a href="#calligraphy" class="seal-btn secondary">欣赏书法</a>
+            </div>
+        </section>
+
+        <!-- 诗词专栏 -->
+        <section id="poetry" class="mb-16 scroll-border p-8">
+            <div class="text-center mb-8">
+                <h3 class="text-2xl font-bold text-amber-900 mb-2 flex items-center justify-center gap-3">
+                    <span class="w-16 h-px bg-amber-300"></span>
+                    诗词鉴赏
+                    <span class="w-16 h-px bg-amber-300"></span>
+                </h3>
+                <p class="text-amber-600/60">诗言志，歌永言</p>
+            </div>
+            
+            <div class="culture-grid">
+                <!-- 静夜思 -->
+                <div class="classic-card cursor-pointer" onclick="showPoem('静夜思', '李白', '床前明月光，疑是地上霜。举头望明月，低头思故乡。')">
+                    <span class="category-tag">唐诗</span>
+                    <h4 class="text-lg font-bold text-amber-900 mb-2">静夜思</h4>
+                    <p class="text-sm text-amber-700/70 mb-3">李白 · 五言绝句</p>
+                    <p class="text-sm text-amber-600/50">床前明月光，疑是地上霜...</p>
+                </div>
+                
+                <!-- 春晓 -->
+                <div class="classic-card cursor-pointer" onclick="showPoem('春晓', '孟浩然', '春眠不觉晓，处处闻啼鸟。夜来风雨声，花落知多少。')">
+                    <span class="category-tag">唐诗</span>
+                    <h4 class="text-lg font-bold text-amber-900 mb-2">春晓</h4>
+                    <p class="text-sm text-amber-700/70 mb-3">孟浩然 · 五言绝句</p>
+                    <p class="text-sm text-amber-600/50">春眠不觉晓，处处闻啼鸟...</p>
+                </div>
+                
+                <!-- 登鹳雀楼 -->
+                <div class="classic-card cursor-pointer" onclick="showPoem('登鹳雀楼', '王之涣', '白日依山尽，黄河入海流。欲穷千里目，更上一层楼。')">
+                    <span class="category-tag">唐诗</span>
+                    <h4 class="text-lg font-bold text-amber-900 mb-2">登鹳雀楼</h4>
+                    <p class="text-sm text-amber-700/70 mb-3">王之涣 · 五言绝句</p>
+                    <p class="text-sm text-amber-600/50">白日依山尽，黄河入海流...</p>
+                </div>
+                
+                <!-- 江雪 -->
+                <div class="classic-card cursor-pointer" onclick="showPoem('江雪', '柳宗元', '千山鸟飞绝，万径人踪灭。孤舟蓑笠翁，独钓寒江雪。')">
+                    <span class="category-tag">唐诗</span>
+                    <h4 class="text-lg font-bold text-amber-900 mb-2">江雪</h4>
+                    <p class="text-sm text-amber-700/70 mb-3">柳宗元 · 五言绝句</p>
+                    <p class="text-sm text-amber-600/50">千山鸟飞绝，万径人踪灭...</p>
+                </div>
+                
+                <!-- 相思 -->
+                <div class="classic-card cursor-pointer" onclick="showPoem('相思', '王维', '红豆生南国，春来发几枝。愿君多采撷，此物最相思。')">
+                    <span class="category-tag">唐诗</span>
+                    <h4 class="text-lg font-bold text-amber-900 mb-2">相思</h4>
+                    <p class="text-sm text-amber-700/70 mb-3">王维 · 五言绝句</p>
+                    <p class="text-sm text-amber-600/50">红豆生南国，春来发几枝...</p>
+                </div>
+                
+                <!-- 鹿柴 -->
+                <div class="classic-card cursor-pointer" onclick="showPoem('鹿柴', '王维', '空山不见人，但闻人语响。返景入深林，复照青苔上。')">
+                    <span class="category-tag">唐诗</span>
+                    <h4 class="text-lg font-bold text-amber-900 mb-2">鹿柴</h4>
+                    <p class="text-sm text-amber-700/70 mb-3">王维 · 五言绝句</p>
+                    <p class="text-sm text-amber-600/50">空山不见人，但闻人语响...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 书法专栏 -->
+        <section id="calligraphy" class="mb-16">
+            <div class="text-center mb-8">
+                <h3 class="text-2xl font-bold text-amber-900 mb-2 flex items-center justify-center gap-3">
+                    <span class="w-16 h-px bg-amber-300"></span>
+                    书法鉴赏
+                    <span class="w-16 h-px bg-amber-300"></span>
+                </h3>
+                <p class="text-amber-600/60">书，心画也</p>
+            </div>
+            
+            <div class="culture-grid">
+                <!-- 楷书 -->
+                <div class="classic-card text-center">
+                    <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-100 flex items-center justify-center">
+                        <span class="text-4xl text-amber-700 font-bold">永</span>
+                    </div>
+                    <h4 class="text-lg font-bold text-amber-900 mb-2">楷书</h4>
+                    <p class="text-sm text-amber-700/70 mb-3">欧阳询·颜真卿·柳公权</p>
+                    <p class="text-xs text-amber-600/50">形体方正，笔画平直</p>
+                </div>
+                
+                <!-- 行书 -->
+                <div class="classic-card text-center">
+                    <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-100 flex items-center justify-center">
+                        <span class="text-4xl text-amber-700 font-bold" style="font-family: cursive">之</span>
+                    </div>
+                    <h4 class="text-lg font-bold text-amber-900 mb-2">行书</h4>
+                    <p class="text-sm text-amber-700/70 mb-3">王羲之·苏轼·米芾</p>
+                    <p class="text-xs text-amber-600/50">流畅飘逸，笔走龙蛇</p>
+                </div>
+                
+                <!-- 草书 -->
+                <div class="classic-card text-center">
+                    <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-100 flex items-center justify-center">
+                        <span class="text-4xl text-amber-700 font-bold" style="font-family: cursive">心</span>
+                    </div>
+                    <h4 class="text-lg font-bold text-amber-900 mb-2">草书</h4>
+                    <p class="text-sm text-amber-700/70 mb-3">张旭·怀素·孙过庭</p>
+                    <p class="text-xs text-amber-600/50">龙飞凤舞，笔势连绵</p>
+                </div>
+                
+                <!-- 隶书 -->
+                <div class="classic-card text-center">
+                    <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-100 flex items-center justify-center">
+                        <span class="text-4xl text-amber-700 font-bold">汉</span>
+                    </div>
+                    <h4 class="text-lg font-bold text-amber-900 mb-2">隶书</h4>
+                    <p class="text-sm text-amber-700/70 mb-3">东汉碑刻·石门颂</p>
+                    <p class="text-xs text-amber-600/50">蚕头燕尾，一波三折</p>
+                </div>
+                
+                <!-- 篆书 -->
+                <div class="classic-card text-center">
+                    <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-100 flex items-center justify-center">
+                        <span class="text-3xl text-amber-700 font-bold">天</span>
+                    </div>
+                    <h4 class="text-lg font-bold text-amber-900 mb-2">篆书</h4>
+                    <p class="text-sm text-amber-700/70 mb-3">甲骨文·金文·小篆</p>
+                    <p class="text-xs text-amber-600/50">圆转流畅，古朴典雅</p>
+                </div>
+                
+                <!-- 魏碑 -->
+                <div class="classic-card text-center">
+                    <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-100 flex items-center justify-center">
+                        <span class="text-4xl text-amber-700 font-bold">道</span>
+                    </div>
+                    <h4 class="text-lg font-bold text-amber-900 mb-2">魏碑</h4>
+                    <p class="text-sm text-amber-700/70 mb-3">龙门十二品·张猛龙</p>
+                    <p class="text-xs text-amber-600/50">雄奇刚健，方峻峭拔</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 民俗专栏 -->
+        <section id="customs" class="mb-16 scroll-border p-8">
+            <div class="text-center mb-8">
+                <h3 class="text-2xl font-bold text-amber-900 mb-2 flex items-center justify-center gap-3">
+                    <span class="w-16 h-px bg-amber-300"></span>
+                    传统节日
+                    <span class="w-16 h-px bg-amber-300"></span>
+                </h3>
+                <p class="text-amber-600/60">岁时节令，文化传承</p>
+            </div>
+            
+            <div class="culture-grid">
+                <!-- 春节 -->
+                <div class="classic-card">
+                    <div class="flex items-start gap-4">
+                        <div class="w-16 h-16 rounded-lg bg-red-600 flex items-center justify-center flex-shrink-0">
+                            <span class="text-white text-2xl">春</span>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-amber-900 mb-1">春节</h4>
+                            <p class="text-xs text-amber-600/50 mb-2">正月初一</p>
+                            <p class="text-sm text-amber-700/70">阖家团聚，迎春接福。贴春联、放鞭炮、拜年祝福。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 元宵 -->
+                <div class="classic-card">
+                    <div class="flex items-start gap-4">
+                        <div class="w-16 h-16 rounded-lg bg-red-600 flex items-center justify-center flex-shrink-0">
+                            <span class="text-white text-2xl">元</span>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-amber-900 mb-1">元宵节</h4>
+                            <p class="text-xs text-amber-600/50 mb-2">正月十五</p>
+                            <p class="text-sm text-amber-700/70">赏花灯、猜灯谜、吃元宵。灯火阑珊处，共庆团圆。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 清明 -->
+                <div class="classic-card">
+                    <div class="flex items-start gap-4">
+                        <div class="w-16 h-16 rounded-lg bg-green-700 flex items-center justify-center flex-shrink-0">
+                            <span class="text-white text-2xl">清</span>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-amber-900 mb-1">清明节</h4>
+                            <p class="text-xs text-amber-600/50 mb-2">春分后15日</p>
+                            <p class="text-sm text-amber-700/70">踏青扫墓，缅怀先人。春风拂柳绿，哀思寄清明。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 端午 -->
+                <div class="classic-card">
+                    <div class="flex items-start gap-4">
+                        <div class="w-16 h-16 rounded-lg bg-green-700 flex items-center justify-center flex-shrink-0">
+                            <span class="text-white text-2xl">端</span>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-amber-900 mb-1">端午节</h4>
+                            <p class="text-xs text-amber-600/50 mb-2">五月初五</p>
+                            <p class="text-sm text-amber-700/70">赛龙舟、包粽子、挂艾草。纪念屈原，驱邪避疫。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 中秋 -->
+                <div class="classic-card">
+                    <div class="flex items-start gap-4">
+                        <div class="w-16 h-16 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0">
+                            <span class="text-white text-2xl">中</span>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-amber-900 mb-1">中秋节</h4>
+                            <p class="text-xs text-amber-600/50 mb-2">八月十五</p>
+                            <p class="text-sm text-amber-700/70">赏月拜月，分食月饼。海上生明月，天涯共此时。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 重阳 -->
+                <div class="classic-card">
+                    <div class="flex items-start gap-4">
+                        <div class="w-16 h-16 rounded-lg bg-orange-600 flex items-center justify-center flex-shrink-0">
+                            <span class="text-white text-2xl">重</span>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-amber-900 mb-1">重阳节</h4>
+                            <p class="text-xs text-amber-600/50 mb-2">九月初九</p>
+                            <p class="text-sm text-amber-700/70">登高眺远，饮菊酒。敬老思亲，祈福安康。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 民乐专栏 -->
+        <section id="music" class="mb-16">
+            <div class="text-center mb-8">
+                <h3 class="text-2xl font-bold text-amber-900 mb-2 flex items-center justify-center gap-3">
+                    <span class="w-16 h-px bg-amber-300"></span>
+                    古典民乐
+                    <span class="w-16 h-px bg-amber-300"></span>
+                </h3>
+                <p class="text-amber-600/60">八音迭奏，雅乐清音</p>
+            </div>
+            
+            <div class="culture-grid">
+                <!-- 古琴 -->
+                <div class="classic-card">
+                    <div class="text-center">
+                        <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-800 flex items-center justify-center">
+                            <svg class="w-10 h-10 text-amber-100" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-amber-900 mb-2">古琴</h4>
+                        <p class="text-sm text-amber-700/70 mb-2">七弦十三徽</p>
+                        <p class="text-xs text-amber-600/50">高山流水，阳春白雪</p>
+                    </div>
+                </div>
+                
+                <!-- 琵琶 -->
+                <div class="classic-card">
+                    <div class="text-center">
+                        <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-800 flex items-center justify-center">
+                            <svg class="w-10 h-10 text-amber-100" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-amber-900 mb-2">琵琶</h4>
+                        <p class="text-sm text-amber-700/70 mb-2">四弦五品</p>
+                        <p class="text-xs text-amber-600/50">珠落玉盘，大珠小珠</p>
+                    </div>
+                </div>
+                
+                <!-- 古筝 -->
+                <div class="classic-card">
+                    <div class="text-center">
+                        <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-800 flex items-center justify-center">
+                            <svg class="w-10 h-10 text-amber-100" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-amber-900 mb-2">古筝</h4>
+                        <p class="text-sm text-amber-700/70 mb-2">二十一弦</p>
+                        <p class="text-xs text-amber-600/50">渔舟唱晚，层层递进</p>
+                    </div>
+                </div>
+                
+                <!-- 笛子 -->
+                <div class="classic-card">
+                    <div class="text-center">
+                        <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-800 flex items-center justify-center">
+                            <svg class="w-10 h-10 text-amber-100" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-amber-900 mb-2">笛子</h4>
+                        <p class="text-sm text-amber-700/70 mb-2">竹笛六孔</p>
+                        <p class="text-xs text-amber-600/50">悠扬婉转，清脆明亮</p>
+                    </div>
+                </div>
+                
+                <!-- 二胡 -->
+                <div class="classic-card">
+                    <div class="text-center">
+                        <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-800 flex items-center justify-center">
+                            <svg class="w-10 h-10 text-amber-100" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-amber-900 mb-2">二胡</h4>
+                        <p class="text-sm text-amber-700/70 mb-2">两根琴弦</p>
+                        <p class="text-xs text-amber-600/50">如泣如诉，婉转缠绵</p>
+                    </div>
+                </div>
+                
+                <!-- 萧 -->
+                <div class="classic-card">
+                    <div class="text-center">
+                        <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-800 flex items-center justify-center">
+                            <svg class="w-10 h-10 text-amber-100" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-bold text-amber-900 mb-2">洞箫</h4>
+                        <p class="text-sm text-amber-700/70 mb-2">六孔竹萧</p>
+                        <p class="text-xs text-amber-600/50">深沉苍凉，意境悠远</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 关于 -->
+        <section class="text-center py-8 border-t border-amber-900/10">
+            <p class="text-sm text-amber-600/50 mb-2">中华传统文化 · 传承千年文明</p>
+            <p class="text-xs text-amber-600/40 mb-4">让优秀传统文化在新时代焕发新的光彩</p>
+            <a href="https://beian.miit.gov.cn/" target="_blank" class="text-xs text-amber-600/40 hover:text-amber-600 transition">
+                闽ICP备2026008561号-1
+            </a>
+        </section>
+
+    </main>
+
+    <!-- 返回顶部 -->
+    <div id="backTop" class="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
+        </svg>
+    </div>
+
+    <!-- 诗词弹窗 -->
+    <div id="poemModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4" onclick="if(event.target.id==='poemModal')closePoem()">
+        <div class="classic-card max-w-lg w-full p-8 animate-scale-in">
+            <div class="poem-text" id="poemContent"></div>
+            <div class="text-center mt-6">
+                <button class="seal-btn secondary" onclick="closePoem()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 诗词弹窗
+        function showPoem(title, author, content) {
+            const modal = document.getElementById('poemModal');
+            const contentDiv = document.getElementById('poemContent');
+            contentDiv.innerHTML = `
+                <div class="title">${title}</div>
+                <div class="author">【${author}】</div>
+                <p>${content}</p>
+            `;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+        
+        function closePoem() {
+            const modal = document.getElementById('poemModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+        
+        // 导航平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const target = document.getElementById(targetId);
+                if (target) {
+                    target.scrollIntoView({behavior: 'smooth', block: 'start'});
+                }
+            });
+        });
+        
+        // 返回顶部显示
+        window.addEventListener('scroll', function() {
+            const backTop = document.getElementById('backTop');
+            if (window.scrollY > 300) {
+                backTop.classList.add('show');
+            } else {
+                backTop.classList.remove('show');
+            }
+        });
+        
+        // 主题切换
+        document.getElementById('themeToggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            this.textContent = document.body.classList.contains('dark-mode') ? '浅色' : '深色';
+        });
+    </script>
+</body>
+</html>
