@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>生态环境法典查询工具 · 案件评查与法条检索 | 刺桐花儿</title>
+    <title>生态环境法典查询工具 · 案件评查与法条检索</title>
     <meta name="description" content="生态环境法典智能查询工具，支持法条检索、案件评查报告生成与文档解析（PDF/Word/Excel）。生态环境执法办案助手，快速定位法条依据。">
-    <meta name="keywords" content="生态环境法典,法条查询,环境执法,案件评查,环保合规,VOCs排放,排污许可">
+    <meta name="keywords" content="生态环境法典,法条查询,环境执法,案件评查,环保合规,VOCs排放,排污许可,询问笔录评查">
     <link rel="canonical" href="https://alex2172026.github.io/xiaolongxia2026/">
     <meta property="og:type" content="website">
     <meta property="og:title" content="生态环境法典查询工具 · 案件评查与法条检索">
     <meta property="og:description" content="生态环境法典智能查询与案件评查助手，环保执法办案法条速查。">
     <meta property="og:url" content="https://alex2172026.github.io/xiaolongxia2026/">
-    <meta property="og:image" content="https://www.xiaolongxia2026.online/og-image-1200x630.png">
+    <meta property="og:image" content="https://alex2172026.github.io/xiaolongxia2026/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="生态环境法典查询工具 · 案件评查与法条检索">
 <meta name="twitter:description" content="生态环境法典智能查询与案件评查助手，环保执法办案法条速查。">
-<meta name="twitter:image" content="https://www.xiaolongxia2026.online/og-image-1200x630.png">
+<meta name="twitter:image" content="https://alex2172026.github.io/xiaolongxia2026/og-image.png">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -27,7 +27,7 @@
       "description": "生态环境法典智能查询与案件评查报告生成工具",
       "inLanguage": "zh-CN",
       "offers": {"@type": "Offer", "price": "0", "priceCurrency": "CNY"},
-      "publisher": {"@type": "Organization", "name": "刺桐花儿", "url": "https://www.xiaolongxia2026.online/"}
+      "publisher": {"@type": "Organization", "name": "生态环境法典查询工具"}
     }
     </script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
@@ -754,9 +754,29 @@ body.codex-mode:not(.light-theme)::-webkit-scrollbar-thumb {
                 <div id="dropZone" class="drop-zone p-6 bg-slate-800 border-2 border-dashed border-slate-700 rounded-xl text-center cursor-pointer">
                     <svg class="w-12 h-12 mx-auto mb-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
                     <p class="text-lg mb-1">拖拽文件到此处 或 点击选择</p>
-                    <p class="text-sm text-slate-500">支持 TXT、Word、Excel、图片(OCR)、PDF（支持批量多选）</p>
+                    <p class="text-sm text-slate-500">支持 TXT、Word、Excel、图片(OCR)、PDF（可批量多选，也可只上传单份笔录）</p>
                 </div>
                 <input type="file" id="fileInput" multiple onchange="handleFiles()" style="display: none;">
+                <input type="file" id="singleFileInput" onchange="handleSingleFile()" style="display: none;">
+
+                <!-- 单份笔录快速评查 -->
+                <div class="mt-4 p-4 bg-blue-900/25 border border-blue-700/50 rounded-xl">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-blue-300 font-semibold text-sm">📄 单份笔录快速评查</span>
+                    </div>
+                    <p class="text-xs text-blue-200/80 mb-3">只有一份询问笔录 / 现场笔录 / 送达回证时，选中即可单独评查，无需整理材料清单。支持 TXT、Word、PDF、图片（OCR）、Excel。</p>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="openSingleFilePicker('record')"
+                                class="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-white text-sm font-medium transition">
+                            📝 选择笔录（单份评查）
+                        </button>
+                        <button onclick="openSingleFilePicker('image')"
+                                class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-slate-200 text-sm font-medium transition border border-slate-600">
+                            📷 上传现场照片（OCR）
+                        </button>
+                    </div>
+                    <div id="singleModeHint" style="display:none" class="mt-3 text-xs text-blue-200"></div>
+                </div>
                 
                 <!-- 免责声明 -->
                 <div class="mt-3 p-3 bg-amber-900/30 border border-amber-700/50 rounded-xl">
@@ -918,6 +938,10 @@ body.codex-mode:not(.light-theme)::-webkit-scrollbar-thumb {
                                 <span>📂 章节导航</span>
                                 <button onclick="expandAllCodexTree()" class="text-xs hover:text-white">展开</button>
                             </div>
+                            <div id="codexLoadingHint" style="display:none" class="items-center gap-2 px-2 py-1 mb-2 rounded-lg bg-blue-900/40 border border-blue-700/40">
+                                <span class="spinner w-3 h-3 border-2 border-blue-400 border-t-transparent rounded-full"></span>
+                                <span class="text-[11px] text-blue-200" data-tip>法典数据加载中…</span>
+                            </div>
                             <div id="codexTree" class="codex-tree"></div>
                         </div>
                     </div>
@@ -962,14 +986,5 @@ body.codex-mode:not(.light-theme)::-webkit-scrollbar-thumb {
 
     <script src="law-app.js" defer></script>
 
-<nav class="citong-footer-nav" aria-label="站内导航" style="margin-top:2rem;padding:1.25rem 1.5rem;border-top:1px solid rgba(255,255,255,.08);display:flex;flex-wrap:wrap;gap:.75rem 1.25rem;align-items:center;justify-content:center;font-size:.8125rem;">
-  <span style="color:#A8A8A8;font-family:'JetBrains Mono',monospace;letter-spacing:.1em;">刺桐花儿</span>
-  <a href="https://www.xiaolongxia2026.online/" style="color:#E8B872;text-decoration:none;">返回主站</a>
-  <a href="https://www.xiaolongxia2026.online/songs/" style="color:#A8A8A8;text-decoration:none;">全部歌词</a>
-  <a href="https://www.xiaolongxia2026.online/albums/" style="color:#A8A8A8;text-decoration:none;">专辑列表</a>
-  <a href="https://www.xiaolongxia2026.online/stories/" style="color:#A8A8A8;text-decoration:none;">刺桐花语</a>
-  <a href="https://www.xiaolongxia2026.online/stock/" style="color:#A8A8A8;text-decoration:none;">A股筛选工具</a>
-  <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener" style="color:#A8A8A8;text-decoration:none;">闽ICP备2026008561号-1</a>
-</nav>
 </body>
 </html>
