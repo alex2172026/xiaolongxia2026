@@ -269,41 +269,77 @@
             document.getElementById('statusText').textContent = text;
         }
 
-        // 初始化PDF.js —— worker 优先用本地副本，避免 CDN 不可达时 PDF 全部无法解析
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'vendor/pdfjs/pdf.worker.min.js';
-        // 若本地 worker 加载失败，回退到 CDN
+        // ============ 静态资源配置 ============
+        // PDF.js worker：优先主站（国内 500KB/s），失败回退 GitHub Pages 本地副本，再回退 CDN
+        var RES_CDN = {
+            pdfWorker: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'
+        };
+        var RES_MAIN = 'https://www.xiaolongxia2026.online/ocr/';
+        var RES_LOCAL = 'vendor/';
+
+        // 依次尝试多个地址，返回第一个可达的（HEAD 探测）
+        function pickFirstAvailable(urls, cb) {
+            var i = 0;
+            function next() {
+                if (i >= urls.length) { cb(urls[urls.length - 1]); return; }
+                var u = urls[i++];
+                fetch(u, { method: 'HEAD' }).then(function (r) {
+                    if (r.ok) { cb(u); return; }
+                    next();
+                }).catch(function () { next(); });
+            }
+            next();
+        }
+
+        // 初始化PDF.js worker
         (function () {
-            var local = 'vendor/pdfjs/pdf.worker.min.js';
-            var cdn = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-            fetch(local, { method: 'HEAD' }).then(function (r) {
-                if (!r.ok) pdfjsLib.GlobalWorkerOptions.workerSrc = cdn;
-            }).catch(function () {
-                pdfjsLib.GlobalWorkerOptions.workerSrc = cdn;
+            pickFirstAvailable([
+                RES_MAIN + 'pdfjs/pdf.worker.min.js',
+                RES_LOCAL + 'pdfjs/pdf.worker.min.js',
+                RES_CDN.pdfWorker
+            ], function (u) {
+                pdfjsLib.GlobalWorkerOptions.workerSrc = u;
             });
         })();
 
-        // ============ OCR 本地化配置 ============
-        // 原因：Tesseract v5 的 worker 在子线程用 importScripts 从 CDN 加载，
-        // 在 GitHub Pages（国内带宽低 + 跨域 importScripts 限制）会失败，
-        // 导致上传图片/扫描件时提示"无法读取"。
-        // 方案：worker / wasm core / 语言包全部随仓库本地托管，彻底脱离 CDN。
-        var OCR_LOCAL = {
-            workerPath: 'vendor/tesseract/worker.min.js',
-            corePath: 'vendor/tesseract/',
-            langPath: 'vendor/tessdata/'
+        // ============ OCR 资源配置 ============
+        // 原因：Tesseract v5 的 worker 在子线程用 importScripts 加载，
+        // 从 CDN 加载会因跨域限制失败 → 上传图片/扫描件时提示"无法读取"。
+        // 方案：资源放主站（国内 500KB/s，3.7MB 约 8 秒），
+        // GitHub Pages 本地副本作为备选，彻底不依赖境外 CDN。
+        var OCR_RES = {
+            worker: null,
+            core: null,
+            lang: null,
+            resolved: false
         };
 
+        function resolveOcrResources(cb) {
+            if (OCR_RES.resolved) { cb(); return; }
+            var pending = 3;
+            function done() { pending--; if (pending <= 0) { OCR_RES.resolved = true; cb(); } }
+
+            pickFirstAvailable([
+                RES_MAIN + 'tesseract/worker.min.js',
+                RES_LOCAL + 'tesseract/worker.min.js'
+            ], function (u) { OCR_RES.worker = u; done(); });
+
+            pickFirstAvailable([
+                RES_MAIN + 'tesseract/tesseract-core-simd-lstm.wasm.js',
+                RES_LOCAL + 'tesseract/tesseract-core-simd-lstm.wasm.js'
+            ], function (u) { OCR_RES.core = u; done(); });
+
+            pickFirstAvailable([
+                RES_MAIN + 'tessdata/',
+                RES_LOCAL + 'tessdata/'
+            ], function (u) { OCR_RES.lang = u; done(); });
+        }
+
         function ocrOptions(logger) {
-            var o = {
-                logger: logger || function () { }
-            };
-            // 仅当本地资源存在时启用（避免路径错误导致整体不可用）
-            o.workerPath = OCR_LOCAL.workerPath;
-            o.corePath = OCR_LOCAL.corePath;
-            o.langPath = OCR_LOCAL.langPath;
-            // 部分浏览器不支持 SIMD，需指定非 SIMD 的 core 文件；
-            // 本地已内置 simd-lstm 版本，这里显式给出完整路径避免 worker 去猜。
-            o.corePath = OCR_LOCAL.corePath + 'tesseract-core-simd-lstm.wasm.js';
+            var o = { logger: logger || function () { } };
+            o.workerPath = OCR_RES.worker || (RES_LOCAL + 'tesseract/worker.min.js');
+            o.corePath = OCR_RES.core || (RES_LOCAL + 'tesseract/tesseract-core-simd-lstm.wasm.js');
+            o.langPath = OCR_RES.lang || (RES_LOCAL + 'tessdata/');
             return o;
         }
 
@@ -667,6 +703,8 @@
             let worker = null;
             let out = '';
             try {
+                // 等待 OCR 资源地址探测完成（主站优先，本地副本兜底）
+                await new Promise(function (r) { resolveOcrResources(r); });
                 worker = await Tesseract.createWorker('chi_sim+eng', 1, ocrOptions(function (m) {
                     if (m.status === 'recognizing text') {
                         setStatus('OCR识别中: ' + Math.round(m.progress * 100) + '%');
@@ -716,6 +754,8 @@
                             setStatus('正在初始化OCR...');
                         }
                     };
+                    // 等待 OCR 资源地址探测完成（主站优先，本地副本兜底）
+                    await new Promise(function (r) { resolveOcrResources(r); });
                     var result = await Tesseract.recognize(file, 'chi_sim+eng', ocrOptions(logger));
                     var txt = (result.data.text || '').trim();
                     if (!txt) {
