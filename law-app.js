@@ -230,16 +230,32 @@
                     resolve(true);
                     return;
                 }
-                var s = document.createElement('script');
-                s.src = 'codex-data.js';
-                s.onload = function() {
-                    window.policyDatabase = window.CODEX_POLICY_DATABASE;
-                    window.codexInterpretations = window.CODEX_INTERPRETATIONS || {};
-                    CODEX_DATA_READY = true;
-                    resolve(true);
-                };
-                s.onerror = function() { resolve(false); };
-                document.head.appendChild(s);
+                // 多源择优：主站（国内 500KB/s，1.7MB 约 3.4 秒）
+                // → GitHub Pages 本地副本（8KB/s，约 3.5 分钟）兜底
+                var candidates = [
+                    RES_MAIN + 'codex-data.js',
+                    RES_LOCAL + 'codex-data.js'
+                ];
+                var idx = 0;
+                function tryNext() {
+                    if (idx >= candidates.length) { resolve(false); return; }
+                    var url = candidates[idx++];
+                    var s = document.createElement('script');
+                    s.src = url;
+                    s.onload = function() {
+                        if (typeof window.CODEX_POLICY_DATABASE === 'undefined') {
+                            tryNext();
+                            return;
+                        }
+                        window.policyDatabase = window.CODEX_POLICY_DATABASE;
+                        window.codexInterpretations = window.CODEX_INTERPRETATIONS || {};
+                        CODEX_DATA_READY = true;
+                        resolve(true);
+                    };
+                    s.onerror = function() { tryNext(); };
+                    document.head.appendChild(s);
+                }
+                tryNext();
             });
             return CODEX_LOADING;
         }
