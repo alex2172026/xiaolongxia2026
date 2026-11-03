@@ -269,8 +269,43 @@
             document.getElementById('statusText').textContent = text;
         }
 
-        // 初始化PDF.js
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        // 初始化PDF.js —— worker 优先用本地副本，避免 CDN 不可达时 PDF 全部无法解析
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'vendor/pdfjs/pdf.worker.min.js';
+        // 若本地 worker 加载失败，回退到 CDN
+        (function () {
+            var local = 'vendor/pdfjs/pdf.worker.min.js';
+            var cdn = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            fetch(local, { method: 'HEAD' }).then(function (r) {
+                if (!r.ok) pdfjsLib.GlobalWorkerOptions.workerSrc = cdn;
+            }).catch(function () {
+                pdfjsLib.GlobalWorkerOptions.workerSrc = cdn;
+            });
+        })();
+
+        // ============ OCR 本地化配置 ============
+        // 原因：Tesseract v5 的 worker 在子线程用 importScripts 从 CDN 加载，
+        // 在 GitHub Pages（国内带宽低 + 跨域 importScripts 限制）会失败，
+        // 导致上传图片/扫描件时提示"无法读取"。
+        // 方案：worker / wasm core / 语言包全部随仓库本地托管，彻底脱离 CDN。
+        var OCR_LOCAL = {
+            workerPath: 'vendor/tesseract/worker.min.js',
+            corePath: 'vendor/tesseract/',
+            langPath: 'vendor/tessdata/'
+        };
+
+        function ocrOptions(logger) {
+            var o = {
+                logger: logger || function () { }
+            };
+            // 仅当本地资源存在时启用（避免路径错误导致整体不可用）
+            o.workerPath = OCR_LOCAL.workerPath;
+            o.corePath = OCR_LOCAL.corePath;
+            o.langPath = OCR_LOCAL.langPath;
+            // 部分浏览器不支持 SIMD，需指定非 SIMD 的 core 文件；
+            // 本地已内置 simd-lstm 版本，这里显式给出完整路径避免 worker 去猜。
+            o.corePath = OCR_LOCAL.corePath + 'tesseract-core-simd-lstm.wasm.js';
+            return o;
+        }
 
         let uploadedFiles = [];
         let reportText = '';
@@ -528,7 +563,27 @@
         function hasGarbledChars(text) {
             if (!text) return true;
             const invalidRatio = (text.match(/[\x00-\x08\x0b\x0c\x0e-\x1f]/g) || []).length / text.length;
-            return invalidRatio > 0.1 || text.includes('\x00');
+            if (invalidRatio > 0.1 || text.includes('\x00')) return true;
+
+            // PDF 乱码特征：大量高位字符（CJK 之外的扩展区）/ 私用区 / 非常见符号，
+            // 或可打印 ASCII 占比过低且中文字符极少 —— 这类内容对用户不可读。
+            const total = text.replace(/\s/g, '').length;
+            if (total < 10) return true;
+            const cjk = (text.match(/[\u4e00-\u9fff]/g) || []).length;
+            const weird = (text.match(/[\u0080-\u00ff\ue000-\uf8ff\ufffd]/g) || []).length;
+            const printableAscii = (text.match(/[\x20-\x7e]/g) || []).length;
+            // 乱码：高位/私用区字符占比高，且几乎没有中文
+            if (weird / total > 0.25 && cjk / total < 0.05) return true;
+            // 乱码：可打印字符极少（说明是二进制/编码错误内容）
+            if (printableAscii / total < 0.1 && cjk / total < 0.05) return true;
+            return false;
+        }
+
+        // 判断提取出的文本是否"可读"——用于决定是否走 OCR 回退
+        function isReadableText(text) {
+            if (!text || !text.trim()) return false;
+            if (hasGarbledChars(text)) return false;
+            return true;
         }
         
         // 清理HTML
@@ -570,8 +625,8 @@
                     const arr = await file.arrayBuffer();
                     const pdf = await pdfjsLib.getDocument({data: arr}).promise;
                     let text = '';
-                    
-                    // 先尝试提取文字
+
+                    // 先尝试提取文字层
                     for (let i = 1; i <= pdf.numPages; i++) {
                         setStatus('正在提取PDF文字 ' + i + '/' + pdf.numPages);
                         const page = await pdf.getPage(i);
@@ -579,58 +634,99 @@
                         const pageText = content.items.map(item => item.str).join(' ');
                         if (pageText.trim()) text += pageText + '\n';
                     }
-                    
-                    // 如果没有文字（扫描件PDF），使用OCR识别
-                    if (!text.trim()) {
-                        setStatus('正在初始化OCR识别...');
-                        console.log('PDF无文字，启用OCR识别扫描件...');
-                        
-                        // 初始化Tesseract worker
-                        const worker = await Tesseract.createWorker('chi_sim+eng', 1, {
-                            logger: m => {
-                                if (m.status === 'recognizing text') {
-                                    setStatus('OCR识别中: ' + Math.round(m.progress * 100) + '%');
-                                }
-                            }
-                        });
-                        
-                        for (let i = 1; i <= pdf.numPages; i++) {
-                            setStatus('OCR识别第 ' + i + ' 页...');
-                            const page = await pdf.getPage(i);
-                            const viewport = await page.getViewport({scale: 2.0});
-                            
-                            const canvas = document.createElement('canvas');
-                            const ctx = canvas.getContext('2d');
-                            canvas.height = viewport.height;
-                            canvas.width = viewport.width;
-                            
-                            await page.render({canvasContext: ctx, viewport: viewport}).promise;
-                            
-                            const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
-                            const ret = await worker.recognize(blob);
-                            text += ret.data.text.trim() + '\n';
-                        }
-                        
-                        await worker.terminate();
+
+                    // 关键：部分中文 PDF（无 ToUnicode 映射）提取出的是乱码，
+                    // 这类必须回退到 OCR，否则用户看到的是一堆无法辨认的字符。
+                    let needOcr = !text.trim();
+                    if (!needOcr && !isReadableText(text)) {
+                        console.warn('PDF文字层为乱码，改用OCR识别');
+                        text = '';
+                        needOcr = true;
                     }
-                    resolve(text || '[PDF无文字]');
-                } catch { reject(new Error('PDF解析失败')) }
+
+                    if (needOcr) {
+                        setStatus('正在初始化OCR识别（首次需下载中文语言包，请稍候）...');
+                        console.log('PDF无有效文字层，启用OCR识别...');
+                        text = await ocrPdfPages(pdf);
+                    }
+
+                    if (!text.trim()) {
+                        resolve('【PDF提取失败：既无文字层也无OCR结果。请把内容复制到下方输入框，或另存为 Word/TXT 后重试】');
+                        return;
+                    }
+                    resolve(text);
+                } catch (e) {
+                    console.error('PDF解析异常:', e);
+                    reject(new Error('PDF解析失败：' + (e && e.message ? e.message : '未知错误')));
+                }
             });
+        }
+
+        // 对 PDF 每页渲染成图片后做 OCR
+        async function ocrPdfPages(pdf) {
+            let worker = null;
+            let out = '';
+            try {
+                worker = await Tesseract.createWorker('chi_sim+eng', 1, ocrOptions(function (m) {
+                    if (m.status === 'recognizing text') {
+                        setStatus('OCR识别中: ' + Math.round(m.progress * 100) + '%');
+                    } else if (m.status === 'loading tesseract core') {
+                        setStatus('正在加载OCR引擎...');
+                    } else if (m.status === 'loading language traineddata') {
+                        setStatus('正在加载中文语言包...');
+                    } else if (m.status === 'initializing api') {
+                        setStatus('正在初始化OCR...');
+                    }
+                }));
+
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    setStatus('OCR识别第 ' + i + '/' + pdf.numPages + ' 页...');
+                    const page = await pdf.getPage(i);
+                    const viewport = await page.getViewport({ scale: 2.0 });
+
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+                    const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+                    const ret = await worker.recognize(blob);
+                    out += ret.data.text.trim() + '\n';
+                }
+            } finally {
+                if (worker) { try { await worker.terminate(); } catch (e) { } }
+            }
+            return out;
         }
 
         function readImageFile(file) {
             return new Promise(async (resolve, reject) => {
                 try {
-                    setStatus('正在OCR识别图片...');
-                    const result = await Tesseract.recognize(file, 'chi_sim+eng', {
-                        logger: m => {
-                            if (m.status === 'recognizing text') {
-                                setStatus('OCR识别: ' + Math.round(m.progress * 100) + '%');
-                            }
+                    setStatus('正在OCR识别图片（首次加载引擎，请稍候）...');
+                    var logger = function (m) {
+                        if (m.status === 'recognizing text') {
+                            setStatus('OCR识别中: ' + Math.round(m.progress * 100) + '%');
+                        } else if (m.status === 'loading tesseract core') {
+                            setStatus('正在加载OCR引擎...');
+                        } else if (m.status === 'loading language traineddata') {
+                            setStatus('正在加载中文语言包...');
+                        } else if (m.status === 'initializing api') {
+                            setStatus('正在初始化OCR...');
                         }
-                    });
-                    resolve(result.data.text.trim() || '[图片无文字]');
-                } catch { reject(new Error('OCR识别失败')) }
+                    };
+                    var result = await Tesseract.recognize(file, 'chi_sim+eng', ocrOptions(logger));
+                    var txt = (result.data.text || '').trim();
+                    if (!txt) {
+                        resolve('【图片中未识别到文字。请确认图片清晰、光线充足，或把笔录内容复制到下方输入框】');
+                        return;
+                    }
+                    resolve(txt);
+                } catch (e) {
+                    console.error('图片OCR失败:', e);
+                    reject(new Error('OCR识别失败：' + (e && e.message ? e.message : '未知错误')));
+                }
             });
         }
 
@@ -736,35 +832,59 @@ ${articlesText}
                 for (let i = 0; i < uploadedFiles.length; i++) {
                     const file = uploadedFiles[i];
                     showProgress(10 + Math.round((i / Math.max(uploadedFiles.length, 1)) * 30), '读取: ' + file.name);
-                    
+
                     // 显示读取状态
                     document.getElementById('fileReadStatus').textContent = '读取中...';
-                    
+
                     let text = '';
+                    let readFailed = false;
+                    let failReason = '';
                     try {
                         text = await readFileContent(file);
                     } catch (e) {
-                        text = '[读取失败: ' + e.message + ']';
+                        readFailed = true;
+                        failReason = e && e.message ? e.message : '未知错误';
                         console.error('文件错误:', e);
                     }
-                    
-                    // 确保有内容
-                    if (!text || text.length < 5) {
-                        text = '[文件内容为空或读取失败]';
+
+                    // 判定是否真的读到了可用内容
+                    // （readFileContent 失败时可能返回带说明的占位文本，不是真实内容）
+                    if (!readFailed && (!text || text.length < 5 || /^[\s【\[]*(读取失败|文件内容为空|文件读取失败|PDF提取失败|图片中未识别到文字)/.test(text))) {
+                        readFailed = true;
+                        failReason = text && text.length ? text.replace(/^[【\[]|[】\]]$/g, '').slice(0, 80) : '文件内容为空';
                     }
-                    
+                    if (readFailed) {
+                        // 明确告知用户并中止 —— 不要把占位文本当成案件材料送去评查，
+                        // 否则生成的报告会通篇是"无法读取"，完全失去意义。
+                        showProgress(0, '读取失败');
+                        setStatus('文件读取失败');
+                        var stEl = document.getElementById('fileReadStatus');
+                        if (stEl) {
+                            stEl.textContent = '❌ ' + file.name + ' 读取失败';
+                            stEl.classList.add('text-red-400');
+                        }
+                        alert('【' + file.name + '】读取失败：' + failReason +
+                            '\n\n可能原因：\n• 文件已加密或损坏\n• 扫描件为图片格式（可尝试"上传现场照片（OCR）"）\n• 网络较慢，OCR 引擎尚未就绪\n\n' +
+                            '建议：把笔录内容复制粘贴到下方「补充案件描述」输入框，也可另存为 Word/TXT 后重试。');
+                        return;
+                    }
+
                     // 截断太长内容
                     if (text.length > MAX_LEN) {
                         text = text.substring(0, MAX_LEN) + '\n...[内容过长，已截断]';
                     }
-                    
+
                     fileInfo += `【文件${i+1}: ${file.name}】\n${text}\n`;
-                    
+
                     // 更新状态
-                    document.getElementById('fileReadStatus').textContent = '已读取 ' + text.length + ' 字';
-                    
+                    var stEl2 = document.getElementById('fileReadStatus');
+                    if (stEl2) {
+                        stEl2.textContent = '已读取 ' + text.length + ' 字';
+                        stEl2.classList.remove('text-red-400');
+                    }
+
                     // 检测是否是询问笔录（文件名+内容双重检测）
-                    const isInquiry = /询问|笔录|询话/i.test(file.name) || 
+                    const isInquiry = /询问|笔录|询话/i.test(file.name) ||
                         /被询问人|询问人|询问时间|询问地点|询问室/i.test(text);
                     if (isInquiry) {
                         fileInfo += '\n【重要】该材料为询问笔录，请按照询问笔录规范进行重点审查！\n';

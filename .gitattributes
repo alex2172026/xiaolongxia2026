@@ -1,7 +1,12 @@
-# 法典数据文件保持原始字节，禁止 Git 做换行符转换
+# 法典数据与 OCR 资源保持原始字节，禁止 Git 做换行符转换
 # 原因：law-app.js / codex-data.js 内嵌大段中文法典文本，
 # CRLF↔LF 转换会导致文件内容漂移、字节数变化，线上解析异常。
 *.js -text
 *.html -text
 *.css -text
 *.json -text
+
+# 二进制资源（OCR 语言包 / wasm）同样禁止转换
+*.gz -text
+*.wasm -text
+*.traineddata -text
